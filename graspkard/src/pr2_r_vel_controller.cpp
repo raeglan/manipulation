@@ -30,14 +30,21 @@
 //#include <kdl_conversions/kdl_msg.h>
 #include <boost/lexical_cast.hpp>
 
+#include <eigen3/Eigen/Eigen>
+#include <r_libs/VisualizationManager.h>
+#include <visualization_msgs/Marker.h>
+#include <visualization_msgs/MarkerArray.h>
+
 int nWSR_;
 giskard::QPController controller_;
 std::vector<std::string> joint_names_;
 std::vector<ros::Publisher> vel_controllers_;
+ros::Publisher visPub;
 ros::Subscriber js_sub_;
 Eigen::VectorXd state_;
 bool controller_started_;
 std::string frame_id_;
+VisualizationManager visMan;
 
 void js_callback(const sensor_msgs::JointState::ConstPtr& msg)
 {
@@ -107,6 +114,24 @@ void goal_callback(const geometry_msgs::PointStamped::ConstPtr& msg)
     return;
   }
 
+  visMan.beginNewDrawCycle();
+  double cWidth = 0.06;
+  double cHeight = 0.2;
+
+  visualization_msgs::MarkerArray markers;
+  markers.markers.push_back(visMan.shapeMarker(0, 
+                                  Affine3d::Identity(), 
+                                  visualization_msgs::Marker::CYLINDER, 
+                                  Vector3d(cWidth, cWidth, cHeight),
+                                  0.f, 
+                                  1.f, 
+                                  0.f, 
+                                  1.f, 
+                                  "cylinder"));
+
+  visMan.endDrawCycle(markers.markers);
+  visPub.publish(markers);
+
   // copying position goal
   state_[joint_names_.size() + 0] = msg->point.x;
   state_[joint_names_.size() + 1] = msg->point.y;
@@ -165,6 +190,11 @@ int main(int argc, char **argv)
   ROS_INFO("Waiting for goal.");
   ros::Subscriber goal_sub = nh.subscribe("/goal", 0, goal_callback);
   js_sub_ = nh.subscribe("joint_states", 0, js_callback);
+
+  // Initialize visualization publisher
+  visPub  = nh.advertise<visualization_msgs::MarkerArray>("/graspkard_visualization", 1);
+  visMan.addNamespace(0, "cylinder");
+
   ros::spin();
 
   return 0;

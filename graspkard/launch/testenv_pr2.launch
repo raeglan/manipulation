@@ -9,6 +9,9 @@
     <param name="frame_id" value="base_link" />
     <remap from="~joint_states" to="/joint_states" />
     <param name="nWSR" value="1000"/>
+
+    <param name="cylinder_width" value="0.06" />
+    <param name="cylinder_height" value="0.2" />
   </node>
 
 <node pkg="tf" type="static_transform_publisher" name="trololo"
