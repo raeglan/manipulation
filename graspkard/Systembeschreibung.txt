@@ -13,3 +13,4 @@ System:
 	IAI-Naive-Kinematics-Sim
 
 Der Actionserver (der keiner ist), ist in "pr2_r_vel_controller.cpp" implementiert. Derzeit nimmt er Ziele vom Typ "geometry_msgs/PointStamped" auf dem Topic "/goal" an. Die Punkte müssen im Frame "base_link" angegeben sein. Der YAML-Controller löst derzeit ein Positionsziel auf, versucht dabei den Gripper in eine feste Rotation und Gripper und Ellenbogen auf eine Höhe zu bringen.
+Im TF-Tree gibt es eine Transformation für den Zylinder. Der Zylinder wird auch über das Topic "/graspkard_visualization" dargestellt, welches in RVIZ angezeigt werden. Die Aktualisierung der Visualisierung erfolgt erst bei dem Setzen eines Ziels. Auf dem Parameterserver liegen die Maße des Zylinders unter "cylinder_width" und "cylinder_height". 
