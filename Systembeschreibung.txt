@@ -1,0 +1,15 @@
+System:
+	Giskard-File
+
+	Actionserver:
+		Goal: Name eines Zylinders
+		Feedback: Erreicht oder nicht erreicht
+		Intern:
+			Giskard
+
+	Parameterserver:
+		Maße des Zylinders: Radius, Höhe
+
+	IAI-Naive-Kinematics-Sim
+
+
