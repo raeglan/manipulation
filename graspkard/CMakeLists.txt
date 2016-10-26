@@ -6,12 +6,17 @@ project(graspkard)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
+  sensor_msgs
+  std_msgs
   giskard
   message_generation
   message_runtime
   r_libs
   roscpp
+  tf_conversions
 )
+
+add_definitions(-std=c++11 -g)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -117,7 +122,10 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
+  ${r_libs_INCLUDE_DIRS}
+  ${YAML_CPP_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -128,19 +136,22 @@ include_directories(
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(graspkard ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 ## Declare a C++ executable
-# add_executable(graspkard_node src/graspkard_node.cpp)
+add_executable(graspkard_node src/pr2_r_vel_controller.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(graspkard_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(graspkard_node r_libs_visualization r_libs_conversions)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(graspkard_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(graspkard_node
+  ${catkin_LIBRARIES}
+  r_libs_visualization
+  r_libs_conversions
+  yaml-cpp
+)
 
 #############
 ## Install ##

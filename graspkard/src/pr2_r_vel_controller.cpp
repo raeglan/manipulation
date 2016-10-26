@@ -107,7 +107,7 @@ void goal_callback(const geometry_msgs::PointStamped::ConstPtr& msg)
     return;
   }
 
-  // copying over left goal
+  // copying position goal
   state_[joint_names_.size() + 0] = msg->point.x;
   state_[joint_names_.size() + 1] = msg->point.y;
   state_[joint_names_.size() + 2] = msg->point.z;
