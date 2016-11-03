@@ -1,0 +1,23 @@
+<launch>
+  <include file="$(find iai_naive_kinematics_sim)/launch/pr2.launch"/>
+
+  <node pkg="graspkard" type="graspkard_node" name="graspkard" output="screen">
+    <rosparam param="joint_names"
+      file="$(find graspkard)/config/pr2_upper_body.yaml" />
+    <param name="controller_description" 
+      textfile="$(find graspkard)/controller_specs/pr2_grasp_control.yaml" />
+    <param name="frame_id" value="base_link" />
+    <remap from="~joint_states" to="/joint_states" />
+    <param name="nWSR" value="1000"/>
+
+    <param name="cylinder_width" value="0.06" />
+    <param name="cylinder_height" value="0.2" />
+  </node>
+
+<node pkg="tf" type="static_transform_publisher" name="fake_odom"
+        output="screen" args="0 0 0 0 0 0 1 odom odom_combined 100" />
+
+<node pkg="tf" type="static_transform_publisher" name="trololo"
+        output="screen" args="0.5 -0.3 0.8 0 0 0 1 odom_combined cylinder 100" /> 
+
+</launch>
