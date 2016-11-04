@@ -50,7 +50,7 @@ scope:
   - cylinder_rot_x: {input-var: 18}
   - cylinder_rot_y: {input-var: 19}
   - cylinder_rot_z: {input-var: 20}
-  - cylinder_rot_w: {input-var: 21}
+  - cylinder_rot_a: {input-var: 21}
 
   - cylinder_width: {input-var: 22}
   - cylinder_height: {input-var: 23}
@@ -91,7 +91,8 @@ scope:
   - r_gripper_offset:
       frame: [{axis-angle: [unit_x, 0]}, {vector3: [0.18, 0, 0]}]
 
-  - cylinder_rot: {quaternion: [cylinder_rot_x, cylinder_rot_y, cylinder_rot_z, cylinder_rot_w]}
+  - cylinder_rot_axis: {vector3: [cylinder_rot_x, cylinder_rot_y, cylinder_rot_z]}
+  - cylinder_rot: {axis-angle: [cylinder_rot_axis, cylinder_rot_a]}
   - cylinder_pos: {vector3: [cylinder_pos_x, cylinder_pos_y, cylinder_pos_z]}
 
   - cylinder_frame:
@@ -150,9 +151,11 @@ scope:
   - r_trans: {origin-of: right_ee}
   #  # right arm goal diff
   - r_goal_diff: { vector-sub: [cylinder_pos, r_trans]}
-  - r_diff_x: {x-coord: r_goal_diff}
-  - r_diff_y: {y-coord: r_goal_diff}
-  - r_diff_z: {z-coord: r_goal_diff}
+  - r_goal_dist: {vector-norm: r_goal_diff}
+  - r_goal_err: {vector-sub: [r_goal_diff, {scale-vector: [{double-div: [cylinder_width, r_goal_dist]}, r_goal_diff]}]}
+  - r_diff_x: {x-coord: r_goal_err} # 
+  - r_diff_y: {y-coord: r_goal_err}
+  - r_diff_z: {z-coord: r_goal_err}
   #  - r_rot_align: {vector-sub: [{origin-of: right_elbow}, r_trans]}
   #  - r_gripper_align: {rot-vector: {orientation-of: right_ee}}
   # right arm rotation
@@ -200,12 +203,12 @@ soft-constraints:
   - soft-constraint: [r_diff_z, r_diff_z, weight_pos_goal, {z-coord: r_trans}, right EE z-vel slack]
   
   # Rotation constraint
-  - soft-constraint: [{x-coord: r_rot_control}, {x-coord: r_rot_control}, weight_rot_control, {x-coord: {rot-vector: r_rot}}, right EE x-rot control slack]
-  - soft-constraint: [{y-coord: r_rot_control}, {y-coord: r_rot_control}, weight_rot_control, {y-coord: {rot-vector: r_rot}}, right EE y-rot control slack]
-  - soft-constraint: [{z-coord: r_rot_control}, {z-coord: r_rot_control}, weight_rot_control, {z-coord: {rot-vector: r_rot}}, right EE z-rot control slack]
+  #- soft-constraint: [{x-coord: r_rot_control}, {x-coord: r_rot_control}, weight_rot_control, {x-coord: {rot-vector: r_rot}}, right EE x-rot control slack]
+  #- soft-constraint: [{y-coord: r_rot_control}, {y-coord: r_rot_control}, weight_rot_control, {y-coord: {rot-vector: r_rot}}, right EE y-rot control slack]
+  #- soft-constraint: [{z-coord: r_rot_control}, {z-coord: r_rot_control}, weight_rot_control, {z-coord: {rot-vector: r_rot}}, right EE z-rot control slack]
 
   # Level elbow and gripper control
-  - soft-constraint: [0.01, 0.01, weight_elbow_control, {y-coord: r_elbow_diff}, right elbow up control slack]
+  #- soft-constraint: [0.01, 0.01, weight_elbow_control, {y-coord: r_elbow_diff}, right elbow up control slack]
 
 hard-constraints:
   - hard-constraint:

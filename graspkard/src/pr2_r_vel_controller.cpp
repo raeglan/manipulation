@@ -138,7 +138,8 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
 
     // copying position goal
     tf::Vector3 pos = temp.getOrigin();
-    tf::Quaternion rot = temp.getRotation();
+    tf::Vector3 rot = temp.getRotation().getAxis();
+    double angle = temp.getRotation().getAngle();
 
     state_[joint_names_.size() + 0] = pos.x();
     state_[joint_names_.size() + 1] = pos.y();
@@ -146,7 +147,7 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
     state_[joint_names_.size() + 3] = rot.x();
     state_[joint_names_.size() + 4] = rot.y();
     state_[joint_names_.size() + 5] = rot.z();
-    state_[joint_names_.size() + 6] = rot.w();
+    state_[joint_names_.size() + 6] = angle;
 
     state_[joint_names_.size() + 7] = cWidth;
     state_[joint_names_.size() + 8] = cHeight;
