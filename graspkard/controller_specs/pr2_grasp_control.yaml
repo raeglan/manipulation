@@ -43,9 +43,17 @@ scope:
   - r_wrist_roll_joint: {input-var: 14}
 
   # definition goal input variables
-  - r_pos_goal_x: {input-var: 15}
-  - r_pos_goal_y: {input-var: 16}
-  - r_pos_goal_z: {input-var: 17}
+  - cylinder_pos_x: {input-var: 15}
+  - cylinder_pos_y: {input-var: 16}
+  - cylinder_pos_z: {input-var: 17}
+
+  - cylinder_rot_x: {input-var: 18}
+  - cylinder_rot_y: {input-var: 19}
+  - cylinder_rot_z: {input-var: 20}
+  - cylinder_rot_w: {input-var: 21}
+
+  - cylinder_width: {input-var: 22}
+  - cylinder_height: {input-var: 23}
 
   # definition of joint transforms
   - torso_lift:
@@ -83,6 +91,11 @@ scope:
   - r_gripper_offset:
       frame: [{axis-angle: [unit_x, 0]}, {vector3: [0.18, 0, 0]}]
 
+  - cylinder_rot: {quaternion: [cylinder_rot_x, cylinder_rot_y, cylinder_rot_z, cylinder_rot_w]}
+  - cylinder_pos: {vector3: [cylinder_pos_x, cylinder_pos_y, cylinder_pos_z]}
+
+  - cylinder_frame:
+      frame: [cylinder_rot, cylinder_pos]
 
   # definition of elbow FK
   - left_elbow:
@@ -136,7 +149,7 @@ scope:
   #  # right arm position
   - r_trans: {origin-of: right_ee}
   #  # right arm goal diff
-  - r_goal_diff: { vector-sub: [{vector3: [r_pos_goal_x, r_pos_goal_y, r_pos_goal_z]}, r_trans]}
+  - r_goal_diff: { vector-sub: [cylinder_pos, r_trans]}
   - r_diff_x: {x-coord: r_goal_diff}
   - r_diff_y: {y-coord: r_goal_diff}
   - r_diff_z: {z-coord: r_goal_diff}

@@ -24,6 +24,7 @@
 #include <ros/package.h>
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/Float64.h>
+#include <std_msgs/String.h>
 #include <geometry_msgs/PointStamped.h>
 #include <yaml-cpp/yaml.h>
 #include <giskard/giskard.hpp>
@@ -34,6 +35,7 @@
 #include <r_libs/VisualizationManager.h>
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
+#include <tf/transform_listener.h>
 
 int nWSR_;
 giskard::QPController controller_;
@@ -44,8 +46,10 @@ ros::Subscriber js_sub_;
 Eigen::VectorXd state_;
 bool controller_started_;
 std::string frame_id_;
+std::string cylinderName;
 VisualizationManager visMan;
 
+tf::TransformListener* tfListener;
 void js_callback(const sensor_msgs::JointState::ConstPtr& msg)
 {
   // TODO: turn this into a map!
@@ -101,54 +105,67 @@ void print_eigen(const Eigen::VectorXd& command)
   ROS_INFO("Command: (%s)", cmd_str.c_str());
 }
 
-void goal_callback(const geometry_msgs::PointStamped::ConstPtr& msg)
+void goal_callback(const std_msgs::String::ConstPtr& msg)
 {
 //  printGoal(*msg);
 
   //std::cout << "received new goal" << std::endl;
 
-  if(msg->header.frame_id.compare(frame_id_) != 0)
-  {
-    ROS_WARN("frame_id of right EE goal did not match expected '%s'. Ignoring goal", 
-        frame_id_.c_str());
-    return;
-  }
+  cylinderName = msg->data;
 
-  visMan.beginNewDrawCycle();
-  double cWidth = 0.06;
-  double cHeight = 0.2;
+  try {
+    tf::StampedTransform temp;
+    tfListener->waitForTransform(frame_id_, cylinderName, ros::Time(0), ros::Duration(0.5));
+    tfListener->lookupTransform(frame_id_, cylinderName, ros::Time(0), temp);
+    
+    visMan.beginNewDrawCycle();
+    double cWidth = 0.06;
+    double cHeight = 0.2;
 
-  visualization_msgs::MarkerArray markers;
-  markers.markers.push_back(visMan.shapeMarker(0, 
-                                  Affine3d::Identity(), 
-                                  visualization_msgs::Marker::CYLINDER, 
-                                  Vector3d(cWidth, cWidth, cHeight),
-                                  0.f, 
-                                  1.f, 
-                                  0.f, 
-                                  1.f, 
-                                  "cylinder"));
+    visualization_msgs::MarkerArray markers;
+    markers.markers.push_back(visMan.shapeMarker(0, 
+                                    Affine3d::Identity(), 
+                                    visualization_msgs::Marker::CYLINDER, 
+                                    Vector3d(cWidth, cWidth, cHeight),
+                                    0.f, 
+                                    1.f, 
+                                    0.f, 
+                                    1.f, 
+                                    "cylinder"));
 
-  visMan.endDrawCycle(markers.markers);
-  visPub.publish(markers);
+    visMan.endDrawCycle(markers.markers);
+    visPub.publish(markers);
 
-  // copying position goal
-  state_[joint_names_.size() + 0] = msg->point.x;
-  state_[joint_names_.size() + 1] = msg->point.y;
-  state_[joint_names_.size() + 2] = msg->point.z;
+    // copying position goal
+    tf::Vector3 pos = temp.getOrigin();
+    tf::Quaternion rot = temp.getRotation();
 
-  if (!controller_started_)
-  {
-    if (controller_.start(state_, nWSR_))
+    state_[joint_names_.size() + 0] = pos.x();
+    state_[joint_names_.size() + 1] = pos.y();
+    state_[joint_names_.size() + 2] = pos.z();
+    state_[joint_names_.size() + 3] = rot.x();
+    state_[joint_names_.size() + 4] = rot.y();
+    state_[joint_names_.size() + 5] = rot.z();
+    state_[joint_names_.size() + 6] = rot.w();
+
+    state_[joint_names_.size() + 7] = cWidth;
+    state_[joint_names_.size() + 8] = cHeight;
+
+    if (!controller_started_)
     {
-      ROS_INFO("Controller started.");
-      controller_started_ = true;
+      if (controller_.start(state_, nWSR_))
+      {
+        ROS_INFO("Controller started.");
+        controller_started_ = true;
+      }
+      else
+      {
+        ROS_ERROR("Couldn't start controller.");
+        print_eigen(state_);
+      }
     }
-    else
-    {
-      ROS_ERROR("Couldn't start controller.");
-      print_eigen(state_);
-    }
+  } catch (tf::TransformException ex) {
+    std::cerr << "Lookup of frame '"<< cylinderName << "' failed!" << std::endl;
   }
 }
 
@@ -177,6 +194,9 @@ int main(int argc, char **argv)
     ROS_ERROR("Parameter 'frame_id' not found in namespace '%s'.", nh.getNamespace().c_str());
     return 0;
   }
+
+  tf::TransformListener tfTemp;
+  tfListener = &tfTemp;
 
   YAML::Node node = YAML::Load(controller_description);
   giskard::QPControllerSpec spec = node.as< giskard::QPControllerSpec >();
