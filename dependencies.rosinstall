@@ -1,0 +1,14 @@
+- git:
+    local-name: giskard
+    uri: https://github.com/airballking/giskard.git
+    version: master
+
+- git:
+    local-name: giskard_msgs
+    uri: https://github.com/airballking/giskard_msgs.git
+    version: master
+
+- git:
+    local-name: iai_naive_kinematics_sim
+    uri: 'https://github.com/code-iai/iai_naive_kinematics_sim.git' 
+    version: master
