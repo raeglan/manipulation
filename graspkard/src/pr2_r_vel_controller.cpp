@@ -37,16 +37,18 @@
 #include <visualization_msgs/MarkerArray.h>
 #include <tf/transform_listener.h>
 
+using namespace std;
+
 int nWSR_;
 giskard::QPController controller_;
-std::vector<std::string> joint_names_;
-std::vector<ros::Publisher> vel_controllers_;
+vector<string> joint_names_;
+vector<ros::Publisher> vel_controllers_;
 ros::Publisher visPub;
 ros::Subscriber js_sub_;
 Eigen::VectorXd state_;
 bool controller_started_;
-std::string frame_id_;
-std::string cylinderName;
+string frame_id_;
+string cylinderName;
 VisualizationManager visMan;
 
 tf::TransformListener* tfListener;
@@ -77,13 +79,13 @@ void js_callback(const sensor_msgs::JointState::ConstPtr& msg)
       command.data = commands[i];
       vel_controllers_[i].publish(command);
     }
-    //std::cout << "published new joint states" << std::endl;
+    //cout << "published new joint states" << endl;
   }
   else
   {
     ROS_WARN("Update failed.");
     // TODO: remove or change to ros_debug
-    std::cout << "State " << state_ << std::endl;
+    cout << "State " << state_ << endl;
   }
 }
 
@@ -99,9 +101,9 @@ void js_callback(const sensor_msgs::JointState::ConstPtr& msg)
 
 void print_eigen(const Eigen::VectorXd& command)
 {
-  std::string cmd_str = " ";
+  string cmd_str = " ";
   for(size_t i=0; i<command.rows(); ++i)
-    cmd_str += boost::lexical_cast<std::string>(command[i]) + " ";
+    cmd_str += boost::lexical_cast<string>(command[i]) + " ";
   ROS_INFO("Command: (%s)", cmd_str.c_str());
 }
 
@@ -109,7 +111,7 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
 {
 //  printGoal(*msg);
 
-  //std::cout << "received new goal" << std::endl;
+  //cout << "received new goal" << endl;
 
   cylinderName = msg->data;
 
@@ -149,6 +151,13 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
     state_[joint_names_.size() + 5] = rot.z();
     state_[joint_names_.size() + 6] = angle;
 
+    cout << "rotation(" 
+         << state_[joint_names_.size() + 3]
+         << ", " << state_[joint_names_.size() + 4]
+         << ", " << state_[joint_names_.size() + 5]
+         << ", " << state_[joint_names_.size() + 6] 
+         << ")" << endl;
+
     state_[joint_names_.size() + 7] = cWidth;
     state_[joint_names_.size() + 8] = cHeight;
 
@@ -166,7 +175,7 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
       }
     }
   } catch (tf::TransformException ex) {
-    std::cerr << "Lookup of frame '"<< cylinderName << "' failed!" << std::endl;
+    cerr << "Lookup of frame '"<< cylinderName << "' failed!" << endl;
   }
 }
 
@@ -177,7 +186,7 @@ int main(int argc, char **argv)
 
   nh.param("nWSR", nWSR_, 10);
 
-  std::string controller_description;
+  string controller_description;
   if (!nh.getParam("controller_description", controller_description))
   {
     ROS_ERROR("Parameter 'controller_description' not found in namespace '%s'.", nh.getNamespace().c_str());
@@ -205,7 +214,7 @@ int main(int argc, char **argv)
   state_ = Eigen::VectorXd::Zero(joint_names_.size() + 2*6);
   controller_started_ = false;
 
-  for (std::vector<std::string>::iterator it = joint_names_.begin(); it != joint_names_.end(); ++it)
+  for (vector<string>::iterator it = joint_names_.begin(); it != joint_names_.end(); ++it)
     vel_controllers_.push_back(nh.advertise<std_msgs::Float64>("/" + it->substr(0, it->size() - 6) + "_velocity_controller/command", 1));
 
   ROS_INFO("Waiting for goal.");
