@@ -146,21 +146,27 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
     state_[joint_names_.size() + 0] = pos.x();
     state_[joint_names_.size() + 1] = pos.y();
     state_[joint_names_.size() + 2] = pos.z();
+
     state_[joint_names_.size() + 3] = rot.x();
     state_[joint_names_.size() + 4] = rot.y();
     state_[joint_names_.size() + 5] = rot.z();
     state_[joint_names_.size() + 6] = angle;
-
-    cout << "rotation(" 
-         << state_[joint_names_.size() + 3]
-         << ", " << state_[joint_names_.size() + 4]
-         << ", " << state_[joint_names_.size() + 5]
-         << ", " << state_[joint_names_.size() + 6] 
-         << ")" << endl;
-
+    
     state_[joint_names_.size() + 7] = cWidth;
     state_[joint_names_.size() + 8] = cHeight;
 
+    cout << "#joint names: " << joint_names_.size() << endl;
+    cout << "#states: " << state_.rows() << endl;
+
+    cout << state_ << endl;
+
+    // cout << "rotation(" 
+    //      << state_[joint_names_.size() + 3]
+    //      << ", " << state_[joint_names_.size() + 4]
+    //      << ", " << state_[joint_names_.size() + 5]
+    //      << ", " << state_[joint_names_.size() + 6] 
+    //      << ")" << endl;
+    
     if (!controller_started_)
     {
       if (controller_.start(state_, nWSR_))
@@ -170,6 +176,15 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
       }
       else
       {
+        giskard::Scope scope = controller_.get_scope();
+        KDL::Rotation crot = scope.find_rotation_expression("cylinder_rot")->value();
+        KDL::Vector crotV = scope.find_vector_expression("cylinder_rot_axis")->value();
+        double crotA = scope.find_double_expression("cylinder_rot_a")->value();
+        double x = scope.find_double_expression("cylinder_rot_x")->value();
+        double y = scope.find_double_expression("cylinder_rot_y")->value();
+        double z = scope.find_double_expression("cylinder_rot_z")->value();
+        using namespace KDL;
+        cout << crot << endl << crotV << endl << crotA << x << y << z << endl;
         ROS_ERROR("Couldn't start controller.");
         print_eigen(state_);
       }
@@ -211,7 +226,7 @@ int main(int argc, char **argv)
   YAML::Node node = YAML::Load(controller_description);
   giskard::QPControllerSpec spec = node.as< giskard::QPControllerSpec >();
   controller_ = giskard::generate(spec);
-  state_ = Eigen::VectorXd::Zero(joint_names_.size() + 2*6);
+  state_ = Eigen::VectorXd::Zero(joint_names_.size() + 9);
   controller_started_ = false;
 
   for (vector<string>::iterator it = joint_names_.begin(); it != joint_names_.end(); ++it)
