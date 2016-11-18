@@ -53,7 +53,7 @@ scope:
   - cylinder_rot_a: {input-var: 21}
 
   - cylinder_width: {input-var: 22}
-  - cylinder_height: {input-var: 23}
+  - cylinder_height: {double-mul: [{input-var: 23}, 0.5]}
 
   # definition of joint transforms
   - torso_lift:
@@ -97,6 +97,7 @@ scope:
 
   - cylinder_frame:
       frame: [cylinder_rot, cylinder_pos]
+
 
   # definition of elbow FK
   - left_elbow:
@@ -176,6 +177,22 @@ scope:
   - dist: {abs: {vector-dot: [vector-sub: [cylinder_pos, r_trans], cross_scaled]}}
   - dist2: {double-mul: [dist, -1]}
 
+  - p_a: {vector-sub: [r_trans, cylinder_pos]}
+
+  - cross_d_x: {double-sub: [double-mul: [y-coord: p_a, z-coord: cylinder_z], double-mul: [z-coord: p_a, y-coord: cylinder_z]]}
+  - cross_d_y: {double-sub: [double-mul: [z-coord: p_a, x-coord: cylinder_z], double-mul: [x-coord: p_a, z-coord: cylinder_z]]}
+  - cross_d_z: {double-sub: [double-mul: [x-coord: p_a, y-coord: cylinder_z], double-mul: [y-coord: p_a, x-coord: cylinder_z]]}
+
+  - cross_d: {vector3: [cross_d_x, cross_d_y,cross_d_z]}
+  - dist_xy: {vector-norm: cross_d}
+  - dist_xy_ctrl: {double-sub: [0, dist_xy]}  
+
+  - dist_z: {vector-norm: {vector-sub: [{vector-add: [r_trans, cross_d]}, cylinder_pos] }}
+  - dist_z_safety_margin: 0.02
+  - cylinder_safety_height: {double-sub: [cylinder_height, dist_z_safety_margin]}
+  - dist_z_lower: {min: [{double-sub: [cylinder_safety_height, dist_z]}, 0]}
+  - dist_z_upper: {double-mul: [{min: [{double-mul: [{double-sub: [dist_z, cylinder_safety_height]}, -1]}, 0]}, -1]}
+
   - r_elbow_diff: {vector-sub: [{origin-of: right_ee}, {origin-of: right_elbow}]}
 
 controllable-constraints:
@@ -201,10 +218,9 @@ controllable-constraints:
 soft-constraints:
   # Position constraint
   #- soft-constraint: [0, 0, weight_pos_goal, {vector-norm: r_goal_err}, right EE x-vel slack]
-  - soft-constraint: [r_diff_x, r_diff_x, weight_pos_goal, {x-coord: r_trans}, right EE x-vel slack]
-  - soft-constraint: [r_diff_y, r_diff_y, weight_pos_goal, {y-coord: r_trans}, right EE y-vel slack]
-  - soft-constraint: [r_diff_z, r_diff_z, weight_pos_goal, {z-coord: r_trans}, right EE z-vel slack]
-  
+  - soft-constraint: [dist_xy_ctrl, dist_xy_ctrl, weight_pos_goal, dist_xy, right EE x-vel slack]
+  - soft-constraint: [dist_z_lower, dist_z_lower, weight_pos_goal, dist_z, right EE x-vel slack]
+
   # Rotation constraint
   - soft-constraint: [r_ori_ctrl, r_ori_ctrl, weight_rot_control, r_goal_dot, right EE rot slack]
   - soft-constraint: [dist2, dist2, weight_rot_control, dist, right EE rot stack]

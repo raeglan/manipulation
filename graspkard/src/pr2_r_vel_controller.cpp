@@ -176,6 +176,7 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
       }
       else
       {
+        cout << "states: " << state_ << endl;
         giskard::Scope scope = controller_.get_scope();
         KDL::Rotation crot = scope.find_rotation_expression("cylinder_rot")->value();
         KDL::Vector crotV = scope.find_vector_expression("cylinder_rot_axis")->value();
