@@ -106,8 +106,8 @@ add_definitions(-std=c++11 -g)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES r_libs
-#  CATKIN_DEPENDS geometry_msgs roscpp rospy std_msgs visualization_msgs
+  LIBRARIES r_libs_visualization r_libs_conversions
+  CATKIN_DEPENDS geometry_msgs roscpp std_msgs visualization_msgs tf_conversions
 #  DEPENDS system_lib
 )
 
