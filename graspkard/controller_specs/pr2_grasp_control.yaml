@@ -159,10 +159,23 @@ scope:
   - r_diff_z: {z-coord: r_goal_err}
 
   - r_gripper_z: {rotate-vector: [{orientation-of: right_ee}, unit_z]}
+  - r_gripper_x: {rotate-vector: [{orientation-of: right_ee}, unit_x]}
   - cylinder_z: {rotate-vector: [cylinder_rot, unit_z]}
   - r_goal_dot: {vector-dot: [cylinder_z, r_gripper_z]}
   - r_ori_ctrl: {double-sub: [1, r_goal_dot]}
-  
+
+  #- dist: {vector-norm: {vector-add: [r_gripper_x, {scale-vector: [{vector-dot: [{scale-vector: [-1, r_gripper_x]},]}, cylinder_z]}]}}
+
+  - cross_x: {double-sub: [double-mul: [y-coord: r_gripper_x, z-coord: cylinder_z], double-mul: [z-coord: r_gripper_x, y-coord: cylinder_z]]}
+  - cross_y: {double-sub: [double-mul: [z-coord: r_gripper_x, x-coord: cylinder_z], double-mul: [x-coord: r_gripper_x, z-coord: cylinder_z]]}
+  - cross_z: {double-sub: [double-mul: [x-coord: r_gripper_x, y-coord: cylinder_z], double-mul: [y-coord: r_gripper_x, x-coord: cylinder_z]]}
+
+  - cross: {vector3: [cross_x, cross_y,cross_z]}
+  - cross_scaled: {scale-vector: [double-div: [1, vector-norm: cross], cross]}
+
+  - dist: {abs: {vector-dot: [vector-sub: [cylinder_pos, r_trans], cross_scaled]}}
+  - dist2: {double-mul: [dist, -1]}
+
   - r_elbow_diff: {vector-sub: [{origin-of: right_ee}, {origin-of: right_elbow}]}
 
 controllable-constraints:
@@ -194,6 +207,7 @@ soft-constraints:
   
   # Rotation constraint
   - soft-constraint: [r_ori_ctrl, r_ori_ctrl, weight_rot_control, r_goal_dot, right EE rot slack]
+  - soft-constraint: [dist2, dist2, weight_rot_control, dist, right EE rot stack]
 
   # Level elbow and gripper control
   #- soft-constraint: [0.01, 0.01, weight_elbow_control, {y-coord: r_elbow_diff}, right elbow up control slack]
