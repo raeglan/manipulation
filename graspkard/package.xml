@@ -56,6 +56,7 @@
   <run_depend>sensor_msgs</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>tf_conversions</run_depend>
+  <run_depend>iai_naive_kinematics_sim</run_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
