@@ -1,39 +1,37 @@
-input-var
-double-add
-double-sub
-vector-norm
-double-mul
-double-div
-x-coord
-y-coord
-z-coord
-vector-dot
-abs
-fmod
-min
-double-if
-cached-vector
-vector3
-origin-of
-vector-add
-vector-sub
-rotate-vector
-transform-vector
-scale-vector
-rot-vector
-quaternion
-slerp
-axis-angle
-orientation-of
-inverse-rotation
-rotation-mul
-cached-frame
-frame
-frame-mul
-controllable-constraint
-soft-constraint
-hard-constraint
-scope
-soft-constraints
-hard-constraints
-controllable-constraints
+double abs(double)
+double double-add(double[])
+double double-div(double[])
+double double-if(double, double, double)
+double double-mul(double[])
+double double-sub(double[])
+double fmod(double, double)
+double input-var(uint)
+double max(double, double)
+double min(double, double)
+double vector-dot(vector3, vector3)
+double vector-norm(vector3)
+double x-coord(vector3)
+double y-coord(vector3)
+double z-coord(vector3)
+frame cached-frame(frame)
+frame frame(rotation, vector3)
+frame frame-mul(frame[])
+idk controllable-constraint(double, double, double, uint, string)
+idk hard-constraint(double, double, double)
+idk hard-constraints(term[], ctrl-constraint[], soft-constraint[], hard-constraint[])
+idk soft-constraint(double, double, double, double, string)
+rotation axis-angle(vector3, double)
+rotation inverse-rotation(rotation)
+rotation orientation-of(frame)
+rotation quaternion(double, double, double, double)
+rotation rotation-mul(rotation[])
+rotation slerp(rotation, rotation, double)
+vector3 cached-vector(vector3)
+vector3 origin-of(frame)
+vector3 rot-vector(rotation)
+vector3 rotate-vector(rotation, vector3)
+vector3 scale-vector(double, vector3)
+vector3 transform-vector(frame, vector3)
+vector3 vector-add(vector3[])
+vector3 vector-sub(vector3[])
+vector3 vector3(double, double, double)
