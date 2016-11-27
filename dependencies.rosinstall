@@ -1,6 +1,6 @@
 - git:
     local-name: giskard
-    uri: https://github.com/airballking/giskard.git
+    uri: https://github.com/suturo16/giskard.git
     version: master
 
 - git:
@@ -10,5 +10,15 @@
 
 - git:
     local-name: iai_naive_kinematics_sim
-    uri: 'https://github.com/code-iai/iai_naive_kinematics_sim.git' 
+    uri: https://github.com/suturo16/iai_naive_kinematics_sim.git
+    version: master
+
+- git: 
+    local-name: expressiongraph
+    uri: https://github.com/SemRoCo/expressiongraph.git
+    version: master
+
+- git:
+    local-name: qpoases
+    uri: https://github.com/airballking/qpOASES.git
     version: master
