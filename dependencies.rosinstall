@@ -1,0 +1,24 @@
+- git:
+    local-name: giskard
+    uri: https://github.com/suturo16/giskard.git
+    version: feature/expressionExtension
+
+- git:
+    local-name: giskard_msgs
+    uri: https://github.com/airballking/giskard_msgs.git
+    version: master
+
+- git:
+    local-name: iai_naive_kinematics_sim
+    uri: https://github.com/suturo16/iai_naive_kinematics_sim.git
+    version: feature/fakecontrollers
+
+- git: 
+    local-name: expressiongraph
+    uri: https://github.com/SemRoCo/expressiongraph.git
+    version: master
+
+- git:
+    local-name: qpoases
+    uri: https://github.com/airballking/qpOASES.git
+    version: master
