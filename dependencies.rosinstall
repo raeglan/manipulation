@@ -1,7 +1,7 @@
 - git:
     local-name: giskard
     uri: https://github.com/suturo16/giskard.git
-    version: master
+    version: feature/expressionExtension
 
 - git:
     local-name: giskard_msgs
@@ -11,7 +11,7 @@
 - git:
     local-name: iai_naive_kinematics_sim
     uri: https://github.com/suturo16/iai_naive_kinematics_sim.git
-    version: master
+    version: feature/fakecontrollers
 
 - git: 
     local-name: expressiongraph
