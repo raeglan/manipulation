@@ -1,4 +1,8 @@
 - git:
+    local-name: suturo_msgs
+    uri: https://github.com/suturo16/suturo_msgs.git
+
+- git:
     local-name: giskard
     uri: https://github.com/suturo16/giskard.git
     version: feature/expressionExtension
