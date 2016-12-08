@@ -153,6 +153,21 @@ target_link_libraries(graspkard_node
   yaml-cpp
 )
 
+add_executable(action_server src/action_manager.cpp)
+
+add_dependencies(action_server 
+  r_libs_visualization 
+  r_libs_conversions
+)
+
+target_link_libraries(action_server 
+  ${catkin_LIBRARIES}
+  r_libs_visualization
+  r_libs_conversions
+  yaml-cpp
+  #graspkard_msgs
+)
+
 #############
 ## Install ##
 #############
