@@ -220,6 +220,7 @@ class ActionServer{
   public:
     ActionServer()
     {
+      ROS_INFO("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
       action_name_ = "name";
       nh_ = new ros::NodeHandle("~");
       nh_->param("nWSR", nWSR_, 10);
@@ -231,8 +232,9 @@ class ActionServer{
     {
     }
 
-    void executeCB(const giskard_msgs::MoveRobotGoalConstPtr &goal)//!!!???
+    void executeCB(const giskard_msgs::MoveRobotGoalConstPtr &goal)
     {
+      ROS_INFO("qwertzuiopztrertzuiop");
       if (!ma)
       {
         ma = new MoveAction(goal->controller_yaml, goal->controlled_joints, goal->params, nh_);
