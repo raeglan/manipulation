@@ -1,5 +1,5 @@
 #include <actionlib/server/simple_action_server.h>
-#include <giskard_msgs/MoveRobotAction.h>
+#include <suturo_manipulation_msgs/MoveRobotAction.h>
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <sensor_msgs/JointState.h>
@@ -83,6 +83,7 @@ public:
     this->controller_ = giskard::generate(spec);
     this->state_ = Eigen::VectorXd::Zero(this->joint_names.size() + 2*6);
     this->controller_started_ = false;
+    //meldet alle joints an
     for (std::vector<std::string>::iterator it = this->joint_names.begin(); it != this->joint_names.end(); ++it)
     {
       vel_controllers_.push_back(this->nh_->advertise<std_msgs::Float64>("/" + it->substr(0, it->size() - 6) + "_velocity_controller/command", 1));
@@ -128,7 +129,7 @@ void MoveAction::js_callback(const sensor_msgs::JointState::ConstPtr& msg)
 
   if (!this->controller_started_)
     return;
-
+////////////////
   if (this->controller_.update(this->state_, nWSR_))
   {
     Eigen::VectorXd commands = this->controller_.get_command();
@@ -146,6 +147,7 @@ void MoveAction::js_callback(const sensor_msgs::JointState::ConstPtr& msg)
     // TODO: remove or change to ros_debug
     std::cout << "State " << this->state_ << std::endl;
   }
+////////////
 }
 
   void MoveAction::set_goal(const geometry_msgs::PointStamped &msg)
@@ -198,23 +200,23 @@ void MoveAction::js_callback(const sensor_msgs::JointState::ConstPtr& msg)
       }
     }
   }
- void  testCB(const giskard_msgs::MoveRobotGoalConstPtr &goal){
+ void  testCB(const suturo_manipulation_msgs::MoveRobotGoalConstPtr &goal){
   return;
  }
 
 //template<class ACTION, class FEEDBACK, class RESULT, class GOALCONSTPTR>
-//<giskard_msgs::MoveRobotAction, giskard_msgs::MoveRobotFeedback, giskard_msgs::MoveRobotResult, giskard_msgs::MoveRobotGoalConstPtr> 
+//<suturo_manipulation_msgs::MoveRobotAction, suturo_manipulation_msgs::MoveRobotFeedback, suturo_manipulation_msgs::MoveRobotResult, suturo_manipulation_msgs::MoveRobotGoalConstPtr> 
 class ActionServer{
 
   private:
 
     ros::NodeHandle * nh_;
-    actionlib::SimpleActionServer<giskard_msgs::MoveRobotAction>* as_; // NodeHandle instance must be created before this line. Otherwise strange error occurs.
+    actionlib::SimpleActionServer<suturo_manipulation_msgs::MoveRobotAction>* as_; // NodeHandle instance must be created before this line. Otherwise strange error occurs.
     std::string action_name_;
 
     // create messages that are used to published feedback/result
-    giskard_msgs::MoveRobotFeedback feedback_;
-    giskard_msgs::MoveRobotResult result_;
+    suturo_manipulation_msgs::MoveRobotFeedback feedback_;
+    suturo_manipulation_msgs::MoveRobotResult result_;
     MoveAction* ma;// = NULL;
 
   public:
@@ -224,7 +226,7 @@ class ActionServer{
       action_name_ = "name";
       nh_ = new ros::NodeHandle("~");
       nh_->param("nWSR", nWSR_, 10);
-      as_ = new actionlib::SimpleActionServer<giskard_msgs::MoveRobotAction>(*nh_, action_name_, boost::bind(&ActionServer::executeCB, this, _1), false);
+      as_ = new actionlib::SimpleActionServer<suturo_manipulation_msgs::MoveRobotAction>(*nh_, action_name_, boost::bind(&ActionServer::executeCB, this, _1), false);
       as_->start();
     }    
 
@@ -232,7 +234,7 @@ class ActionServer{
     {
     }
 
-    void executeCB(const giskard_msgs::MoveRobotGoalConstPtr &goal)
+    void executeCB(const suturo_manipulation_msgs::MoveRobotGoalConstPtr &goal)
     {
       ROS_INFO("qwertzuiopztrertzuiop");
       if (!ma)
@@ -254,6 +256,8 @@ class ActionServer{
       // start executing the action
       while (true) //only the client can abort the action
       {
+        //waitformsg /joint_states
+        //dann update (siehe oben)
         // check that preempt has not been requested by the client
         if (as_->isPreemptRequested() || !ros::ok())
         {

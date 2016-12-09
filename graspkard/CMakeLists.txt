@@ -6,6 +6,7 @@ project(graspkard)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
+  suturo_manipulation_msgs
   sensor_msgs
   std_msgs
   giskard
