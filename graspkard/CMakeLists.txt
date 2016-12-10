@@ -111,7 +111,7 @@ add_definitions(-std=c++11 -g)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES graspkard
-#  CATKIN_DEPENDS geometry_msgs giskard message_generation message_runtime r_libs roscpp
+  CATKIN_DEPENDS geometry_msgs suturo_manipulation_msgs giskard r_libs roscpp
 #  DEPENDS system_lib
 )
 
@@ -159,6 +159,7 @@ add_executable(movement_server src/action_manager.cpp)
 add_dependencies(movement_server 
   r_libs_visualization 
   r_libs_conversions
+  suturo_manipulation_msgs_generate_messages_cpp
 )
 
 target_link_libraries(movement_server 
