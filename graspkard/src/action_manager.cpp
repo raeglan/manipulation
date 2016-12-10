@@ -26,7 +26,7 @@ template<class T>
 class ActionManager{
 public:
   //virtual bool finished() = 0;
-  //virtual void update() = 0;
+  virtual void update() = 0;
   //virtual T get_status() = 0;
   virtual T get_current_value() = 0;
   virtual T get_alteration_rate() = 0;
@@ -102,15 +102,34 @@ public:
   float get_alteration_rate(){
     return 0;
   }
+
+  void update(){
+    ros::topic::waitForMessage<sensor_msgs::JointState>("joint_states");
+    if (!this->controller_started_){
+      ROS_INFO("WEEEEEEEEEEEEEEEEEEE4");
+      return;
+    }
+    if (this->controller_.update(this->state_, nWSR_))
+    {
+      Eigen::VectorXd commands = this->controller_.get_command();
+      for (unsigned int i=0; i < this->vel_controllers_.size(); i++)
+      {
+        std_msgs::Float64 command;
+        command.data = commands[i];
+        this->vel_controllers_[i].publish(command);
+      }
+      //std::cout << "published new joint states" << std::endl;
+    }
+    else
+    {
+      ROS_WARN("Update failed.");
+      // TODO: remove or change to ros_debug
+      std::cout << "State " << this->state_ << std::endl;
+    }
+  }
 };
 
-  float get_current_value(){
-    return 0;
-  }
 
-  float get_alteration_rate(){
-    return 0;
-  }
 
 void MoveAction::js_callback(const sensor_msgs::JointState::ConstPtr& msg)
 {
@@ -220,14 +239,15 @@ class ActionServer{
     MoveAction* ma;// = NULL;
 
   public:
-    ActionServer()
+    ActionServer(std::string name):
+    action_name_(name)
     {
-      ROS_INFO("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-      action_name_ = "name";
+      //action_name_ = "name";
       nh_ = new ros::NodeHandle("~");
       nh_->param("nWSR", nWSR_, 10);
       as_ = new actionlib::SimpleActionServer<suturo_manipulation_msgs::MoveRobotAction>(*nh_, action_name_, boost::bind(&ActionServer::executeCB, this, _1), false);
       as_->start();
+      ROS_INFO("AS STARTED#########################");
     }    
 
     ~ActionServer(void)
@@ -270,7 +290,8 @@ class ActionServer{
         } 
         else 
         {
-          //c->update(); //perform next computing step
+          //perform next computing step
+          ma->update();
           feedback_.current_value = ma->get_current_value();
           feedback_.alteration_rate = ma->get_alteration_rate();
           // publish the feedback
@@ -284,14 +305,12 @@ class ActionServer{
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "pr2_controller");
+  std::string server_name("movement_server");
+  ros::init(argc, argv, server_name);
   
   ROS_INFO("#############1");
-  std::string server_name("movement_server");
+  ActionServer movement_server(server_name);
   ROS_INFO("#############2");
-  ActionServer movement_server();//server_name);
-  ROS_INFO("#############3");
   ros::spin();
-  ROS_INFO("#############4");
   return 0;
 }

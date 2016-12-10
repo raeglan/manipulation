@@ -1,7 +1,7 @@
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
-#include <giskard_msgs/MoveRobotAction.h>
+#include <suturo_manipulation_msgs/MoveRobotAction.h>
 
 const char *controller = 
 "scope:\
@@ -228,11 +228,11 @@ hard-constraints:\
 
 int main (int argc, char **argv)
 {
-  ros::init(argc, argv, "test_fibonacci");
-
+  ros::init(argc, argv, "client_test");
+  ros::NodeHandle nh("~");
   // create the action client
   // true causes the client to spin its own thread
-  actionlib::SimpleActionClient<giskard_msgs::MoveRobotAction> ac("movemen_client", true);
+  actionlib::SimpleActionClient<suturo_manipulation_msgs::MoveRobotAction> ac(nh, "movement_server", true);
 
   ROS_INFO("Waiting for action server to start.");
   // wait for the action server to start
@@ -240,7 +240,7 @@ int main (int argc, char **argv)
 
   ROS_INFO("Action server started, sending goal.");
   // send a goal to the action
-  giskard_msgs::MoveRobotGoal goal;
+  suturo_manipulation_msgs::MoveRobotGoal goal;
   goal.params.push_back("0");
   goal.params.push_back("0");
   goal.params.push_back("0");
@@ -267,7 +267,7 @@ int main (int argc, char **argv)
   ac.sendGoal(goal);
 
   //wait for the action to return
-  bool finished_before_timeout = ac.waitForResult(ros::Duration(30.0));
+  bool finished_before_timeout = ac.waitForResult(ros::Duration(120.0));
 
   if (finished_before_timeout)
   {

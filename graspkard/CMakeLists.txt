@@ -154,14 +154,14 @@ target_link_libraries(graspkard_node
   yaml-cpp
 )
 
-add_executable(action_server src/action_manager.cpp)
+add_executable(movement_server src/action_manager.cpp)
 
-add_dependencies(action_server 
+add_dependencies(movement_server 
   r_libs_visualization 
   r_libs_conversions
 )
 
-target_link_libraries(action_server 
+target_link_libraries(movement_server 
   ${catkin_LIBRARIES}
   r_libs_visualization
   r_libs_conversions
