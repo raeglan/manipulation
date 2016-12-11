@@ -232,7 +232,7 @@ int main (int argc, char **argv)
   ros::NodeHandle nh("~");
   // create the action client
   // true causes the client to spin its own thread
-  actionlib::SimpleActionClient<suturo_manipulation_msgs::MoveRobotAction> ac(nh, "movement_server", true);
+  actionlib::SimpleActionClient<suturo_manipulation_msgs::MoveRobotAction> ac("/graspkard/movement_server", true);
 
   ROS_INFO("Waiting for action server to start.");
   // wait for the action server to start
