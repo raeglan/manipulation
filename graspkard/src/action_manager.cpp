@@ -88,17 +88,23 @@ public:
     YAML::Node node = YAML::Load(this->movement_controller);
     giskard::QPControllerSpec spec = node.as< giskard::QPControllerSpec >();
     this->controller_ = giskard::generate(spec);
-    this->state_ = Eigen::VectorXd::Zero(this->joint_names.size() + 2*6);
+    this->state_ = Eigen::VectorXd::Zero(this->joint_names.size() + 3);
     this->controller_started_ = false;
     //meldet alle joints an
     for (std::vector<std::string>::iterator it = this->joint_names.begin(); it != this->joint_names.end(); ++it)
     {
       vel_controllers_.push_back(this->nh_->advertise<std_msgs::Float64>("/" + it->substr(0, it->size() - 6) + "_velocity_controller/command", 1));
     }
+
+    visPub  = this->nh_->advertise<visualization_msgs::MarkerArray>("/graspkard_visualization", 1);
+    if (!visPub) {
+      ROS_ERROR("NO publisher!");
+    }
+
     this->set_goal(goal_definition);
+    
     js_sub_ = this->nh_->subscribe("joint_states", 0, &MoveAction::js_callback, this);
     // Initialize visualization publisher
-    visPub  = this->nh_->advertise<visualization_msgs::MarkerArray>("/graspkard_visualization", 1);
     visMan.addNamespace(0, "cylinder");
     ROS_INFO("+++++++++++++++++++++++++++END");
   }
@@ -261,11 +267,12 @@ class ActionServer{
   public:
     ActionServer(std::string name):
     action_name_(name), 
-    nh_("~")
+    nh_("~"),
+    ma(0)
     {
       //action_name_ = "name";
       //nh_ = new ros::NodeHandle("~");
-      nh_.param("nWSR", nWSR_, 10);
+      nh_.param("nWSR", nWSR_, 1000);
       as_ = new actionlib::SimpleActionServer<suturo_manipulation_msgs::MoveRobotAction>(nh_, action_name_, boost::bind(&ActionServer::executeCB, this, _1), false);
       as_->start();
       ROS_INFO("AS STARTED#########################");
@@ -294,16 +301,16 @@ class ActionServer{
       // start executing the action
       while (!(as_->isPreemptRequested() || !ros::ok())) //only the client can abort the action
       {
-      //waitformsg /joint_states
-      //dann update (siehe oben)
-      // check that preempt has not been requested by the client
+        //waitformsg /joint_states
+        //dann update (siehe oben)
+        // check that preempt has not been requested by the client
 
-      //perform next computing step
-      ma->update();
-      feedback_.current_value = ma->get_current_value();
-      feedback_.alteration_rate = ma->get_alteration_rate();
-      // publish the feedback
-      as_->publishFeedback(feedback_);
+        //perform next computing step
+        ma->update();
+        feedback_.current_value = ma->get_current_value();
+        feedback_.alteration_rate = ma->get_alteration_rate();
+        // publish the feedback
+        as_->publishFeedback(feedback_);
       }
 
       ROS_INFO("%s: Preempted", action_name_.c_str());
