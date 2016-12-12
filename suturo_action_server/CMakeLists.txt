@@ -108,12 +108,12 @@ add_definitions(-std=c++11 -g)
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-# catkin_package(
+catkin_package(
 #   include
 #   ${catkin_INCLUDE_DIRS}
 #   ${r_libs_INCLUDE_DIRS}
 #   ${YAML_CPP_INCLUDE_DIRS}
-# )
+)
 
 ###########
 ## Build ##
