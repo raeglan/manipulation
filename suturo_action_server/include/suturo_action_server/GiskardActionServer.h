@@ -77,14 +77,16 @@ struct TFQuery : public AQuery {
 	bool eval() {
 		try {
 			tf::StampedTransform temp;
-			tfListener->waitForTransform(frameId, refFrame, ros::Time(0), ros::Duration(0.5));
-			tfListener->lookupTransform(frameId, refFrame, ros::Time(0), temp);
+			tfListener->waitForTransform(refFrame, frameId, ros::Time(0), ros::Duration(0.5));
+			tfListener->lookupTransform(refFrame, frameId, ros::Time(0), temp);
 			
 			pServer->decodeTransform(idx, temp);
 		} catch(tf::TransformException ex) {
+			cerr << ex.what() << endl;
 			ROS_WARN("Query for frame '%s' in '%s' failed!", frameId.c_str(), refFrame.c_str());
 			return false;
 		}
+		return true;
 	}
 
 private:

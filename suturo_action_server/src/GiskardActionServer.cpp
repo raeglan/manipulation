@@ -5,6 +5,14 @@
 using namespace YAML;
 using namespace suturo_manipulation_msgs;
 
+void print_eigen(const Eigen::VectorXd& command)
+{
+  std::string cmd_str = " ";
+  for(size_t i=0; i<command.rows(); ++i)
+    cmd_str += boost::lexical_cast<std::string>(command[i]) + " ";
+  ROS_INFO("Command: (%s)", cmd_str.c_str());
+}
+
 struct SBacklogParam {
 	suturo_manipulation_msgs::TypedParam param;
 	size_t idx;
@@ -47,7 +55,7 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		TypedParam p = goal->params[i];
 		SBacklogParam bp;
 		bp.param = p;
-		bp.idx = paramLength;
+		bp.idx = jntOffset + paramLength;
 
 		if (p.isConst)
 			backlog.push_back(bp);
@@ -85,23 +93,24 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		}
 	}
 
-	if (controller.start(state, nWSR)) {
-		controllerInitialized = true;
-		ROS_INFO("Controller started");
-		jsSub = nh.subscribe("/joint_state", 1, &GiskardActionServer::jointStateCallback, this);
-		const giskard::Scope& scope = controller.get_scope();
-	    feedbackExpr = scope.find_double_expression(goal->feedbackValue);
-	
-	    ros::spinOnce();
-	} else {
-		ROS_ERROR("Starting of controller failed!");
+	ROS_INFO("Controller started");
+	//jsSub = nh.subscribe("/joint_state", 1, &GiskardActionServer::jointStateCallback, this);
+	const giskard::Scope& scope = controller.get_scope();
+    feedbackExpr = scope.find_double_expression(goal->feedbackValue);
+
+    ros::spinOnce();
+
+	while (!server.isPreemptRequested() && ros::ok()) {
+		boost::shared_ptr<const sensor_msgs::JointState> js = ros::topic::waitForMessage<sensor_msgs::JointState>("joint_states");
+		jointStateCallback(js);
 	}
 
+	MoveRobotResult res;
+	res.reason_for_termination = MoveRobotResult::PREEMPTED;
+	server.setPreempted();
 }	
 
 void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::ConstPtr& jointStateMsg) {
-	if (!controllerInitialized)
-		return;
 
 	for (size_t i = 0; i < jointStateMsg->name.size(); i++) {
 		auto it = jointIndexMap.find(jointStateMsg->name[i]);
@@ -117,9 +126,19 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::Cons
 
 	if (!ok) {
 		ROS_ERROR("Query evaluation failed! Skipping this update step.");
+		return;
 	}
 
 	updateLoop();
+
+	if (!controllerInitialized) {
+		if (controller.start(state, nWSR)) {
+			controllerInitialized = true;
+		} else {
+			ROS_ERROR("Starting of controller failed!");
+			return;
+		}
+	}
 
 	if (controller.update(state, nWSR)) {
 		Eigen::VectorXd commands = controller.get_command();
@@ -132,6 +151,7 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::Cons
 		feedback.current_value = feedbackExpr->value();
 		feedback.alteration_rate = lastFeedback - feedback.current_value;
 		lastFeedback = feedback.current_value;
+		server.publishFeedback(feedback);
 	} else {
 		ROS_WARN("Update failed!");
 		cerr << "State: " << state << endl;
