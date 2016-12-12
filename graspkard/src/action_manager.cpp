@@ -20,13 +20,16 @@
 #include "std_msgs/String.h"
 #include <sstream>
 
+#include <tf/transform_listener.h>
+
+
 int nWSR_;
 
 template<class T>
 class ActionManager{
 public:
   //virtual bool finished() = 0;
-  virtual void update() = 0;
+  //virtual void update() = 0;
   //virtual T get_status() = 0;
   virtual T get_current_value() = 0;
   virtual T get_alteration_rate() = 0;
@@ -40,7 +43,7 @@ void print_eigen(const Eigen::VectorXd& command)
   ROS_INFO("Command: (%s)", cmd_str.c_str());
 }
 
-class MoveAction:public ActionManager<float>{
+class MoveAction{//:public ActionManager<float>{
 private:
   float last_feedback;
   ros::NodeHandle* nh_;
@@ -52,7 +55,7 @@ private:
   std::vector<ros::Publisher> vel_controllers_;
   Eigen::VectorXd state_;
   bool controller_started_;
-  geometry_msgs::PointStamped goal_definition;
+  //geometry_msgs::PointStamped goal_definition;
   ros::Subscriber js_sub_;
 
   ros::Publisher visPub;
@@ -67,6 +70,10 @@ public:
     joint_names(joint_names_),
     nh_(nh_)
   {
+    ROS_INFO("+++++++++++++++++++++++++++START");
+    /*this->movement_controller = movement_controller;
+    this->joint_names = joint_names;
+    this->nh_ = nh_;*/
     this->last_feedback = 0;
     this->frame_id = "base_link";
     geometry_msgs::PointStamped goal_definition;
@@ -88,29 +95,45 @@ public:
     {
       vel_controllers_.push_back(this->nh_->advertise<std_msgs::Float64>("/" + it->substr(0, it->size() - 6) + "_velocity_controller/command", 1));
     }
-    set_goal(goal_definition);
+    this->set_goal(goal_definition);
     js_sub_ = this->nh_->subscribe("joint_states", 0, &MoveAction::js_callback, this);
     // Initialize visualization publisher
     visPub  = this->nh_->advertise<visualization_msgs::MarkerArray>("/graspkard_visualization", 1);
     visMan.addNamespace(0, "cylinder");
+    ROS_INFO("+++++++++++++++++++++++++++END");
   }
 
   float get_current_value(){
-    return 0;
+    if (!this->controller_started_)
+    {
+      return 0;
+    }
+    else
+    {
+      return 0;
+    }
   }
 
   float get_alteration_rate(){
-    return 0;
+    if (!this->controller_started_)
+    {
+      return 0;
+    }
+    else
+    {
+      return 0;
+    }
   }
 
   void update(){
-    ros::topic::waitForMessage<sensor_msgs::JointState>("joint_states");
     if (!this->controller_started_){
-      ROS_INFO("WEEEEEEEEEEEEEEEEEEE4");
       return;
     }
+    ROS_INFO("WEEEEEEEEEEEEEEEEEEEEEE5");
+    ros::topic::waitForMessage<sensor_msgs::JointState>("joint_states");
     if (this->controller_.update(this->state_, nWSR_))
     {
+    ROS_INFO("WEEEEEEEEEEEEEEEEEEEEEE IF");
       Eigen::VectorXd commands = this->controller_.get_command();
       for (unsigned int i=0; i < this->vel_controllers_.size(); i++)
       {
@@ -122,6 +145,7 @@ public:
     }
     else
     {
+    ROS_INFO("WEEEEEEEEEEEEEEEEEEEEEE ELSE");
       ROS_WARN("Update failed.");
       // TODO: remove or change to ros_debug
       std::cout << "State " << this->state_ << std::endl;
@@ -169,89 +193,87 @@ void MoveAction::js_callback(const sensor_msgs::JointState::ConstPtr& msg)
 ////////////
 }
 
-  void MoveAction::set_goal(const geometry_msgs::PointStamped &msg)
+void MoveAction::set_goal(const geometry_msgs::PointStamped &msg)
+{
+  ROS_INFO("SSSSSEEEEEEEEEEEEEE START");
+  if(msg.header.frame_id.compare(this->frame_id) != 0)
   {
-  //  printGoal(*msg);
+    ROS_WARN("frame_id of right EE goal did not match expected '%s'. Ignoring goal", 
+        this->frame_id.c_str());
+    return;
+  }
 
-    //std::cout << "received new goal" << std::endl;
+  this->visMan.beginNewDrawCycle();
+  double cWidth = 0.06;
+  double cHeight = 0.2;
 
-    if(msg.header.frame_id.compare(this->frame_id) != 0)
+  visualization_msgs::MarkerArray markers;
+  markers.markers.push_back(this->visMan.shapeMarker(0, 
+                                  Affine3d::Identity(), 
+                                  visualization_msgs::Marker::CYLINDER, 
+                                  Vector3d(cWidth, cWidth, cHeight),
+                                  0.f, 
+                                  1.f, 
+                                  0.f, 
+                                  1.f, 
+                                  "cylinder"));
+
+  this->visMan.endDrawCycle(markers.markers);
+  this->visPub.publish(markers);
+
+  // copying position goal
+  this->state_[joint_names.size() + 0] = msg.point.x;
+  this->state_[joint_names.size() + 1] = msg.point.y;
+  this->state_[joint_names.size() + 2] = msg.point.z;
+
+  if (!this->controller_started_)
+  {
+    if (this->controller_.start(this->state_, nWSR_))
     {
-      ROS_WARN("frame_id of right EE goal did not match expected '%s'. Ignoring goal", 
-          this->frame_id.c_str());
-      return;
+      ROS_INFO("Controller started.");
+      this->controller_started_ = true;
     }
-
-    this->visMan.beginNewDrawCycle();
-    double cWidth = 0.06;
-    double cHeight = 0.2;
-
-    visualization_msgs::MarkerArray markers;
-    markers.markers.push_back(this->visMan.shapeMarker(0, 
-                                    Affine3d::Identity(), 
-                                    visualization_msgs::Marker::CYLINDER, 
-                                    Vector3d(cWidth, cWidth, cHeight),
-                                    0.f, 
-                                    1.f, 
-                                    0.f, 
-                                    1.f, 
-                                    "cylinder"));
-
-    this->visMan.endDrawCycle(markers.markers);
-    this->visPub.publish(markers);
-
-    // copying position goal
-    this->state_[joint_names.size() + 0] = msg.point.x;
-    this->state_[joint_names.size() + 1] = msg.point.y;
-    this->state_[joint_names.size() + 2] = msg.point.z;
-
-    if (!this->controller_started_)
+    else
     {
-      if (this->controller_.start(this->state_, nWSR_))
-      {
-        ROS_INFO("Controller started.");
-        this->controller_started_ = true;
-      }
-      else
-      {
-        ROS_ERROR("Couldn't start controller.");
-        print_eigen(this->state_);
-      }
+      ROS_ERROR("Couldn't start controller.");
+      print_eigen(this->state_);
     }
   }
- void  testCB(const suturo_manipulation_msgs::MoveRobotGoalConstPtr &goal){
-  return;
- }
+}
+void  testCB(const suturo_manipulation_msgs::MoveRobotGoalConstPtr &goal){
+return;
+}
 
 //template<class ACTION, class FEEDBACK, class RESULT, class GOALCONSTPTR>
-//<suturo_manipulation_msgs::MoveRobotAction, suturo_manipulation_msgs::MoveRobotFeedback, suturo_manipulation_msgs::MoveRobotResult, suturo_manipulation_msgs::MoveRobotGoalConstPtr> 
 class ActionServer{
 
   private:
 
-    ros::NodeHandle * nh_;
+    ros::NodeHandle nh_;
     actionlib::SimpleActionServer<suturo_manipulation_msgs::MoveRobotAction>* as_; // NodeHandle instance must be created before this line. Otherwise strange error occurs.
     std::string action_name_;
 
     // create messages that are used to published feedback/result
     suturo_manipulation_msgs::MoveRobotFeedback feedback_;
     suturo_manipulation_msgs::MoveRobotResult result_;
-    MoveAction* ma;// = NULL;
+    MoveAction* ma;
 
   public:
     ActionServer(std::string name):
-    action_name_(name)
+    action_name_(name), 
+    nh_("~")
     {
       //action_name_ = "name";
-      nh_ = new ros::NodeHandle("~");
-      nh_->param("nWSR", nWSR_, 10);
-      as_ = new actionlib::SimpleActionServer<suturo_manipulation_msgs::MoveRobotAction>(*nh_, action_name_, boost::bind(&ActionServer::executeCB, this, _1), false);
+      //nh_ = new ros::NodeHandle("~");
+      nh_.param("nWSR", nWSR_, 10);
+      as_ = new actionlib::SimpleActionServer<suturo_manipulation_msgs::MoveRobotAction>(nh_, action_name_, boost::bind(&ActionServer::executeCB, this, _1), false);
       as_->start();
       ROS_INFO("AS STARTED#########################");
     }    
 
     ~ActionServer(void)
     {
+      delete[] ma;
     }
 
     void executeCB(const suturo_manipulation_msgs::MoveRobotGoalConstPtr &goal)
@@ -259,46 +281,34 @@ class ActionServer{
       ROS_INFO("qwertzuiopztrertzuiop");
       if (!ma)
       {
-        ma = new MoveAction(goal->controller_yaml, goal->controlled_joints, goal->params, nh_);
+        ma = new MoveAction(goal->controller_yaml, goal->controlled_joints, goal->params, &nh_);
       }
 
       // helper variables
-      bool success = true;
 
-      // push_back the seeds for the fibonacci sequence
       // get status of computation
-      //feedback_.sequence.clear();
-      //feedback_.sequence.push_back(ma->get_current_value()); // for now its only possible to publisch one value
 
       // publish info to the console for the user
       ROS_INFO("Started action: %s\n", action_name_.c_str());
 
       // start executing the action
-      while (true) //only the client can abort the action
+      while (!(as_->isPreemptRequested() || !ros::ok())) //only the client can abort the action
       {
-        //waitformsg /joint_states
-        //dann update (siehe oben)
-        // check that preempt has not been requested by the client
-        if (as_->isPreemptRequested() || !ros::ok())
-        {
-          ROS_INFO("%s: Preempted", action_name_.c_str());
-          // set the action state to preempted
-          //c.abort()
-          as_->setPreempted();
-          success = false;
-          break;
-        } 
-        else 
-        {
-          //perform next computing step
-          ma->update();
-          feedback_.current_value = ma->get_current_value();
-          feedback_.alteration_rate = ma->get_alteration_rate();
-          // publish the feedback
-          as_->publishFeedback(feedback_);
-        }
+      //waitformsg /joint_states
+      //dann update (siehe oben)
+      // check that preempt has not been requested by the client
+
+      //perform next computing step
+      ma->update();
+      feedback_.current_value = ma->get_current_value();
+      feedback_.alteration_rate = ma->get_alteration_rate();
+      // publish the feedback
+      as_->publishFeedback(feedback_);
       }
-      
+
+      ROS_INFO("%s: Preempted", action_name_.c_str());
+      // set the action state to preempted
+      as_->setPreempted();
     }
 
 };
