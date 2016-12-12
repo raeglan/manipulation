@@ -147,6 +147,18 @@ target_link_libraries(suturo_action_server
   yaml-cpp
 )
 
+add_executable(client_test src/client_test.cpp)
+
+add_dependencies(client_test 
+  graspkard_msgs
+  suturo_manipulation_msgs_generate_messages_cpp
+  #${graspkard_EXPORTED_TARGETS}
+)
+
+target_link_libraries(client_test 
+  ${catkin_LIBRARIES}
+)
+
 #############
 ## Install ##
 #############
