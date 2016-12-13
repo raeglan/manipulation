@@ -1,6 +1,6 @@
 #include "suturo_action_server/GiskardActionServer.h"
-#include <std_msgs/Float64.h>
 #include <suturo_manipulation_msgs/TypedParam.h>
+#include <pr2_controllers_msgs/Pr2GripperCommand.h>
 
 using namespace YAML;
 using namespace suturo_manipulation_msgs;
@@ -21,17 +21,29 @@ struct SBacklogParam {
 GiskardActionServer::GiskardActionServer(string _name) 
 : controllerInitialized(false)
 , lastFeedback(0)
+, dT(0)
+, rGripperIdx(-1)
+, lGripperIdx(-1)
+, rGripperEffort(30)
+, lGripperEffort(30)
 , name(_name)
 , nWSR(100)
 , nh("~")
 , server(nh, name, boost::bind(&GiskardActionServer::setGoal, this, _1), false)
 {
+	rGripperPub = nh.advertise<pr2_controllers_msgs::Pr2GripperCommand>("r_pr2_gripper_command", 1);
+	lGripperPub = nh.advertise<pr2_controllers_msgs::Pr2GripperCommand>("l_pr2_gripper_command", 1);
+
 	server.start();
 }
 
 void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	//Node ctrlJoints = YAML::Load(goal->controlled_joints);
 	lastFeedback = 0;
+	dT = 0;
+	lastUpdate = ros::Time::now();
+	rGripperIdx = -1;
+	lGripperIdx = -1;
 
 	velControllers.clear();
 	jointIndexMap.clear();
@@ -40,6 +52,10 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		string jointName = goal->controlled_joints[i];
 		jointIndexMap[goal->controlled_joints[i]] = i;
 		velControllers.push_back(nh.advertise<std_msgs::Float64>("/" + jointName.substr(0, jointName.size() - 6) + "_velocity_controller/command", 1));
+		if (jointName.compare("r_gripper_joint") == 0)
+			rGripperIdx = i;
+		else if (jointName.compare("l_gripper_joint") == 0)
+			lGripperIdx = i;
 	}
 
 	Node yamlController = YAML::Load(goal->controller_yaml);
@@ -56,6 +72,14 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		SBacklogParam bp;
 		bp.param = p;
 		bp.idx = jntOffset + paramLength;
+
+		if (p.name.compare("r_gripper_effort") == 0) {
+			rGripperEffort = ::atof(p.value.c_str());
+			continue;
+		} else if (p.name.compare("l_gripper_effort") == 0) {
+			lGripperEffort = ::atof(p.value.c_str());
+			continue;
+		}
 
 		if (p.isConst)
 			backlog.push_back(bp);
@@ -111,6 +135,9 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 }	
 
 void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::ConstPtr& jointStateMsg) {
+	ros::Time now = ros::Time::now();
+	dT = (now - lastUpdate).toSec();
+	lastUpdate = now;
 
 	for (size_t i = 0; i < jointStateMsg->name.size(); i++) {
 		auto it = jointIndexMap.find(jointStateMsg->name[i]);
@@ -146,6 +173,22 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::Cons
 			std_msgs::Float64 command;
 			command.data = commands[i];
 			velControllers[i].publish(command);
+		}
+
+		if (rGripperIdx > -1) {
+			pr2_controllers_msgs::Pr2GripperCommand cmd;
+			cmd.position = state[rGripperIdx] + commands[rGripperIdx] * dT;
+			cmd.max_effort = rGripperEffort;
+
+			rGripperPub.publish(cmd);
+		}
+
+		if (lGripperIdx > -1) {
+			pr2_controllers_msgs::Pr2GripperCommand cmd;
+			cmd.position = state[lGripperIdx] + commands[lGripperIdx] * dT;
+			cmd.max_effort = lGripperEffort;
+
+			lGripperPub.publish(cmd);
 		}
 
 		feedback.current_value = feedbackExpr->value();

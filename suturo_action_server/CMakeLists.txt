@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   suturo_manipulation_msgs
   tf_conversions
   r_libs
+  pr2_controllers_msgs
 )
 
 add_definitions(-std=c++11 -g)

@@ -1,6 +1,7 @@
 #pragma once
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
+#include <std_msgs/Float64.h>
 #include <tf/transform_listener.h>
 #include <suturo_manipulation_msgs/MoveRobotAction.h>
 #include <actionlib/server/simple_action_server.h>
@@ -27,6 +28,8 @@ public:
 	void decodeTransform(size_t startIdx, tf::Transform transform);
 protected:
 	int nWSR;
+	double rGripperEffort, lGripperEffort;
+	int lGripperIdx, rGripperIdx;
 	const string name;
 	ros::NodeHandle nh;
 	actionlib::SimpleActionServer<suturo_manipulation_msgs::MoveRobotAction> server;
@@ -40,11 +43,15 @@ protected:
 	vector<boost::shared_ptr<AQuery>> queries;
 
 private:
+	ros::Time lastUpdate;
+	double dT;
 	tf::TransformListener tfListener;
 	double lastFeedback;
 	ros::Subscriber jsSub;
 	bool controllerInitialized;
 	KDL::Expression<double>::Ptr feedbackExpr;
+	ros::Publisher rGripperPub, lGripperPub;
+	ros::Subscriber rGripperSub, lGripperSub;
 
 	suturo_manipulation_msgs::MoveRobotFeedback feedback;
 	suturo_manipulation_msgs::MoveRobotResult result;
