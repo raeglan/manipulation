@@ -1,0 +1,13 @@
+<launch>
+  <include file="$(find iai_naive_kinematics_sim)/launch/pr2.launch"/>
+  <node pkg="graspkard" type="movement_server" name="graspkard" output="screen">
+  	<remap from="~joint_states" to="/joint_states" />
+  </node>
+
+<node pkg="tf" type="static_transform_publisher" name="fake_odom"
+        output="screen" args="0 0 0 0 0 0 1 odom odom_combined 100" />
+
+<node pkg="tf" type="static_transform_publisher" name="trololo"
+        output="screen" args="0.5 -0.3 0.8 0 0 0 1 odom_combined cylinder 100" /> 
+
+</launch>
