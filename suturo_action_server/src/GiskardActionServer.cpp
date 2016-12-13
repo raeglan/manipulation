@@ -90,8 +90,12 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 				break;
 			case TypedParam::TRANSFORM:
 				if (!p.isConst) {
+					istringstream ss(p.value);
+					string childframe, refFrame;
+					ss >> childframe;
+					ss >> refFrame;
 					queries.push_back(boost::shared_ptr<AQuery>(
-						new TFQuery(this, paramLength + jntOffset, p.value, "base_link", &tfListener)
+						new TFQuery(this, paramLength + jntOffset, childframe, refFrame, &tfListener)
 						));
 				}
 				paramLength += 7;
