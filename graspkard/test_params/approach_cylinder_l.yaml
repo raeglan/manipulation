@@ -10,10 +10,10 @@
 
 - name: cylinder_width
   type: double
-  const: false
+  const: true
   value: 0.06
 
 - name: cylinder_height
   type: double
   const: true
-  value: 0.2
+  value: 0.14

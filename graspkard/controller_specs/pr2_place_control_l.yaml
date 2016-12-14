@@ -37,23 +37,32 @@ scope:
   - gripper_joint: {input-var: 8}
 
   # definition goal input variables
-  - cylinder_pos_x: {input-var: 9}
-  - cylinder_pos_y: {input-var: 10}
-  - cylinder_pos_z: {input-var: 11}
+  - target_pos_x: {input-var: 9}
+  - target_pos_y: {input-var: 10}
+  - target_pos_z: {input-var: 11}
 
-  - cylinder_rot_x: {input-var: 12}
-  - cylinder_rot_y: {input-var: 13}
-  - cylinder_rot_z: {input-var: 14}
-  - cylinder_rot_a: {input-var: 15}
+  - target_rot_x: {input-var: 12}
+  - target_rot_y: {input-var: 13}
+  - target_rot_z: {input-var: 14}
+  - target_rot_a: {input-var: 15}
 
-  - cylinder_width: {input-var: 16}
-  - cylinder_height: {double-mul: [{input-var: 17}, 0.5]}
+  - cylinder_pos_x: {input-var: 16}
+  - cylinder_pos_y: {input-var: 17}
+  - cylinder_pos_z: {input-var: 18}
+
+  - cylinder_rot_x: {input-var: 19}
+  - cylinder_rot_y: {input-var: 20}
+  - cylinder_rot_z: {input-var: 21}
+  - cylinder_rot_a: {input-var: 22}
+
+  - cylinder_width: {input-var: 23}
+  - cylinder_height: {input-var: 24}
 
   # definition of joint transforms
   - torso_lift:
       frame: [{axis-angle: [unit_x, 0]}, {vector3: [-0.05, 0, {double-add: [0.739675, torso_lift_joint]}]}]
   - shoulder_pan:
-      frame: [{axis-angle: [unit_z, shoulder_pan_joint]}, {vector3: [0, -0.188, 0]}]
+      frame: [{axis-angle: [unit_z, shoulder_pan_joint]}, {vector3: [0, 0.188, 0]}]
   - shoulder_lift:
       frame: [{axis-angle: [unit_y, shoulder_lift_joint]}, {vector3: [0.1, 0, 0]}]
   - upper_arm_roll: 
@@ -66,8 +75,8 @@ scope:
       frame: [{axis-angle: [unit_y, wrist_flex_joint]}, {vector3: [0.321, 0, 0]}]
   - wrist_roll:
       frame: [{axis-angle: [unit_x, wrist_roll_joint]}, {vector3: [0, 0, 0]}]
-  - gripper_offset:
-      frame: [{axis-angle: [unit_x, 0]}, {vector3: [0.18, 0, 0]}]
+  #- gripper_offset:
+  #    frame: [{axis-angle: [unit_x, 0]}, {vector3: [0.18, 0, 0]}]
 
   - cylinder_rot_axis: {vector3: [cylinder_rot_x, cylinder_rot_y, cylinder_rot_z]}
   - cylinder_rot: {axis-angle: [cylinder_rot_axis, cylinder_rot_a]}
@@ -76,6 +85,12 @@ scope:
   - cylinder_frame:
       frame: [cylinder_rot, cylinder_pos]
 
+  - target_pos: {vector3: [target_pos_x, target_pos_y, target_pos_z]}
+  - target_rot_axis: {vector3: [target_rot_x, target_rot_y, target_rot_z]}
+  - target_rot: {axis-angle: [target_rot_axis, target_rot_a]}
+
+  - target_frame:
+      frame: [target_rot, target_pos]
 
   # definition of elbow FK
   - elbow:
@@ -86,14 +101,13 @@ scope:
       - upper_arm_roll
       - elbow_flex
 
-  # defintion of EE FK
-  - ee:
+  - cylinder_ee:
       frame-mul:
       - elbow
       - forearm_roll
       - wrist_flex
       - wrist_roll
-      - gripper_offset
+      - cylinder_frame
 
   # control params
   - pos_p_gain: 1.0
@@ -103,7 +117,7 @@ scope:
   - weight_arm_joints: 0.001
   - weight_torso_joint: 0.001
   - weight_align_goal: 0.5
-  - weight_elbow_control: 2.0
+  - weight_elbow_control: 0.4
   - weight_grasp_goal: 2.0
   - neg_vel_limit_arm_joints: -0.6
   - pos_vel_limit_arm_joints: 0.6
@@ -111,68 +125,45 @@ scope:
   - pos_vel_limit_torso_joint: 0.02
   - gripper_safety_margin: 0.01
 
+  - height: 0.1
   # definition EE goals and control laws
-  #  #arm position
-  - trans: {origin-of: ee}
+  #  # right arm position
+  - trans: {origin-of: cylinder_ee}
   #  # right arm goal diff
-  - goal_diff: {vector-sub: [cylinder_pos, trans]}
+  - goal_diff: {vector-sub: [target_pos, trans]}
+  - goal_diff_xy: {vector3: [{x-coord: goal_diff}, {y-coord: goal_diff}, 0]}
   - goal_dist: {vector-norm: goal_diff}
-  - goal_err: {vector-sub: [goal_diff, {scale-vector: [{double-div: [cylinder_width, goal_dist]}, goal_diff]}]}
-  - diff_x: {x-coord: goal_err} # 
-  - diff_y: {y-coord: goal_err}
-  - diff_z: {z-coord: goal_err}
+  - goal_dist_xy: {vector-norm: goal_diff_xy}
 
-  - gripper_z: {rotate-vector: [{orientation-of: ee}, unit_z]}
-  - gripper_x: {rotate-vector: [{orientation-of: ee}, unit_x]}
-  - cylinder_z: {rotate-vector: [cylinder_rot, unit_z]}
-  - goal_dot: {abs: {vector-dot: [cylinder_z, gripper_z]}}
+  #- offset_z : {double-add: [cylinder_height, z-coord: {vector-sub: [cylinder_pos, trans]}]}
+  - offset_z : {double-mul: [cylinder_height, 0.5]}
+
+
+  #- goal_err: {vector-sub: [goal_diff, {scale-vector: [{double-div: [cylinder_width, goal_dist]}, goal_diff]}]}
+  #- diff_x: {x-coord: goal_diff}
+  #- diff_y: {y-coord: goal_diff}
+  #- diff_z: {z-coord: goal_diff}
+  - rate_elbow: {z-coord: {vector-sub: [trans, {origin-of: elbow}]}}
+
+  - height_z: {double-sub: [height, double-div: [height, double-add: [1, double-mul: [20,goal_dist_xy]]]]}
+  - diff_z: {double-add: [{z-coord: goal_diff}, double-add: [offset_z, height_z] ]} #offset_z
+
+  - diff_x: {double-mul: [double-div: [0.1, double-add: [0.1, abs: diff_z]], x-coord: goal_diff]}
+  - diff_y: {double-mul: [double-div: [0.1, double-add: [0.1, abs: diff_z]], y-coord: goal_diff]}
+  
+  - target_z: {rotate-vector: [{orientation-of: cylinder_ee}, unit_z]}
+  - goal_dot: {abs: {vector-dot: [unit_z, target_z]}}
   - ori_ctrl: {double-sub: [1, goal_dot]}
 
-  - cylinder_safety_width: {double-add: [cylinder_width, gripper_safety_margin]}
-  - gripper_ctrl: {double-sub: [cylinder_safety_width, gripper_joint]}
-  - gripper_frac: {double-div: [gripper_joint, cylinder_width]}
-
-  - cross_x: {double-sub: [double-mul: [y-coord: gripper_x, z-coord: cylinder_z], double-mul: [z-coord: gripper_x, y-coord: cylinder_z]]}
-  - cross_y: {double-sub: [double-mul: [z-coord: gripper_x, x-coord: cylinder_z], double-mul: [x-coord: gripper_x, z-coord: cylinder_z]]}
-  - cross_z: {double-sub: [double-mul: [x-coord: gripper_x, y-coord: cylinder_z], double-mul: [y-coord: gripper_x, x-coord: cylinder_z]]}
-
-  - cross: {vector3: [cross_x, cross_y,cross_z]}
-  - cross_scaled: {scale-vector: [double-div: [1, vector-norm: cross], cross]}
-
-  - dist: {abs: {vector-dot: [vector-sub: [cylinder_pos, trans], cross_scaled]}}
-  - dist2: {double-mul: [dist, -1]}
-
-  - p_a: {vector-sub: [trans, cylinder_pos]}
-
-  - cross_d_x: {double-sub: [double-mul: [y-coord: p_a, z-coord: cylinder_z], double-mul: [z-coord: p_a, y-coord: cylinder_z]]}
-  - cross_d_y: {double-sub: [double-mul: [z-coord: p_a, x-coord: cylinder_z], double-mul: [x-coord: p_a, z-coord: cylinder_z]]}
-  - cross_d_z: {double-sub: [double-mul: [x-coord: p_a, y-coord: cylinder_z], double-mul: [y-coord: p_a, x-coord: cylinder_z]]}
-
-  - weight_gripper_frac: 0.5
-  - pos_scale: {min: [{double-add: [goal_dot, {double-mul: [gripper_frac, weight_gripper_frac]}]}, 1]}
-
-  - cross_d: {vector3: [cross_d_x, cross_d_y,cross_d_z]}
-  - dist_xy: {vector-norm: cross_d}
-  - dist_xy_ctrl: {double-mul: [{double-sub: [0, dist_xy]}, pos_scale]}  
-
-  - dist_z: {vector-norm: {vector-sub: [{vector-add: [trans, cross_d]}, cylinder_pos] }}
-  - dist_z_safety_margin: 0.02
-  - cylinder_safety_height: {double-sub: [cylinder_height, dist_z_safety_margin]}
-  - dist_z_lower: {double-mul: [{min: [{double-sub: [cylinder_safety_height, dist_z]}, 0]}, pos_scale]}
-  - dist_z_upper: {double-mul: [{max: [{double-sub: [cylinder_safety_height, dist_z]}, 0]}, pos_scale]}
-
-  - elbow_diff: {z-coord: {vector-sub: [{origin-of: ee}, {origin-of: elbow}]}}
-  - elbow_ctrl: {double-sub: [0, elbow_diff]}
+  - feedback: {double-add: [ori_ctrl, diff_x, diff_y, diff_z]}
 
   - weight_pos_goal: 1 
   - weight_rot_control: 1
 
-  - feedback: {double-add: [dist_xy, {max: [{double-sub: [dist_z, cylinder_safety_height]}, 0]}]}
-
 controllable-constraints:
   # torso joint
   - controllable-constraint: [neg_vel_limit_torso_joint, pos_vel_limit_torso_joint, weight_torso_joint, 0, torso_lift_joint]
-  # arm joints
+  # left arm joints
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 1, shoulder_pan_joint]
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 2, shoulder_lift_joint]
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 3, upper_arm_roll_joint]
@@ -180,22 +171,27 @@ controllable-constraints:
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 5, forearm_roll_joint]
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 6, wrist_flex_joint]
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 7, wrist_roll_joint]
+  # right arm joints
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 8, gripper_joint]
 
 soft-constraints:
   # Position constraint
   #- soft-constraint: [0, 0, weight_pos_goal, {vector-norm: goal_err}, right EE x-vel slack]
-  - soft-constraint: [dist_xy_ctrl, dist_xy_ctrl, weight_pos_goal, dist_xy,EE x-vel slack]
-  - soft-constraint: [dist_z_lower, dist_z_lower, weight_pos_goal, dist_z,EE x-vel slack]
+  - soft-constraint: [diff_x, diff_x, weight_pos_goal, {x-coord: trans}, EE x-vel slack]
+  - soft-constraint: [diff_y, diff_y, weight_pos_goal, {y-coord: trans}, EE y-vel slack]
+  - soft-constraint: [diff_z, diff_z, weight_pos_goal, {z-coord: trans}, EE z-vel slack]
+
+  - soft-constraint: [rate_elbow, {double-add: [rate_elbow, 0.2]}, weight_pos_goal, {z-coord: {origin-of: elbow}}, elbow vel slack]
 
   # Rotation constraint
-  - soft-constraint: [ori_ctrl, ori_ctrl, weight_rot_control, goal_dot,EE rot slack]
-  - soft-constraint: [dist2, dist2, weight_rot_control, dist,EE rot stack]
+  - soft-constraint: [ori_ctrl, ori_ctrl, weight_rot_control, goal_dot, right EE rot slack]
+  #- soft-constraint: [ori_ctrl, ori_ctrl, weight_rot_control, goal_dot, right EE rot slack]
+  #- soft-constraint: [dist2, dist2, weight_rot_control, dist, right EE rot stack]
 
-  - soft-constraint: [gripper_ctrl, 0.2, weight_grasp_goal, gripper_joint,EE gripper stack]
+  #- soft-constraint: [gripper_ctrl, 0.2, weight_grasp_goal, gripper_joint, right EE gripper stack]
 
   # Level elbow and gripper control
-  - soft-constraint: [{double-sub: [elbow_ctrl, 0.6]}, elbow_ctrl, weight_elbow_control, elbow_diff, elbow up control slack]
+  #- soft-constraint: [0.01, 0.01, weight_elbow_control, {y-coord: elbow_diff}, right elbow up control slack]
 
 hard-constraints:
   - hard-constraint:
@@ -203,8 +199,8 @@ hard-constraints:
       - {double-sub: [0.325, torso_lift_joint]}
       - torso_lift_joint
   - hard-constraint:
-      - {double-sub: [-2.1353, shoulder_pan_joint]}
-      - {double-sub: [0.5646, shoulder_pan_joint]}
+      - {double-sub: [-0.5646, shoulder_pan_joint]}
+      - {double-sub: [2.1353, shoulder_pan_joint]}
       - shoulder_pan_joint
   - hard-constraint:
       - {double-sub: [-0.3536, shoulder_lift_joint]}
