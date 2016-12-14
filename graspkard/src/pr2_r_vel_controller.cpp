@@ -48,7 +48,7 @@ ros::Subscriber js_sub_;
 Eigen::VectorXd state_;
 bool controller_started_;
 string frame_id_;
-string cylinderName;
+string goalName;
 VisualizationManager visMan;
 
 tf::TransformListener* tfListener;
@@ -113,18 +113,23 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
 
   //cout << "received new goal" << endl;
 
-  cylinderName = msg->data;
+  goalName = msg->data;
 
   try {
     tf::StampedTransform temp;
-    tfListener->waitForTransform(frame_id_, cylinderName, ros::Time(0), ros::Duration(0.5));
-    tfListener->lookupTransform(frame_id_, cylinderName, ros::Time(0), temp);
+    tfListener->waitForTransform(frame_id_, goalName, ros::Time(0), ros::Duration(0.5));
+    tfListener->lookupTransform(frame_id_, goalName, ros::Time(0), temp);
+
+    tf::StampedTransform  temp_cylinder;
+    tfListener->waitForTransform("r_gripper_r_finger_tip_link", "cylinder", ros::Time(0), ros::Duration(0.5));
+    tfListener->lookupTransform("r_gripper_r_finger_tip_link", "cylinder", ros::Time(0), temp_cylinder);
     
     visMan.beginNewDrawCycle();
     double cWidth = 0.06;
     double cHeight = 0.2;
 
     visualization_msgs::MarkerArray markers;
+    /*
     markers.markers.push_back(visMan.shapeMarker(0, 
                                     Affine3d::Identity(), 
                                     visualization_msgs::Marker::CYLINDER, 
@@ -133,7 +138,17 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
                                     1.f, 
                                     0.f, 
                                     1.f, 
-                                    "cylinder"));
+                                    "cylinder"));*/
+
+    markers.markers.push_back(visMan.shapeMarker(0, 
+                                    Affine3d::Identity(), 
+                                    visualization_msgs::Marker::CYLINDER, 
+                                    Vector3d(0.3, 0.3, 0),
+                                    0.f, 
+                                    1.f, 
+                                    0.f, 
+                                    1.f, 
+                                    "target_area"));
 
     visMan.endDrawCycle(markers.markers);
     visPub.publish(markers);
@@ -142,6 +157,10 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
     tf::Vector3 pos = temp.getOrigin();
     tf::Vector3 rot = temp.getRotation().getAxis();
     double angle = temp.getRotation().getAngle();
+
+    tf::Vector3 pos_c = temp_cylinder.getOrigin();
+    tf::Vector3 rot_c = temp_cylinder.getRotation().getAxis();
+    double angle_c = temp_cylinder.getRotation().getAngle();
 
     state_[joint_names_.size() + 0] = pos.x();
     state_[joint_names_.size() + 1] = pos.y();
@@ -154,6 +173,15 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
     
     state_[joint_names_.size() + 7] = cWidth;
     state_[joint_names_.size() + 8] = cHeight;
+
+    state_[joint_names_.size() + 9] = pos_c.x();
+    state_[joint_names_.size() + 10] = pos_c.y();
+    state_[joint_names_.size() + 11] = pos_c.z();
+
+    state_[joint_names_.size() + 12] = rot_c.x();
+    state_[joint_names_.size() + 13] = rot_c.y();
+    state_[joint_names_.size() + 14] = rot_c.z();
+    state_[joint_names_.size() + 15] = angle_c;
 
     cout << "#joint names: " << joint_names_.size() << endl;
     cout << "#states: " << state_.rows() << endl;
@@ -178,12 +206,12 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
       {
         cout << "states: " << state_ << endl;
         giskard::Scope scope = controller_.get_scope();
-        KDL::Rotation crot = scope.find_rotation_expression("cylinder_rot")->value();
-        KDL::Vector crotV = scope.find_vector_expression("cylinder_rot_axis")->value();
-        double crotA = scope.find_double_expression("cylinder_rot_a")->value();
-        double x = scope.find_double_expression("cylinder_rot_x")->value();
-        double y = scope.find_double_expression("cylinder_rot_y")->value();
-        double z = scope.find_double_expression("cylinder_rot_z")->value();
+        KDL::Rotation crot = scope.find_rotation_expression("target_rot")->value();
+        KDL::Vector crotV = scope.find_vector_expression("target_rot_axis")->value();
+        double crotA = scope.find_double_expression("target_rot_a")->value();
+        double x = scope.find_double_expression("target_rot_x")->value();
+        double y = scope.find_double_expression("target_rot_y")->value();
+        double z = scope.find_double_expression("target_rot_z")->value();
         using namespace KDL;
         cout << crot << endl << crotV << endl << crotA << x << y << z << endl;
         ROS_ERROR("Couldn't start controller.");
@@ -191,7 +219,7 @@ void goal_callback(const std_msgs::String::ConstPtr& msg)
       }
     }
   } catch (tf::TransformException ex) {
-    cerr << "Lookup of frame '"<< cylinderName << "' failed!" << endl;
+    cerr << "Lookup of frame '"<< goalName << "' failed!" << endl;
   }
 }
 
@@ -227,7 +255,7 @@ int main(int argc, char **argv)
   YAML::Node node = YAML::Load(controller_description);
   giskard::QPControllerSpec spec = node.as< giskard::QPControllerSpec >();
   controller_ = giskard::generate(spec);
-  state_ = Eigen::VectorXd::Zero(joint_names_.size() + 9);
+  state_ = Eigen::VectorXd::Zero(joint_names_.size() + 16);
   controller_started_ = false;
 
   for (vector<string>::iterator it = joint_names_.begin(); it != joint_names_.end(); ++it)

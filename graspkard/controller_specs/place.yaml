@@ -60,6 +60,11 @@ scope:
   - cylinder_pos_y: {input-var: 26}
   - cylinder_pos_z: {input-var: 27}
 
+  - cylinder_rot_x: {input-var: 28}
+  - cylinder_rot_y: {input-var: 29}
+  - cylinder_rot_z: {input-var: 30}
+  - cylinder_rot_a: {input-var: 31}
+
   # definition of joint transforms
   - torso_lift:
       frame: [{axis-angle: [unit_x, 0]}, {vector3: [-0.05, 0, {double-add: [0.739675, torso_lift_joint]}]}]
@@ -96,11 +101,12 @@ scope:
   - r_gripper_offset:
       frame: [{axis-angle: [unit_x, 0]}, {vector3: [0.18, 0, 0]}]
 
-  #- cylinder_rot_axis: {vector3: [cylinder_rot_x, cylinder_rot_y, cylinder_rot_z]}
-  #- cylinder_rot: {axis-angle: [cylinder_rot_axis, cylinder_rot_a]}
+  - cylinder_rot_axis: {vector3: [cylinder_rot_x, cylinder_rot_y, cylinder_rot_z]}
+  - cylinder_rot: {axis-angle: [cylinder_rot_axis, cylinder_rot_a]}
   - cylinder_pos: {vector3: [cylinder_pos_x, cylinder_pos_y, cylinder_pos_z]}
 
-  #    frame: [cylinder_rot, cylinder_pos]
+  - cylinder_frame:
+      frame: [cylinder_rot, cylinder_pos]
 
   - target_pos: {vector3: [target_pos_x, target_pos_y, target_pos_z]}
   - target_rot_axis: {vector3: [target_rot_x, target_rot_y, target_rot_z]}
@@ -141,6 +147,15 @@ scope:
       - r_wrist_roll
       - r_gripper_offset
 
+  - cylinder_ee:
+      frame-mul:
+      - right_elbow
+      - r_forearm_roll
+      - r_wrist_flex
+      - r_wrist_roll
+      - r_gripper_offset
+      - cylinder_frame
+
   # control params
   - pos_p_gain: 1.0
   - rot_p_gain: 1.0
@@ -160,14 +175,16 @@ scope:
   - height: 0.3
   # definition EE goals and control laws
   #  # right arm position
-  - r_trans: {origin-of: right_ee}
+  - r_trans: {origin-of: cylinder_ee}
   #  # right arm goal diff
   - r_goal_diff: {vector-sub: [target_pos, r_trans]}
   - r_goal_diff_xy: {vector3: [{x-coord: r_goal_diff}, {y-coord: r_goal_diff}, 0]}
   - r_goal_dist: {vector-norm: r_goal_diff}
   - r_goal_dist_xy: {vector-norm: r_goal_diff_xy}
 
-  - offset_z : {double-add: [cylinder_height, z-coord: {vector-sub: [cylinder_pos, r_trans]}]}
+  #- offset_z : {double-add: [cylinder_height, z-coord: {vector-sub: [cylinder_pos, r_trans]}]}
+  - offset_z : {double-div: [cylinder_height, 2]}
+
 
   #- r_goal_err: {vector-sub: [r_goal_diff, {scale-vector: [{double-div: [cylinder_width, r_goal_dist]}, r_goal_diff]}]}
   #- r_diff_x: {x-coord: r_goal_diff}
