@@ -170,16 +170,6 @@ target_link_libraries(movement_server
   #graspkard_msgs
 )
 
-add_executable(client_test src/client_test.cpp)
-
-add_dependencies(client_test 
-  graspkard_msgs
-  #${graspkard_EXPORTED_TARGETS}
-)
-
-target_link_libraries(client_test 
-  ${catkin_LIBRARIES}
-)
 #############
 ## Install ##
 #############

@@ -1,0 +1,19 @@
+- name: object_name
+  type: transform
+  const: false
+  value: cylinder base_link
+
+- name: l_gripper_effort
+  type: double
+  const: true
+  value: 50.0
+
+- name: cylinder_width
+  type: double
+  const: false
+  value: 0.06
+
+- name: cylinder_height
+  type: double
+  const: true
+  value: 0.2
