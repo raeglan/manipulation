@@ -24,6 +24,7 @@
 #include <ros/package.h>
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/Float64.h>
+#include <std_msgs/String.h>
 #include <geometry_msgs/PointStamped.h>
 #include <yaml-cpp/yaml.h>
 #include <giskard/giskard.hpp>
@@ -34,18 +35,23 @@
 #include <r_libs/VisualizationManager.h>
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
+#include <tf/transform_listener.h>
+
+using namespace std;
 
 int nWSR_;
 giskard::QPController controller_;
-std::vector<std::string> joint_names_;
-std::vector<ros::Publisher> vel_controllers_;
+vector<string> joint_names_;
+vector<ros::Publisher> vel_controllers_;
 ros::Publisher visPub;
 ros::Subscriber js_sub_;
 Eigen::VectorXd state_;
 bool controller_started_;
-std::string frame_id_;
+string frame_id_;
+string cylinderName;
 VisualizationManager visMan;
 
+tf::TransformListener* tfListener;
 void js_callback(const sensor_msgs::JointState::ConstPtr& msg)
 {
   // TODO: turn this into a map!
@@ -73,13 +79,13 @@ void js_callback(const sensor_msgs::JointState::ConstPtr& msg)
       command.data = commands[i];
       vel_controllers_[i].publish(command);
     }
-    //std::cout << "published new joint states" << std::endl;
+    //cout << "published new joint states" << endl;
   }
   else
   {
     ROS_WARN("Update failed.");
     // TODO: remove or change to ros_debug
-    std::cout << "State " << state_ << std::endl;
+    cout << "State " << state_ << endl;
   }
 }
 
@@ -95,60 +101,97 @@ void js_callback(const sensor_msgs::JointState::ConstPtr& msg)
 
 void print_eigen(const Eigen::VectorXd& command)
 {
-  std::string cmd_str = " ";
+  string cmd_str = " ";
   for(size_t i=0; i<command.rows(); ++i)
-    cmd_str += boost::lexical_cast<std::string>(command[i]) + " ";
+    cmd_str += boost::lexical_cast<string>(command[i]) + " ";
   ROS_INFO("Command: (%s)", cmd_str.c_str());
 }
 
-void goal_callback(const geometry_msgs::PointStamped::ConstPtr& msg)
+void goal_callback(const std_msgs::String::ConstPtr& msg)
 {
 //  printGoal(*msg);
 
-  //std::cout << "received new goal" << std::endl;
+  //cout << "received new goal" << endl;
 
-  if(msg->header.frame_id.compare(frame_id_) != 0)
-  {
-    ROS_WARN("frame_id of right EE goal did not match expected '%s'. Ignoring goal", 
-        frame_id_.c_str());
-    return;
-  }
+  cylinderName = msg->data;
 
-  visMan.beginNewDrawCycle();
-  double cWidth = 0.06;
-  double cHeight = 0.2;
+  try {
+    tf::StampedTransform temp;
+    tfListener->waitForTransform(frame_id_, cylinderName, ros::Time(0), ros::Duration(0.5));
+    tfListener->lookupTransform(frame_id_, cylinderName, ros::Time(0), temp);
+    
+    visMan.beginNewDrawCycle();
+    double cWidth = 0.06;
+    double cHeight = 0.2;
 
-  visualization_msgs::MarkerArray markers;
-  markers.markers.push_back(visMan.shapeMarker(0, 
-                                  Affine3d::Identity(), 
-                                  visualization_msgs::Marker::CYLINDER, 
-                                  Vector3d(cWidth, cWidth, cHeight),
-                                  0.f, 
-                                  1.f, 
-                                  0.f, 
-                                  1.f, 
-                                  "cylinder"));
+    visualization_msgs::MarkerArray markers;
+    markers.markers.push_back(visMan.shapeMarker(0, 
+                                    Affine3d::Identity(), 
+                                    visualization_msgs::Marker::CYLINDER, 
+                                    Vector3d(cWidth, cWidth, cHeight),
+                                    0.f, 
+                                    1.f, 
+                                    0.f, 
+                                    1.f, 
+                                    "cylinder"));
 
-  visMan.endDrawCycle(markers.markers);
-  visPub.publish(markers);
+    visMan.endDrawCycle(markers.markers);
+    visPub.publish(markers);
 
-  // copying position goal
-  state_[joint_names_.size() + 0] = msg->point.x;
-  state_[joint_names_.size() + 1] = msg->point.y;
-  state_[joint_names_.size() + 2] = msg->point.z;
+    // copying position goal
+    tf::Vector3 pos = temp.getOrigin();
+    tf::Vector3 rot = temp.getRotation().getAxis();
+    double angle = temp.getRotation().getAngle();
 
-  if (!controller_started_)
-  {
-    if (controller_.start(state_, nWSR_))
+    state_[joint_names_.size() + 0] = pos.x();
+    state_[joint_names_.size() + 1] = pos.y();
+    state_[joint_names_.size() + 2] = pos.z();
+
+    state_[joint_names_.size() + 3] = rot.x();
+    state_[joint_names_.size() + 4] = rot.y();
+    state_[joint_names_.size() + 5] = rot.z();
+    state_[joint_names_.size() + 6] = angle;
+    
+    state_[joint_names_.size() + 7] = cWidth;
+    state_[joint_names_.size() + 8] = cHeight;
+
+    cout << "#joint names: " << joint_names_.size() << endl;
+    cout << "#states: " << state_.rows() << endl;
+
+    cout << state_ << endl;
+
+    // cout << "rotation(" 
+    //      << state_[joint_names_.size() + 3]
+    //      << ", " << state_[joint_names_.size() + 4]
+    //      << ", " << state_[joint_names_.size() + 5]
+    //      << ", " << state_[joint_names_.size() + 6] 
+    //      << ")" << endl;
+    
+    if (!controller_started_)
     {
-      ROS_INFO("Controller started.");
-      controller_started_ = true;
+      if (controller_.start(state_, nWSR_))
+      {
+        ROS_INFO("Controller started.");
+        controller_started_ = true;
+      }
+      else
+      {
+        cout << "states: " << state_ << endl;
+        giskard::Scope scope = controller_.get_scope();
+        KDL::Rotation crot = scope.find_rotation_expression("cylinder_rot")->value();
+        KDL::Vector crotV = scope.find_vector_expression("cylinder_rot_axis")->value();
+        double crotA = scope.find_double_expression("cylinder_rot_a")->value();
+        double x = scope.find_double_expression("cylinder_rot_x")->value();
+        double y = scope.find_double_expression("cylinder_rot_y")->value();
+        double z = scope.find_double_expression("cylinder_rot_z")->value();
+        using namespace KDL;
+        cout << crot << endl << crotV << endl << crotA << x << y << z << endl;
+        ROS_ERROR("Couldn't start controller.");
+        print_eigen(state_);
+      }
     }
-    else
-    {
-      ROS_ERROR("Couldn't start controller.");
-      print_eigen(state_);
-    }
+  } catch (tf::TransformException ex) {
+    cerr << "Lookup of frame '"<< cylinderName << "' failed!" << endl;
   }
 }
 
@@ -159,7 +202,7 @@ int main(int argc, char **argv)
 
   nh.param("nWSR", nWSR_, 10);
 
-  std::string controller_description;
+  string controller_description;
   if (!nh.getParam("controller_description", controller_description))
   {
     ROS_ERROR("Parameter 'controller_description' not found in namespace '%s'.", nh.getNamespace().c_str());
@@ -178,13 +221,16 @@ int main(int argc, char **argv)
     return 0;
   }
 
+  tf::TransformListener tfTemp;
+  tfListener = &tfTemp;
+
   YAML::Node node = YAML::Load(controller_description);
   giskard::QPControllerSpec spec = node.as< giskard::QPControllerSpec >();
   controller_ = giskard::generate(spec);
-  state_ = Eigen::VectorXd::Zero(joint_names_.size() + 2*6);
+  state_ = Eigen::VectorXd::Zero(joint_names_.size() + 9);
   controller_started_ = false;
 
-  for (std::vector<std::string>::iterator it = joint_names_.begin(); it != joint_names_.end(); ++it)
+  for (vector<string>::iterator it = joint_names_.begin(); it != joint_names_.end(); ++it)
     vel_controllers_.push_back(nh.advertise<std_msgs::Float64>("/" + it->substr(0, it->size() - 6) + "_velocity_controller/command", 1));
 
   ROS_INFO("Waiting for goal.");

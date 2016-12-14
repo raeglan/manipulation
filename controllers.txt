@@ -1,0 +1,35 @@
+Controller Documentation
+
+## graspkard / gripper_control.yaml
+	Description: Bring gripper fingers into a position
+
+	Params:
+		- Goal Position : DOUBLE
+
+	Feedback:
+		- Name: "feedback"
+		- Desc: Closer to 0 is better
+
+## graspkard / pr2_grasp_control_r.yaml
+	Description: Approaches a cylinder using the right arm, while opening the gripper and keeping elbow and gripper level
+
+	Params:
+		- Transformation of the cylinder: TRANSFORM
+		- Width of the cylinder: DOUBLE
+		- Height of the cylinder: DOUBLE 
+
+	Feedback:
+		- Name: "feedback"
+		- Desc: Closer to 0 is better
+
+## graspkard / pr2_grasp_control_l.yaml
+	Description: Approaches a cylinder using the left arm, while opening the gripper and keeping elbow and gripper level
+
+	Params:
+		- Transformation of the cylinder: TRANSFORM
+		- Width of the cylinder: DOUBLE
+		- Height of the cylinder: DOUBLE 
+
+	Feedback:
+		- Name: "feedback"
+		- Desc: Closer to 0 is better
