@@ -1,0 +1,130 @@
+#
+# Copyright (C) 2015-2016 Georg Bartels <georg.bartels@cs.uni-bremen.de>
+#
+# This file is part of giskard.
+#
+# giskard is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
+
+scope:
+  # definition of some nice short-cuts
+  - unit_x: {vector3: [1, 0, 0]}
+  - unit_y: {vector3: [0, 1, 0]}
+  - unit_z: {vector3: [0, 0, 1]}
+  - pi: 3.14159265359
+  - two_pi: {double-mul: [pi, 2.0]}
+
+  # definition of joint input variables
+  - shoulder_pan_joint: {input-var: 0}
+  - shoulder_lift_joint: {input-var: 1}
+  - upper_arm_roll_joint: {input-var: 2}
+  - elbow_flex_joint: {input-var: 3}
+  - forearm_roll_joint: {input-var: 4}
+  - wrist_flex_joint: {input-var: 5}
+  - wrist_roll_joint: {input-var: 6}
+  - gripper_joint: {input-var: 7}
+
+  # definition goal input variables
+  - shoulder_pan_joint_goal: {input-var: 8}
+  - shoulder_lift_joint_goal: {input-var: 9}
+  - upper_arm_roll_joint_goal: {input-var: 10}
+  - elbow_flex_joint_goal: {input-var: 11}
+  - forearm_roll_joint_goal: {input-var: 12}
+  - wrist_flex_joint_goal: {input-var: 13}
+  - wrist_roll_joint_goal: {input-var: 14}
+
+  # definition goals and control laws
+  - shoulder_pan_error: {double-sub: [shoulder_pan_joint_goal, shoulder_pan_joint]}
+  - shoulder_lift_error: {double-sub: [shoulder_lift_joint_goal, shoulder_lift_joint]}
+  - upper_arm_roll_error: {double-sub: [upper_arm_roll_joint_goal, upper_arm_roll_joint]}
+  - elbow_flex_error: {double-sub: [elbow_flex_joint_goal, elbow_flex_joint]}
+  - forearm_roll_error_unnormalized: {double-sub: [forearm_roll_joint_goal, forearm_roll_joint]}
+  - forearm_roll_error_normalized: 
+      fmod: 
+      - {double-add: [{fmod: [forearm_roll_error_unnormalized, two_pi]}, two_pi]}
+      - two_pi
+  - forearm_roll_error: 
+      double-if: 
+        - {double-sub: [forearm_roll_error_normalized, pi]}
+        - {double-sub: [forearm_roll_error_normalized, two_pi]}
+        - forearm_roll_error_normalized
+  - wrist_flex_error: {double-sub: [wrist_flex_joint_goal, wrist_flex_joint]}
+  - wrist_roll_error_unnormalized: {double-sub: [wrist_roll_joint_goal, wrist_roll_joint]}
+  - wrist_roll_error_normalized: 
+      fmod: 
+      - {double-add: [{fmod: [wrist_roll_error_unnormalized, two_pi]}, two_pi]}
+      - two_pi
+  - wrist_roll_error: 
+      double-if: 
+        - {double-sub: [wrist_roll_error_normalized, pi]}
+        - {double-sub: [wrist_roll_error_normalized, two_pi]}
+        - wrist_roll_error_normalized
+
+  # some constants
+  - weight_arm_joints: 0.001
+  - weight_torso_joint: 0.01
+  - weight_pos_control: 1
+  - neg_vel_limit_arm_joints: -0.6
+  - pos_vel_limit_arm_joints: 0.6
+  - neg_vel_limit_torso_joint: -0.02
+  - pos_vel_limit_torso_joint: 0.02
+
+  - feedback: {double-add: [{abs: shoulder_pan_error}, {abs: shoulder_lift_error}, {abs: upper_arm_roll_error}, {abs: elbow_flex_error}, {abs: forearm_roll_error}, {abs: wrist_flex_error}, {abs: wrist_roll_error}]}
+
+controllable-constraints:
+  # arm joints
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 0, shoulder_pan_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 1, shoulder_lift_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 2, upper_arm_roll_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 3, elbow_flex_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 4, forearm_roll_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 5, wrist_flex_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 6, wrist_roll_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 7, gripper_joint]
+
+soft-constraints:
+  - soft-constraint: [shoulder_pan_error, shoulder_pan_error , weight_pos_control, shoulder_pan_joint, shoulder_pan_joint control slack]
+  - soft-constraint: [shoulder_lift_error, shoulder_lift_error , weight_pos_control, shoulder_lift_joint, shoulder_lift_joint control slack]
+  - soft-constraint: [upper_arm_roll_error, upper_arm_roll_error , weight_pos_control, upper_arm_roll_joint, upper_arm_roll_joint control slack]
+  - soft-constraint: [elbow_flex_error, elbow_flex_error , weight_pos_control, elbow_flex_joint, elbow_flex_joint control slack]
+  - soft-constraint: [forearm_roll_error, forearm_roll_error , weight_pos_control, forearm_roll_joint, forearm_roll_joint control slack]
+  - soft-constraint: [wrist_flex_error, wrist_flex_error , weight_pos_control, wrist_flex_joint, wrist_flex_joint control slack]
+  - soft-constraint: [wrist_roll_error, wrist_roll_error , weight_pos_control, wrist_roll_joint, wrist_roll_joint control slack]
+
+hard-constraints:
+  - hard-constraint:
+      - {double-sub: [-0.5646, shoulder_pan_joint]}
+      - {double-sub: [2.1353, shoulder_pan_joint]}
+      - shoulder_pan_joint
+  - hard-constraint:
+      - {double-sub: [-0.3536, shoulder_lift_joint]}
+      - {double-sub: [1.2963, shoulder_lift_joint]}
+      -  shoulder_lift_joint
+  - hard-constraint:
+      - {double-sub: [-0.65, upper_arm_roll_joint]}
+      - {double-sub: [3.75, upper_arm_roll_joint]}
+      - upper_arm_roll_joint
+  - hard-constraint:
+      - {double-sub: [-2.1213, elbow_flex_joint]}
+      - {double-sub: [-0.15, elbow_flex_joint]}
+      - elbow_flex_joint
+  - hard-constraint:
+      - {double-sub: [-2.0, wrist_flex_joint]}
+      - {double-sub: [-0.1, wrist_flex_joint]}
+      - wrist_flex_joint
+  - hard-constraint:
+      - {double-sub: [0.0, gripper_joint]}
+      - {double-sub: [0.1, gripper_joint]}
+      - gripper_joint

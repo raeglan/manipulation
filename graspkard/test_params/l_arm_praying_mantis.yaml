@@ -1,0 +1,35 @@
+
+- name: l_shoulder_pan_joint
+  type: double
+  const: true
+  value: 1.23679
+
+- name: l_shoulder_lift_joint
+  type: double
+  const: true
+  value: -0.247593
+
+- name: l_upper_arm_roll_joint
+  type: double
+  const: true
+  value: 0.614271
+
+- name: l_elbow_flex_joint
+  type: double
+  const: true
+  value: -1.38094
+
+- name: l_forearm_roll_joint
+  type: double
+  const: true
+  value: -4.94757
+
+- name: l_wrist_flex_joint
+  type: double
+  const: true
+  value: -1.56861
+
+- name: l_wrist_roll_joint
+  type: double
+  const: true
+  value: 0

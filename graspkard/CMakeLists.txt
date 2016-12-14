@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(graspkard)
 
+## Find catkin macros and libraries
+## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
+## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   suturo_manipulation_msgs
@@ -16,7 +19,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_definitions(-std=c++11 -g)
 
-catkin_package()
+## System dependencies are found with CMake's conventions
+# find_package(Boost REQUIRED COMPONENTS system)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -121,6 +125,32 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${r_libs_INCLUDE_DIRS}
+  ${YAML_CPP_INCLUDE_DIRS}
+)
+
+## Declare a C++ library
+# add_library(graspkard
+#   src/${PROJECT_NAME}/graspkard.cpp
+# )
+
+## Add cmake target dependencies of the library
+## as an example, code may need to be generated before libraries
+## either from message generation or dynamic reconfigure
+
+
+## Declare a C++ executable
+add_executable(graspkard_node src/pr2_r_vel_controller.cpp)
+
+## Add cmake target dependencies of the executable
+## same as for the library above
+add_dependencies(graspkard_node r_libs_visualization r_libs_conversions)
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(graspkard_node
+  ${catkin_LIBRARIES}
+  r_libs_visualization
+  r_libs_conversions
+  yaml-cpp
 )
 
 add_executable(movement_server src/action_manager.cpp)
@@ -185,4 +215,3 @@ target_link_libraries(movement_server
 # endif()
 
 ## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)

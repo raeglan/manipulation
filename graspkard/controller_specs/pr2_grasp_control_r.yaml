@@ -125,7 +125,7 @@ scope:
   - gripper_z: {rotate-vector: [{orientation-of: right_ee}, unit_z]}
   - gripper_x: {rotate-vector: [{orientation-of: right_ee}, unit_x]}
   - cylinder_z: {rotate-vector: [cylinder_rot, unit_z]}
-  - goal_dot: {vector-dot: [cylinder_z, gripper_z]}
+  - goal_dot: {abs: {vector-dot: [cylinder_z, gripper_z]}}
   - ori_ctrl: {double-sub: [1, goal_dot]}
 
   - cylinder_safety_width: {double-add: [cylinder_width, gripper_safety_margin]}
@@ -162,7 +162,7 @@ scope:
   - dist_z_upper: {double-mul: [{max: [{double-sub: [cylinder_safety_height, dist_z]}, 0]}, pos_scale]}
 
   - elbow_diff: {z-coord: {vector-sub: [{origin-of: right_ee}, {origin-of: right_elbow}]}}
-  - elbow_ctrl: {double-sub: [0, elbow_diff]}
+  - elbow_low: {double-sub: [0, elbow_diff]}
 
   - weight_pos_goal: 1 
   - weight_rot_control: 1
@@ -195,7 +195,7 @@ soft-constraints:
   - soft-constraint: [gripper_ctrl, 0.2, weight_grasp_goal, gripper_joint, right EE gripper stack]
 
   # Level elbow and gripper control
-  - soft-constraint: [elbow_ctrl, elbow_ctrl, weight_elbow_control, elbow_diff, right elbow up control slack]
+  - soft-constraint: [elbow_diff, {double-add: [elbow_diff, 0.6]}, weight_elbow_control, {z-coord: {origin-of: right_elbow}}, right elbow up control slack]
 
 hard-constraints:
   - hard-constraint:

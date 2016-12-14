@@ -6,7 +6,9 @@ scope:
   - neg_vel_limit_gripper: -1.0
   - pos_vel_limit_gripper: 1.0
 
-  - gripper_ctrl: {double-sub: [gripper_goal, gripper_joint]}
+  - pos_diff: {double-sub: [gripper_goal, gripper_joint]}
+  - vel_scale: 10.0
+  - gripper_ctrl: {double-mul: [pos_diff, vel_scale]}
 
   - feedback: {abs: gripper_ctrl}
 

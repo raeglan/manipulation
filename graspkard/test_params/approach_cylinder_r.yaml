@@ -11,9 +11,9 @@
 - name: cylinder_width
   type: double
   const: false
-  value: 0.06
+  value: 0.05
 
 - name: cylinder_height
   type: double
   const: true
-  value: 0.2
+  value: 0.14
