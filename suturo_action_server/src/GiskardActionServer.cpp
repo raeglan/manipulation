@@ -20,6 +20,7 @@ struct SBacklogParam {
 
 GiskardActionServer::GiskardActionServer(string _name) 
 : controllerInitialized(false)
+, terminateExecution(false)
 , lastFeedback(0)
 , dT(0)
 , rGripperIdx(-1)
@@ -27,7 +28,7 @@ GiskardActionServer::GiskardActionServer(string _name)
 , rGripperEffort(30)
 , lGripperEffort(30)
 , name(_name)
-, nWSR(100)
+, nWSR(1000)
 , nh("~")
 , server(nh, name, boost::bind(&GiskardActionServer::setGoal, this, _1), false)
 {
@@ -39,6 +40,7 @@ GiskardActionServer::GiskardActionServer(string _name)
 
 void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	//Node ctrlJoints = YAML::Load(goal->controlled_joints);
+	terminateExecution = false;
 	lastFeedback = 0;
 	dT = 0;
 	lastUpdate = ros::Time::now();
@@ -58,10 +60,25 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 			lGripperIdx = i;
 	}
 
-	Node yamlController = YAML::Load(goal->controller_yaml);
-	giskard::QPControllerSpec spec = yamlController.as<giskard::QPControllerSpec>();
-	controller = giskard::generate(spec);
 	controllerInitialized = false;
+	
+	try {
+		Node yamlController = YAML::Load(goal->controller_yaml);
+		giskard::QPControllerSpec spec = yamlController.as<giskard::QPControllerSpec>();
+		controller = giskard::generate(spec);
+	} catch (YAML::Exception e) {
+		ROS_ERROR("%s", e.what());
+		MoveRobotResult res;
+		res.reason_for_termination = MoveRobotResult::DEFECT_YAML;
+		server.setAborted(res);
+		return;
+	} catch (std::invalid_argument e) {
+		ROS_ERROR("%s", e.what());
+		MoveRobotResult res;
+		res.reason_for_termination = MoveRobotResult::DEFECT_CONTROLLER;
+		server.setAborted(res);
+		return;
+	}
 
 	size_t paramLength = 0;
 	size_t jntOffset = jointIndexMap.size();
@@ -101,7 +118,11 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 				paramLength += 7;
 				break;
 			default:
-				ROS_ERROR("STFU, wat is %d?!", p.type);
+				ROS_ERROR("Datatype of index %d is unknown! Aborting goal!", p.type);
+				MoveRobotResult res;
+				res.reason_for_termination = MoveRobotResult::INVALID_DATATYPE;
+				server.setAborted(res);
+				return;
 		}
 	}
 
@@ -124,18 +145,41 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	ROS_INFO("Controller started");
 	//jsSub = nh.subscribe("/joint_state", 1, &GiskardActionServer::jointStateCallback, this);
 	const giskard::Scope& scope = controller.get_scope();
-    feedbackExpr = scope.find_double_expression(goal->feedbackValue);
-
+	try {
+    	feedbackExpr = scope.find_double_expression(goal->feedbackValue);
+	} catch (std::invalid_argument e) {
+		ROS_ERROR("%s", e.what());
+		MoveRobotResult res;
+		res.reason_for_termination = MoveRobotResult::INVALID_FEEDBACK;
+		server.setAborted(res);	
+		return;	
+	}
     ros::spinOnce();
 
-	while (!server.isPreemptRequested() && ros::ok()) {
+	while (!server.isPreemptRequested() && ros::ok() && !terminateExecution) {
 		boost::shared_ptr<const sensor_msgs::JointState> js = ros::topic::waitForMessage<sensor_msgs::JointState>("joint_states");
 		jointStateCallback(js);
 	}
 
-	MoveRobotResult res;
-	res.reason_for_termination = MoveRobotResult::PREEMPTED;
-	server.setPreempted();
+	if (ros::ok()) {
+		if (terminateExecution) {
+			ROS_INFO("Server aborted due to infeasible goal!");
+			MoveRobotResult res;
+			res.reason_for_termination = MoveRobotResult::INFEASIBLE_GOAL;
+			server.setAborted(res);
+		} else {
+			ROS_INFO("Server was preempted!");
+			MoveRobotResult res;
+			res.reason_for_termination = MoveRobotResult::PREEMPTED;
+			server.setPreempted(res);
+		}
+	} else {
+		ROS_INFO("Server was terminated!");
+		MoveRobotResult res;
+		res.reason_for_termination = MoveRobotResult::TERMINATED;
+		server.setAborted(res);
+	}
+
 }	
 
 void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::ConstPtr& jointStateMsg) {
@@ -166,6 +210,7 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::Cons
 		if (controller.start(state, nWSR)) {
 			controllerInitialized = true;
 		} else {
+			terminateExecution = true;
 			ROS_ERROR("Starting of controller failed!");
 			return;
 		}

@@ -109,7 +109,7 @@ scope:
   - pos_vel_limit_arm_joints: 0.6
   - neg_vel_limit_torso_joint: -0.02
   - pos_vel_limit_torso_joint: 0.02
-  - gripper_safety_margin: 0.01
+  - gripper_safety_margin: 0.02
 
   # definition EE goals and control laws
   #  #arm position
@@ -159,7 +159,7 @@ scope:
   - dist_z_safety_margin: 0.02
   - cylinder_safety_height: {double-sub: [cylinder_height, dist_z_safety_margin]}
   - dist_z_lower: {double-mul: [{min: [{double-sub: [cylinder_safety_height, dist_z]}, 0]}, pos_scale]}
-  - dist_z_upper: {double-mul: [{max: [{double-sub: [cylinder_safety_height, dist_z]}, 0]}, pos_scale]}
+  - dist_z_upper: {double-mul: [{max: [{double-sub: [cylinder_safety_height, dist_z]}, dist_z_lower]}, pos_scale]}
 
   - elbow_diff: {z-coord: {vector-sub: [{origin-of: ee}, {origin-of: elbow}]}}
   - elbow_ctrl: {double-sub: [0, elbow_diff]}
@@ -186,7 +186,7 @@ soft-constraints:
   # Position constraint
   #- soft-constraint: [0, 0, weight_pos_goal, {vector-norm: goal_err}, right EE x-vel slack]
   - soft-constraint: [dist_xy_ctrl, dist_xy_ctrl, weight_pos_goal, dist_xy,EE x-vel slack]
-  - soft-constraint: [dist_z_lower, dist_z_lower, weight_pos_goal, dist_z,EE x-vel slack]
+  - soft-constraint: [dist_z_lower, dist_z_upper, weight_pos_goal, dist_z,EE x-vel slack]
 
   # Rotation constraint
   - soft-constraint: [ori_ctrl, ori_ctrl, weight_rot_control, goal_dot,EE rot slack]

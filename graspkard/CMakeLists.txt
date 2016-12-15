@@ -153,21 +153,21 @@ target_link_libraries(graspkard_node
   yaml-cpp
 )
 
-add_executable(movement_server src/action_manager.cpp)
+# add_executable(movement_server src/action_manager.cpp)
 
-add_dependencies(movement_server 
-  r_libs_visualization 
-  r_libs_conversions
-  suturo_manipulation_msgs_generate_messages_cpp
-)
+# add_dependencies(movement_server 
+#   r_libs_visualization 
+#   r_libs_conversions
+#   suturo_manipulation_msgs_generate_messages_cpp
+# )
 
-target_link_libraries(movement_server 
-  ${catkin_LIBRARIES}
-  r_libs_visualization
-  r_libs_conversions
-  yaml-cpp
-  #graspkard_msgs
-)
+# target_link_libraries(movement_server 
+#   ${catkin_LIBRARIES}
+#   r_libs_visualization
+#   r_libs_conversions
+#   yaml-cpp
+#   #graspkard_msgs
+# )
 
 #############
 ## Install ##

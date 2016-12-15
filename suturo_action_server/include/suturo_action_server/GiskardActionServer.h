@@ -28,6 +28,7 @@ public:
 	void decodeTransform(size_t startIdx, tf::Transform transform);
 protected:
 	int nWSR;
+	bool terminateExecution;
 	double rGripperEffort, lGripperEffort;
 	int lGripperIdx, rGripperIdx;
 	const string name;
