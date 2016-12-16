@@ -10,7 +10,7 @@ scope:
   - vel_scale: 10.0
   - gripper_ctrl: {double-mul: [pos_diff, vel_scale]}
 
-  - feedback: {abs: gripper_ctrl}
+  - feedback: {abs: pos_diff}
 
 controllable-constraints:
   - controllable-constraint: [neg_vel_limit_gripper, pos_vel_limit_gripper, 1, 0, gripper_joint]
