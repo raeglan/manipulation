@@ -27,7 +27,8 @@
     uri: https://github.com/airballking/qpOASES.git
     version: master
 
--git:
+- git:
     local-name: pr2_controllers
     uri: https://github.com/PR2/pr2_controllers.git
     version: master
+    
