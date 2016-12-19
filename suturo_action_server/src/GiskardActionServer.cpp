@@ -1,6 +1,6 @@
 #include "suturo_action_server/GiskardActionServer.h"
 #include <suturo_manipulation_msgs/TypedParam.h>
-#include <pr2_controllers_msgs/Pr2GripperCommand.h>
+#include <control_msgs/GripperCommand.h>
 
 using namespace YAML;
 using namespace suturo_manipulation_msgs;
@@ -32,8 +32,8 @@ GiskardActionServer::GiskardActionServer(string _name)
 , nh("~")
 , server(nh, name, boost::bind(&GiskardActionServer::setGoal, this, _1), false)
 {
-	rGripperPub = nh.advertise<pr2_controllers_msgs::Pr2GripperCommand>("r_pr2_gripper_command", 1);
-	lGripperPub = nh.advertise<pr2_controllers_msgs::Pr2GripperCommand>("l_pr2_gripper_command", 1);
+	rGripperPub = nh.advertise<control_msgs::GripperCommand>("r_pr2_gripper_command", 1);
+	lGripperPub = nh.advertise<control_msgs::GripperCommand>("l_pr2_gripper_command", 1);
 
 	server.start();
 }
@@ -180,6 +180,14 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		server.setAborted(res);
 	}
 
+	ROS_INFO("Setting velocity commands to zero!");
+	for (unsigned int i=0; i < velControllers.size(); i++) {
+		std_msgs::Float64 command;
+		command.data = 0.0;
+		velControllers[i].publish(command);
+	}
+
+	ros::spinOnce();
 }	
 
 void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::ConstPtr& jointStateMsg) {
@@ -225,7 +233,7 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::Cons
 		}
 
 		if (rGripperIdx > -1) {
-			pr2_controllers_msgs::Pr2GripperCommand cmd;
+			control_msgs::GripperCommand cmd;
 			cmd.position = state[rGripperIdx] + commands[rGripperIdx] * dT;
 			cmd.max_effort = rGripperEffort;
 
@@ -233,7 +241,7 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::Cons
 		}
 
 		if (lGripperIdx > -1) {
-			pr2_controllers_msgs::Pr2GripperCommand cmd;
+			control_msgs::GripperCommand cmd;
 			cmd.position = state[lGripperIdx] + commands[lGripperIdx] * dT;
 			cmd.max_effort = lGripperEffort;
 
