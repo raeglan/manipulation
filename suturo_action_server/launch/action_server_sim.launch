@@ -1,0 +1,11 @@
+<launch>
+  <include file="$(find iai_naive_kinematics_sim)/launch/pr2.launch"/>
+  <!-- <node pkg="suturo_action_server" type="suturo_action_server" name="movement_server" output="screen">
+  	<remap from="~joint_states" to="/joint_states" />
+  </node> -->
+
+<node pkg="tf" type="static_transform_publisher" name="fake_odom"
+        output="screen" args="0 0 0 0 0 0 1 odom odom_combined 100" />
+
+	<include file="$(find suturo_action_server)/launch/pub_cylinder_sim.launch"/>
+</launch>

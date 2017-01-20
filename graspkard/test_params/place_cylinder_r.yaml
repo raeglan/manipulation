@@ -1,0 +1,24 @@
+- name: goal_name
+  type: transform
+  const: false
+  value: goal_area base_link
+
+- name: object_name
+  type: transform
+  const: false
+  value: cylinder r_wrist_roll_link
+
+- name: cylinder_width
+  type: double
+  const: false
+  value: 0.05
+
+- name: cylinder_height
+  type: double
+  const: true
+  value: 0.14
+
+- name: r_gripper_effort
+  type: double
+  const: true
+  value: 50.0

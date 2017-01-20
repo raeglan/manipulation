@@ -1,0 +1,258 @@
+#
+# Copyright (C) 2015-2016 Georg Bartels <georg.bartels@cs.uni-bremen.de>
+#
+# This file is part of giskard.
+#
+# giskard is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
+
+scope:
+  # definition of some nice short-cuts
+  - unit_x: {vector3: [1, 0, 0]}
+  - unit_y: {vector3: [0, 1, 0]}
+  - unit_z: {vector3: [0, 0, 1]}
+
+
+  # definition of joint input variables
+  - torso_lift_joint: {input-var: 0}
+  - shoulder_pan_joint: {input-var: 1}
+  - shoulder_lift_joint: {input-var: 2}
+  - upper_arm_roll_joint: {input-var: 3}
+  - elbow_flex_joint: {input-var: 4}
+  - forearm_roll_joint: {input-var: 5}
+  - wrist_flex_joint: {input-var: 6}
+  - wrist_roll_joint: {input-var: 7}
+  - gripper_joint: {input-var: 8}
+
+  # definition goal input variables
+  - plate_pos_x: {input-var: 9}
+  - plate_pos_y: {input-var: 10}
+  - plate_pos_z: {input-var: 11}
+
+  - plate_rot_x: {input-var: 12}
+  - plate_rot_y: {input-var: 13}
+  - plate_rot_z: {input-var: 14}
+  - plate_rot_a: {input-var: 15}
+
+  - plate_width: {input-var: 16}
+  - plate_height: {double-mul: [{input-var: 17}, 0.5]}
+  - rim_angle: {input-var: 18} # In radians
+  - rim_width: {min: [{input-var: 19}, 0.04]}
+
+
+  # definition of joint transforms
+  - torso_lift:
+      frame: [{axis-angle: [unit_x, 0]}, {vector3: [-0.05, 0, {double-add: [0.739675, torso_lift_joint]}]}]
+  - shoulder_pan:
+      frame: [{axis-angle: [unit_z, shoulder_pan_joint]}, {vector3: [0, -0.188, 0]}]
+  - shoulder_lift:
+      frame: [{axis-angle: [unit_y, shoulder_lift_joint]}, {vector3: [0.1, 0, 0]}]
+  - upper_arm_roll: 
+      frame: [{axis-angle: [unit_x, upper_arm_roll_joint]}, {vector3: [0, 0, 0]}]
+  - elbow_flex:
+      frame: [{axis-angle: [unit_y, elbow_flex_joint]}, {vector3: [0.4, 0, 0]}]
+  - forearm_roll:
+      frame: [{axis-angle: [unit_x, forearm_roll_joint]}, {vector3: [0, 0, 0]}]
+  - wrist_flex:
+      frame: [{axis-angle: [unit_y, wrist_flex_joint]}, {vector3: [0.321, 0, 0]}]
+  - wrist_roll:
+      frame: [{axis-angle: [unit_x, wrist_roll_joint]}, {vector3: [0, 0, 0]}]
+  - gripper_offset:
+      frame: [{axis-angle: [unit_x, 0]}, {vector3: [0.18, 0, 0]}]
+
+  - plate_rot_axis: {vector3: [plate_rot_x, plate_rot_y, plate_rot_z]}
+  - plate_rot: {axis-angle: [plate_rot_axis, plate_rot_a]}
+  - inv_plate_rot: {inverse-rotation: plate_rot}
+  - plate_pos: {vector3: [plate_pos_x, plate_pos_y, plate_pos_z]}
+  
+  - plate_radius: {double-mul: [plate_width, 0.5]}
+
+  - plate_frame:
+      frame: [plate_rot, plate_pos]
+
+
+  # definition of elbow FK
+  - elbow:
+      frame-mul:
+      - torso_lift
+      - shoulder_pan
+      - shoulder_lift
+      - upper_arm_roll
+      - elbow_flex
+
+  # defintion of EE FK
+  - ee:
+      frame-mul:
+      - elbow
+      - forearm_roll
+      - wrist_flex
+      - wrist_roll
+      - gripper_offset
+
+  # control params
+  - pos_p_gain: 1.0
+  - rot_p_gain: 1.0
+  - pos_thresh: 0.05
+  - rot_thresh: 0.1
+  - weight_arm_joints: 0.001
+  - weight_torso_joint: 0.001
+  - weight_align_goal: 0.5
+  - weight_elbow_control: 2.0
+  - weight_grasp_goal: 2.0
+  - neg_vel_limit_arm_joints: -0.6
+  - pos_vel_limit_arm_joints: 0.6
+  - neg_vel_limit_torso_joint: -0.02
+  - pos_vel_limit_torso_joint: 0.02
+  - gripper_safety_margin: 0.02
+
+  # Shorthands
+  - rim_sin: {sin: rim_angle}
+  - rim_cos: {cos: rim_angle}
+
+  # Default pre-rim position
+  - pre_rim_xy: {double-add: [{double-mul: [rim_cos, 0.03]}, plate_radius]}
+  - pre_rim_z: {double-add: [plate_height, {double-mul: [rim_sin, 0.03]}]}
+
+  # Goal positions
+  - g_rim_xy: {double-add: [{double-mul: [{double-sub: [0, rim_width]}, rim_cos]}, plate_radius]}
+  - g_rim_z: {double-add: [plate_height, {double-mul: [rim_sin, rim_width]}]}
+
+  # definition EE goals and control laws
+  # Align gripper to center axis of plate
+  - trans: {origin-of: ee}
+  - plate_z: {rotate-vector: [plate_rot, unit_z]} # Z axis of the plate
+  - gr_rot: {orientation-of: ee} # Rotation of the gripper
+  - gr_x: {rotate-vector: [gr_rot, unit_x]} # Forward axis of gripper in ws
+  - gr_z: {rotate-vector: [gr_rot, unit_z]} # Sideways axis of gripper in ws
+
+  - dist_center: {abs: {vector-dot: [{vector-sub: [trans, plate_pos]}, {vector-cross: [gr_x, plate_z]}]}}
+  - dist_c_err: {double-sub: [0, dist_center]}
+
+  # Make gripper match the angle of the rim
+  - gr_x_pl: {rotate-vector: [inv_plate_rot, gr_x]}
+  - gr_z_pl: {rotate-vector: [inv_plate_rot, gr_z]}
+  
+  - pitch_dist: {abs: {double-sub: [rim_sin, {z-coord: gr_x_pl}]}}
+  - pitch_err: {double-sub: [0, pitch_dist]}
+
+  - roll_dist: {z-coord: gr_z_pl}
+  - roll_err: {double-sub: [0, roll_dist]}
+
+  # Gripper in plate
+  - trans_pl: {rotate-vector: [inv_plate_rot, {vector-sub: [trans, plate_pos]}]}
+  - trans_pl_xy: {vector3: [{x-coord: trans_pl}, {y-coord: trans_pl}, 0]}
+  - trans_pl_z: {z-coord: trans_pl}
+  - trans_pl_xy_n: {vector-norm: trans_pl_xy}
+
+  # Distances in rim-world
+  - trans_x_rim: {double-sub: [trans_pl_xy_n, plate_radius]}
+  - trans_y_rim: {double-sub: [trans_pl_z, plate_height]}
+
+  # Distance to the rim's plane
+  - hp_dist: {abs: {double-add: [{double-mul: [trans_x_rim, rim_sin]}, {double-mul: [rim_cos, trans_y_rim]}]}}
+  - hp_err: {double-sub: [0, hp_dist]}
+
+  # Gripper opening
+  - gripper_err: {double-sub: [0.01, gripper_joint]}
+  
+  - weight_rot: 3
+
+  - pre_factor:
+      min:
+        - double-add:
+            - {double-div: [hp_dist, 0.003]} # Move gripper into rim-plane; Margin 3mm
+            - {double-mul: [weight_rot, dist_center]} # Yaw orientation
+            - {double-mul: [weight_rot, pitch_err]}
+            - {double-mul: [weight_rot, {z-coord: gr_z_pl}]}
+            - {double-div: [gripper_joint, 0.01]}
+        - 1
+  - goal_factor: {max: [{double-sub: [1, pre_factor]}, 0]}
+
+  - xy_vel:
+      double-add:
+        - {double-mul: [pre_factor, {double-sub: [pre_rim_xy, trans_pl_xy_n]}]}
+        - {double-mul: [goal_factor, {double-sub: [g_rim_xy, trans_pl_xy_n]}]}
+  - z_vel:
+      double-add:
+        - {double-mul: [pre_factor, {double-sub: [pre_rim_z, trans_pl_z]}]}
+        - {double-mul: [goal_factor, {double-sub: [g_rim_z, trans_pl_z]}]}
+  # Elbow things
+  - elbow_diff: {z-coord: {vector-sub: [{origin-of: ee}, {origin-of: elbow}]}}
+  - elbow_ctrl: {double-sub: [0, elbow_diff]}
+
+  - weight_pos_goal: 1 
+  - weight_rot_control: 1
+
+  - feedback: {double-add: [{double-sub: [g_rim_xy, trans_x_rim]}, hp_dist]}
+
+controllable-constraints:
+  # torso joint
+  - controllable-constraint: [neg_vel_limit_torso_joint, pos_vel_limit_torso_joint, weight_torso_joint, 0, torso_lift_joint]
+  # arm joints
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 1, shoulder_pan_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 2, shoulder_lift_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 3, upper_arm_roll_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 4, elbow_flex_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 5, forearm_roll_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 6, wrist_flex_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 7, wrist_roll_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 8, gripper_joint]
+
+soft-constraints:
+  # Position constraint
+  #- soft-constraint: [0, 0, weight_pos_goal, {vector-norm: goal_err}, right EE x-vel slack]
+  - soft-constraint: [xy_vel, xy_vel, weight_pos_goal, trans_pl_xy_n, EE xy-vel slack]
+  - soft-constraint: [z_vel, z_vel, weight_pos_goal, trans_pl_z, EE z-vel slack]
+  - soft-constraint: [hp_err, hp_err, weight_pos_goal, hp_dist, EE hp-dist slack]
+
+  # Rotation constraint
+  - soft-constraint: [pitch_err, pitch_err, weight_rot_control, pitch_dist, EE pitch slack]
+  - soft-constraint: [dist_c_err, dist_c_err, weight_rot_control, dist_center, EE yaw stack]
+  - soft-constraint: [roll_err, roll_err, weight_rot_control, roll_dist, EE roll stack]
+
+  - soft-constraint: [gripper_err, gripper_err, weight_grasp_goal, gripper_joint, EE gripper stack]
+
+  # Level elbow and gripper control
+  - soft-constraint: [{double-sub: [elbow_ctrl, 0.6]}, elbow_ctrl, weight_elbow_control, elbow_diff, elbow up control slack]
+
+hard-constraints:
+  - hard-constraint:
+      - {double-sub: [0.0115, torso_lift_joint]}
+      - {double-sub: [0.325, torso_lift_joint]}
+      - torso_lift_joint
+  - hard-constraint:
+      - {double-sub: [-2.1353, shoulder_pan_joint]}
+      - {double-sub: [0.5646, shoulder_pan_joint]}
+      - shoulder_pan_joint
+  - hard-constraint:
+      - {double-sub: [-0.3536, shoulder_lift_joint]}
+      - {double-sub: [1.2963, shoulder_lift_joint]}
+      -  shoulder_lift_joint
+  - hard-constraint:
+      - {double-sub: [-3.75, upper_arm_roll_joint]}
+      - {double-sub: [0.65, upper_arm_roll_joint]}
+      - upper_arm_roll_joint
+  - hard-constraint:
+      - {double-sub: [-2.1213, elbow_flex_joint]}
+      - {double-sub: [-0.15, elbow_flex_joint]}
+      - elbow_flex_joint
+  - hard-constraint:
+      - {double-sub: [-2.0, wrist_flex_joint]}
+      - {double-sub: [-0.1, wrist_flex_joint]}
+      - wrist_flex_joint
+  - hard-constraint:
+      - {double-sub: [0.0, gripper_joint]}
+      - {double-sub: [0.1, gripper_joint]}
+      - gripper_joint

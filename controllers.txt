@@ -1,0 +1,153 @@
+Controller Documentation
+
+## graspkard / gripper_control.yaml
+	Description: Bring gripper fingers into a position
+
+	Joints: 
+		- graspkard/config/pr2_right_gripper.yaml
+		- graspkard/config/pr2_left_gripper.yaml	
+
+	Params:
+		- Goal Position : DOUBLE
+
+	Feedback:
+		- Name: "feedback"
+		- Desc: Closer to 0 is better
+
+
+## graspkard / pr2_grasp_control_r.yaml
+	Description: Approaches a cylinder using the right arm, while opening the gripper and keeping elbow and gripper level
+
+	Joints: 
+		- graspkard/config/pr2_upper_body_right_arm.yaml	
+
+	Params:
+		- Transformation of the cylinder: TRANSFORM
+		- Width of the cylinder: DOUBLE
+		- Height of the cylinder: DOUBLE 
+
+	Feedback:
+		- Name: "feedback"
+		- Desc: Closer to 0 is better
+
+
+## graspkard / pr2_grasp_control_l.yaml
+	Description: Approaches a cylinder using the left arm, while opening the gripper and keeping elbow and gripper level
+
+	Joints: 
+		- graspkard/config/pr2_upper_body_left_arm.yaml	
+
+	Params:
+		- Transformation of the cylinder: TRANSFORM
+		- Width of the cylinder: DOUBLE
+		- Height of the cylinder: DOUBLE 
+
+	Feedback:
+		- Name: "feedback"
+		- Desc: Closer to 0 is better
+
+
+## graspkard / pr2_upper_body_joint_control.yaml
+	Description: Tries to reach a goal in joint space for the upper body of the pr2.
+				 The grippers are NOT included!
+
+	Joints: 
+		- graspkard/config/pr2_upper_body.yaml
+
+	Params:
+		- torso_lift_joint: DOUBLE
+		- r_shoulder_pan_joint: DOUBLE
+		- r_shoulder_lift_joint: DOUBLE
+		- r_upper_arm_roll_joint: DOUBLE
+		- r_elbow_flex_joint: DOUBLE
+		- r_forearm_roll_joint: DOUBLE
+		- r_wrist_flex_joint: DOUBLE
+		- r_wrist_roll_joint: DOUBLE
+		- l_shoulder_pan_joint: DOUBLE
+		- l_shoulder_lift_joint: DOUBLE
+		- l_upper_arm_roll_joint: DOUBLE
+		- l_elbow_flex_joint: DOUBLE
+		- l_forearm_roll_joint: DOUBLE
+		- l_wrist_flex_joint: DOUBLE
+		- l_wrist_roll_joint: DOUBLE
+
+
+	Feedback:
+		- Name: "feedback"
+		- Desc: Closer to 0 is better
+
+## graspkard / pr2_right_arm_joint_control.yaml
+	Description: Tries to reach a goal in joint space for the right arm of the pr2.
+				 The gripper is NOT included, even though it is part of the parameter list!
+
+	Joints: 
+		- graspkard/config/pr2_right_arm.yaml
+
+	Params:
+		- r_shoulder_pan_joint: DOUBLE
+		- r_shoulder_lift_joint: DOUBLE
+		- r_upper_arm_roll_joint: DOUBLE
+		- r_elbow_flex_joint: DOUBLE
+		- r_forearm_roll_joint: DOUBLE
+		- r_wrist_flex_joint: DOUBLE
+		- r_wrist_roll_joint: DOUBLE
+		- r_gripper_joint: DOUBLE
+
+	Feedback:
+		- Name: "feedback"
+		- Desc: Closer to 0 is better
+
+## graspkard / pr2_left_arm_joint_control.yaml
+	Description: Tries to reach a goal in joint space for the left arm of the pr2.
+				 The gripper is NOT included, even though it is part of the parameter list!
+
+	Joints: 
+		- graspkard/config/pr2_left_arm.yaml
+
+	Params:
+		- l_shoulder_pan_joint: DOUBLE
+		- l_shoulder_lift_joint: DOUBLE
+		- l_upper_arm_roll_joint: DOUBLE
+		- l_elbow_flex_joint: DOUBLE
+		- l_forearm_roll_joint: DOUBLE
+		- l_wrist_flex_joint: DOUBLE
+		- l_wrist_roll_joint: DOUBLE
+		- l_gripper_joint: DOUBLE
+
+	Feedback:
+		- Name: "feedback"
+		- Desc: Closer to 0 is better
+
+
+## graspkard / pr2_place_control_r.yaml
+	Description: Uses the right arm to place an object 
+
+	Joints: 
+		- graspkard/config/pr2_upper_body_right_arm.yaml
+
+	Params:
+		- pose of goal area relative to base_link: TRANSFORM
+		- object pose relative to r_wrist_roll_link: TRANSFORM
+		- object width: DOUBLE
+		- object height: DOUBLE
+
+	Feedback:
+		- Name: "feedback"
+		- Desc: Closer to 0 is better
+
+
+## graspkard / pr2_place_control_l.yaml
+	Description: Uses the left arm to place an object 
+
+	Joints: 
+		- graspkard/config/pr2_upper_body_left_arm.yaml
+
+	Params:
+		- pose of goal area relative to base_link: TRANSFORM
+		- object pose relative to l_wrist_roll_link: TRANSFORM
+		- object width: DOUBLE
+		- object height: DOUBLE
+
+	Feedback:
+		- Name: "feedback"
+		- Desc: Closer to 0 is better
