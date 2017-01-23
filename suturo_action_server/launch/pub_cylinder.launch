@@ -1,0 +1,11 @@
+<launch>
+<node pkg="tf" type="static_transform_publisher" name="cylinder_publisher"
+        output="screen" args="0.73 0.02 0.913 0 0 0 1 odom_combined cylinder 100" /> 
+
+<node pkg="tf" type="static_transform_publisher" name="red_dropzone_publisher"
+        output="screen" args="0.76 -0.3 0.841 0 0 0 1 odom_combined red_dropzone 100" /> 
+
+<node pkg="tf" type="static_transform_publisher" name="yellow_dropzone_publisher"
+        output="screen" args="0.76 0.3 0.841 0 0 0 1 odom_combined yellow_dropzone 100" /> 
+
+</launch>

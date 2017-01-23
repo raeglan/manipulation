@@ -1,26 +1,28 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(graspkard)
+project(suturo_action_server)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
-  suturo_manipulation_msgs
-  sensor_msgs
-  std_msgs
   giskard
   message_generation
   message_runtime
-  r_libs
   roscpp
+  rospy
+  sensor_msgs
+  std_msgs
+  suturo_manipulation_msgs
   tf_conversions
+  r_libs
+  control_msgs
 )
 
 add_definitions(-std=c++11 -g)
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+#find_package(Boost REQUIRED COMPONENTS system)
+
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -75,7 +77,7 @@ add_definitions(-std=c++11 -g)
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   geometry_msgs
+#   sensor_msgs#   std_msgs#   suturo_manipulation_msgs
 # )
 
 ################################################
@@ -108,10 +110,7 @@ add_definitions(-std=c++11 -g)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES graspkard
-  CATKIN_DEPENDS geometry_msgs suturo_manipulation_msgs giskard r_libs roscpp
-#  DEPENDS system_lib
+  CATKIN_DEPENDS suturo_manipulation_msgs giskard r_libs roscpp
 )
 
 ###########
@@ -129,45 +128,35 @@ include_directories(
 )
 
 ## Declare a C++ library
-# add_library(graspkard
-#   src/${PROJECT_NAME}/graspkard.cpp
+# add_library(suturo_action_server
+#   src/${PROJECT_NAME}/suturo_action_server.cpp
 # )
-
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
 
 
 ## Declare a C++ executable
-add_executable(graspkard_node src/pr2_r_vel_controller.cpp)
-
-## Add cmake target dependencies of the executable
-## same as for the library above
-add_dependencies(graspkard_node r_libs_visualization r_libs_conversions)
+ add_executable(suturo_action_server src/main_server.cpp src/GiskardActionServer.cpp)
+ add_dependencies(suturo_action_server r_libs_visualization r_libs_conversions suturo_manipulation_msgs_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(graspkard_node
+target_link_libraries(suturo_action_server
   ${catkin_LIBRARIES}
   r_libs_visualization
   r_libs_conversions
   yaml-cpp
 )
 
-# add_executable(movement_server src/action_manager.cpp)
+add_executable(client_test src/client_test.cpp)
 
-# add_dependencies(movement_server 
-#   r_libs_visualization 
-#   r_libs_conversions
-#   suturo_manipulation_msgs_generate_messages_cpp
-# )
+add_dependencies(client_test 
+  graspkard_msgs
+  suturo_manipulation_msgs_generate_messages_cpp
+  #${graspkard_EXPORTED_TARGETS}
+)
 
-# target_link_libraries(movement_server 
-#   ${catkin_LIBRARIES}
-#   r_libs_visualization
-#   r_libs_conversions
-#   yaml-cpp
-#   #graspkard_msgs
-# )
+target_link_libraries(client_test 
+  ${catkin_LIBRARIES}
+  yaml-cpp
+)
 
 #############
 ## Install ##
@@ -184,7 +173,7 @@ target_link_libraries(graspkard_node
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS graspkard graspkard_node
+# install(TARGETS suturo_action_server suturo_action_server_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -209,9 +198,10 @@ target_link_libraries(graspkard_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_graspkard.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_suturo_action_server.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 
 ## Add folders to be run by python nosetests
+# catkin_add_nosetests(test)

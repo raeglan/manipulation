@@ -1,0 +1,15 @@
+torso_lift_joint: 0.1797
+r_upper_arm_roll_joint: -0.614271
+r_shoulder_pan_joint: -1.23679
+r_shoulder_lift_joint: -0.247593
+r_forearm_roll_joint: 4.94757
+r_elbow_flex_joint: -1.38094
+r_wrist_flex_joint: -1.56861
+r_wrist_roll_joint: 3.32855
+l_upper_arm_roll_joint: -0.614271
+l_shoulder_pan_joint: -1.23679
+l_shoulder_lift_joint: -0.247593
+l_forearm_roll_joint: 4.94757
+l_elbow_flex_joint: -1.38094
+l_wrist_flex_joint: -1.56861
+l_wrist_roll_joint: 3.32855

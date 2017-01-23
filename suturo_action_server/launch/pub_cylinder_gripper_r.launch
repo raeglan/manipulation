@@ -1,0 +1,8 @@
+<launch>
+<node pkg="tf" type="static_transform_publisher" name="trololo"
+        output="screen" args="0.179 0.003 0.043 0.902 0.432 -0.016 -0.004 r_wrist_roll_link cylinder 100" /> 
+
+<node pkg="tf" type="static_transform_publisher" name="trololololol"
+        output="screen" args="0.76 -0.3 0.841 0 0 0 1 odom_combined goal_area 100" /> 
+
+</launch>

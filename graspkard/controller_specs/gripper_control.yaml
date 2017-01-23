@@ -1,0 +1,25 @@
+
+scope:
+  - gripper_joint: {input-var: 0}
+  - gripper_goal: {input-var: 1}
+
+  - neg_vel_limit_gripper: -1.0
+  - pos_vel_limit_gripper: 1.0
+
+  - pos_diff: {double-sub: [gripper_goal, gripper_joint]}
+  - vel_scale: 10.0
+  - gripper_ctrl: {double-mul: [pos_diff, vel_scale]}
+
+  - feedback: {abs: pos_diff}
+
+controllable-constraints:
+  - controllable-constraint: [neg_vel_limit_gripper, pos_vel_limit_gripper, 1, 0, gripper_joint]
+
+soft-constraints:
+  - soft-constraint: [gripper_ctrl, gripper_ctrl, 1, gripper_joint, gripper vel slack]
+
+hard-constraints:
+  - hard-constraint:
+    - {double-sub: [-0.001, gripper_joint]}
+    - {double-sub: [0.1, gripper_joint]}
+    - gripper_joint
