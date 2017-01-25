@@ -1,0 +1,74 @@
+cylinder:
+  id: 1
+  pose:
+    frame_id: odom_combined
+    orientation: !!python/tuple [0.004978239070624113, 0.00020869937725365162, 0.04188588634133339,
+      0.9991101622581482]
+    translation: !!python/tuple [0.4920726418495178, -0.04930777847766876, 1.029859185218811]
+  vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
+    state:
+    - !!python/object/new:std_msgs.msg._Header.Header
+      state:
+      - 0
+      - !!python/object/new:genpy.rostime.Time
+        state: [0, 0]
+      - cylinder
+    - suturo_obstacle_scene
+    - 1
+    - 3
+    - 0
+    - !!python/object/new:geometry_msgs.msg._Pose.Pose
+      state:
+      - !!python/object/new:geometry_msgs.msg._Point.Point
+        state: [0.0, 0.0, 0.0]
+      - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
+        state: [0.0, 0.0, 0.0, 1.0]
+    - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
+      state: [0.05999999865889549, 0.05999999865889549, 0.20000000298023224]
+    - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
+      state: [0.7333333492279053, 1.0, 0.0, 1.0]
+    - !!python/object/new:genpy.rostime.Duration
+      state: [0, 0]
+    - false
+    - []
+    - []
+    - ''
+    - package://suturo_action_tester/meshes/plate.dae
+    - true
+plate:
+  id: 0
+  pose:
+    frame_id: odom_combined
+    orientation: !!python/tuple [-0.0006454364047385752, 0.02042587473988533, -0.0514192096889019,
+      0.9984681010246277]
+    translation: !!python/tuple [0.500182569026947, 0.16121023893356323, 0.8261642456054688]
+  vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
+    state:
+    - !!python/object/new:std_msgs.msg._Header.Header
+      state:
+      - 0
+      - !!python/object/new:genpy.rostime.Time
+        state: [0, 0]
+      - plate
+    - suturo_obstacle_scene
+    - 0
+    - 10
+    - 0
+    - !!python/object/new:geometry_msgs.msg._Pose.Pose
+      state:
+      - !!python/object/new:geometry_msgs.msg._Point.Point
+        state: [0.0, 0.0, 0.0]
+      - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
+        state: [0.0, 0.0, 0.0, 1.0]
+    - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
+      state: [1.0, 1.0, 1.0]
+    - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
+      state: [1.0, 1.0, 1.0, 1.0]
+    - !!python/object/new:genpy.rostime.Duration
+      state: [0, 0]
+    - false
+    - []
+    - []
+    - ''
+    - package://suturo_action_tester/meshes/plate.dae
+    - true

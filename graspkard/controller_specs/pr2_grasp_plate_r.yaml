@@ -182,12 +182,12 @@ scope:
 
   - xy_vel:
       double-add:
-        - {double-mul: [pre_factor, {double-sub: [pre_rim_xy, trans_pl_xy_n]}]}
-        - {double-mul: [goal_factor, {double-sub: [g_rim_xy, trans_pl_xy_n]}]}
+        - 0.0 # {double-mul: [pre_factor, {double-sub: [pre_rim_xy, trans_pl_xy_n]}]}
+        - {double-mul: [1.0, {double-sub: [g_rim_xy, trans_pl_xy_n]}]} # goal_factor
   - z_vel:
       double-add:
-        - {double-mul: [pre_factor, {double-sub: [pre_rim_z, trans_pl_z]}]}
-        - {double-mul: [goal_factor, {double-sub: [g_rim_z, trans_pl_z]}]}
+        - 0.0 # {double-mul: [pre_factor, {double-sub: [pre_rim_z, trans_pl_z]}]}
+        - {double-mul: [1.0, {double-sub: [g_rim_z, trans_pl_z]}]} # goal_factor
   # Elbow things
   - elbow_diff: {z-coord: {vector-sub: [{origin-of: ee}, {origin-of: elbow}]}}
   - elbow_ctrl: {double-sub: [0, elbow_diff]}
@@ -213,7 +213,7 @@ controllable-constraints:
 soft-constraints:
   # Position constraint
   #- soft-constraint: [0, 0, weight_pos_goal, {vector-norm: goal_err}, right EE x-vel slack]
-  - soft-constraint: [xy_vel, xy_vel, weight_pos_goal, trans_pl_xy_n, EE xy-vel slack]
+  #- soft-constraint: [xy_vel, xy_vel, weight_pos_goal, trans_pl_xy_n, EE xy-vel slack]
   - soft-constraint: [z_vel, z_vel, weight_pos_goal, trans_pl_z, EE z-vel slack]
   - soft-constraint: [hp_err, hp_err, weight_pos_goal, hp_dist, EE hp-dist slack]
 
