@@ -1,0 +1,145 @@
+(
+scope = {
+	unitX = vec3(1,0,0);
+	unitY = vec3(0,1,0);
+	unitZ = vec3(0,0,1);
+
+	# Joint input
+	j_torso_lift    = input(0);
+	j_shoulder_pan  = input(1);
+	j_shoulder_lift = input(2);
+	j_upper_arm_roll= input(3);
+	j_elbow_flex    = input(4);
+	j_forearm_roll  = input(5);
+	j_wrist_flex    = input(6);
+	j_wrist_roll    = input(7);
+	j_gripper       = input(8);
+
+	# Plate input
+	plate_pos = vec3(input(9), input(10), input(11));
+	plate_rot = axAng(vec3(input(12), input(13), input(14)), input(15));
+
+	plate_width  = input(16);
+	plate_height = input(17) * 0.5;
+	rim_angle    = input(18);
+	rimWidth    = min(input(19), 0.04);
+
+	# Robot
+	torso_lift     = frame(axAng(unitX, 0),                vec3(-0.05, 0, 0.739675 + j_torso_lift));
+	shoulder_pan   = frame(axAng(unitZ, j_shoulder_pan),   vec3(0, -0.188, 0));
+	shoulder_lift  = frame(axAng(unitY, j_shoulder_lift),  vec3(0.1, 0, 0));
+	upper_arm_roll = frame(axAng(unitX, j_upper_arm_roll), vec3(0, 0, 0));
+	elbow_flex     = frame(axAng(unitY, j_elbow_flex),     vec3(0.4, 0, 0));
+	forearm_roll   = frame(axAng(unitX, j_forearm_roll),   vec3(0, 0, 0));
+	wrist_flex     = frame(axAng(unitY, j_wrist_flex),     vec3(0.321, 0, 0));
+	wrist_roll     = frame(axAng(unitX, j_wrist_roll),     vec3(0, 0, 0));
+	gripper_offset = frame(axAng(unitX, 0),                vec3(0.18, 0, 0));
+
+	# Frame chains
+	elbow = torso_lift * shoulder_pan * shoulder_lift * upper_arm_roll * elbow_flex;
+	ee = elbow * forearm_roll * wrist_flex * wrist_roll * gripper_offset;
+
+	# Further definitions
+	plateRadius = plate_width * 0.5;
+	inv_plate_rot = invRot(plate_rot);
+	rimSin = sin(rim_angle);
+	rimCos = cos(rim_angle);
+
+	preRimX = rimCos * 0.03 + plateRadius;
+	preRimZ = rimSin * rimWidth + plate_height;
+
+	gRimX = plateRadius - rimCos * rimWidth;
+	gRimZ = plate_height - rimSin * rimWidth;
+
+	# Controlly things
+	trans = originOf(ee);
+	plateZ = plate_rot * unitZ;
+	grRot = orientationOf(ee);
+	grX = grRot * unitX;
+	grZ = grRot * unitZ;
+
+	distC = abs((trans - plate_pos) * cross(grX, plateZ));
+	distCerr = -distC;
+
+	# Rotational constraints for gripper
+	grXpl = inv_plate_rot * grX;
+	grZpl = inv_plate_rot * grZ;
+
+	pitchDist = abs(rimSin - grXpl.x); # Alternatives: grXpl[0], xcoord(grXpl)
+	pitchErr = -pitchDist;
+
+	rollDist = grZpl.z;
+	rollErr  = -rollDist;
+
+	# Convert gripper to plate
+	transPl = inv_plate_rot * (trans - plate_pos);
+	transPlXY = vec3(transPl.x, transPl.y, 0);
+	transPlXYn = norm(transPlXY); # Alternative: |transPlXY|
+
+	# Coordinates in rim world
+	# rim is 2D-System: 
+	#      x(y) = y * rimCos
+	#      y(x) = x * rimSin
+	transXrim = plateRadius - transPlXYn;
+	transYrim = transPl.z - plate_height;
+
+	# Distance to rim plane
+	hpDist = abs(transXrim * rimSin + rimCos * transYrim)
+	hpErr = -hpDist;
+
+	# Gripper opening
+	gripperErr = 0.01 - j_gripper;
+
+	weightRot = 3;
+	preFac = min(1, hpDist / 0.003 + weightRot * (distC + pitchErr + rollDist) + j_gripper / 0.01);
+	goalFac = max(0, 1 - preFac);
+
+	xyVel = preFac * (preRimX - transPlXYn) + goalFac * (gRimX - transPlXYn);
+	zVel  = preFac * (preRimZ - transPl.z)  + goalFac * (gRimZ - transPl.z);
+
+	# Elbow things
+	elbowDiff = trans - originOf(elbow);
+	elbowCtrl = -elbowDiff;
+
+	# Feedback
+	feedback = gRimX - transXrim + hpDist;
+
+	# Limits, weights and the like
+	negVelLimitTorso = -0.02;
+	posVelLimitTorso =  0.02;
+	negVelLimitArm   = -0.6;
+	posVelLimitArm   =  0.6;
+
+	weightTorso = 0.001;
+	weightArm   = 0.001;
+
+	weightRotControl = 4;
+	weightGraspControl = 5;
+};
+
+controllableConstraints = {
+	controllableConstraint(negVelLimitTorso, posVelLimitTorso, weightTorso, 0, j_torso_lift);
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, 1, j_shoulder_pan);
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, 2, j_shoulder_lift);
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, 3, j_upper_arm_roll);
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, 4, j_elbow_flex);
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, 5, j_forearm_roll);
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, 6, j_wrist_flex);
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, 7, j_wrist_roll);
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, 8, j_gripper);
+};
+
+softConstraints = {
+	# Rotational constraints
+	softConstraint(pitchErr, pitchErr, weightRotControl, pitchDist, "EE pitch slack");
+	softConstraint(distCerr, distCerr, weightRotControl, distC, "EE yaw slack");
+	softConstraint(rollErr, rollErr, weightRotControl, rollDist, "EE roll slack");
+
+	# Gripper constraint
+	softConstraint(gripperErr, gripperErr, weightGraspControl, j_gripper, "Gripper slack");
+
+	
+};
+
+hardConstraints = {}
+)
