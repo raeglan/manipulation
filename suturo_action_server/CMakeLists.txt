@@ -159,12 +159,6 @@ target_link_libraries(client_test
   yaml-cpp
 )
 
-add_executable(parserTest src/parserTest.cpp)
-target_link_libraries(parserTest 
-  ${catkin_LIBRARIES}
-  yaml-cpp
-)
-
 #############
 ## Install ##
 #############
