@@ -5,7 +5,7 @@
     <rosparam param="joint_names"
       file="$(find graspkard)/config/pr2_upper_body_right_arm.yaml" />
     <param name="controller_description" 
-      textfile="$(find graspkard)/controller_specs/knife_grasp.yaml" />
+      textfile="$(find graspkard)/controller_specs/cut.yaml" />
     <param name="frame_id" value="base_link" />
     <remap from="~joint_states" to="/joint_states" />
     <param name="nWSR" value="1000"/>

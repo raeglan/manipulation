@@ -117,21 +117,22 @@ void goal_callback(const geometry_msgs::Pose::ConstPtr& msg)
 
   visMan.beginNewDrawCycle();
   double cWidth = 0.06;
-  double cHeight = 0.2;
+  double cLength = 0.2;
+  double cHeight = 0.06;
 
-  Affine3d knifepos;
+  Affine3d cakepos;
 
   geometry_msgs::Pose asd = *msg;
 
   tf::Pose temp;
   tf::poseMsgToTF(asd, temp);
-  tf::transformTFToEigen(temp, knifepos);
+  tf::transformTFToEigen(temp, cakepos);
 
   visualization_msgs::MarkerArray markers;
   markers.markers.push_back(visMan.shapeMarker(0, 
-                                  knifepos, 
+                                  cakepos, 
                                   visualization_msgs::Marker::CUBE, 
-                                  Vector3d(cHeight, 0.01, cWidth ),
+                                  Vector3d(cLength, cHeight , cWidth ),
                                   0.f, 
                                   1.f, 
                                   0.f, 
@@ -151,7 +152,10 @@ void goal_callback(const geometry_msgs::Pose::ConstPtr& msg)
   state_[joint_names_.size() + 5] = msg->orientation.z;
   state_[joint_names_.size() + 6] = msg->orientation.w;
 
-  state_[joint_names_.size() + 7] = 0.01;
+  state_[joint_names_.size() + 7] = cLength;
+  state_[joint_names_.size() + 8] = cWidth;
+  state_[joint_names_.size() + 9] = cHeight;
+
 
   if (!controller_started_)
   {
@@ -197,7 +201,7 @@ int main(int argc, char **argv)
   YAML::Node node = YAML::Load(controller_description);
   giskard::QPControllerSpec spec = node.as< giskard::QPControllerSpec >();
   controller_ = giskard::generate(spec);
-  state_ = Eigen::VectorXd::Zero(joint_names_.size() + 8);
+  state_ = Eigen::VectorXd::Zero(joint_names_.size() + 10);
   controller_started_ = false;
 
   for (std::vector<std::string>::iterator it = joint_names_.begin(); it != joint_names_.end(); ++it)
