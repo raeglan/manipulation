@@ -1,6 +1,7 @@
 #include "suturo_action_server/GiskardActionServer.h"
 #include <suturo_manipulation_msgs/TypedParam.h>
 #include <control_msgs/GripperCommand.h>
+#include <giskard/GiskardLangParser.h>
 
 using namespace YAML;
 using namespace suturo_manipulation_msgs;
@@ -70,8 +71,34 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		ROS_ERROR("%s", e.what());
 		MoveRobotResult res;
 		res.reason_for_termination = MoveRobotResult::DEFECT_YAML;
-		server.setAborted(res);
-		return;
+		try {
+			giskard::GiskardLangParser glParser;
+			giskard::QPControllerSpec spec = glParser.parseQPController(goal->controller_yaml);
+			
+			YAML::Node yamlSpec = YAML::Load("");
+			yamlSpec["spec"] = spec;
+
+			std::ofstream fout("last-gk-controller.yaml");
+			fout << yamlSpec;
+			fout.close();
+
+			controller = giskard::generate(spec);
+
+		} catch (giskard::GiskardLangParser::EOSException e) {
+			ROS_ERROR("%s", e.what());
+			server.setAborted(res);
+			return;
+		} catch (giskard::GiskardLangParser::ParseException e) {
+			ROS_ERROR("%s", e.what());
+			server.setAborted(res);
+			return;
+		} catch (std::invalid_argument e) {
+			ROS_ERROR("%s", e.what());
+			res.reason_for_termination = MoveRobotResult::DEFECT_CONTROLLER;
+			server.setAborted(res);
+			return;
+		}
+
 	} catch (std::invalid_argument e) {
 		ROS_ERROR("%s", e.what());
 		MoveRobotResult res;

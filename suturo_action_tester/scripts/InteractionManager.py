@@ -106,6 +106,9 @@ class InteractionManager(object):
 
 
 	def addObject(self, name, pose, vis):
+		if self.selected == name:
+			self.selectObject(None, None, None, None, False)
+
 		intMarker = InteractiveMarker()
 		intMarker.name = name
 		intMarker.header.frame_id = pose['frame_id']
