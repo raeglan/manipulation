@@ -3,9 +3,9 @@
 
   <node pkg="graspkard" type="graspkard_node" name="graspkard" output="screen">
     <rosparam param="joint_names"
-      file="$(find graspkard)/config/pr2_upper_body.yaml" />
+      file="$(find graspkard)/config/pr2_upper_body_right_arm.yaml" />
     <param name="controller_description" 
-      textfile="$(find graspkard)/controller_specs/pr2_grasp_control.yaml" />
+      textfile="$(find graspkard)/controller_specs/cut.yaml" />
     <param name="frame_id" value="base_link" />
     <remap from="~joint_states" to="/joint_states" />
     <param name="nWSR" value="1000"/>
@@ -18,6 +18,6 @@
         output="screen" args="0 0 0 0 0 0 1 odom odom_combined 100" />
 
 <node pkg="tf" type="static_transform_publisher" name="trololo"
-        output="screen" args="0.5 -0.3 0.8 0 0 0 1 odom_combined cylinder 100" /> 
+        output="screen" args="0.5 0.3 1.0 0.5 1.0 0 0 odom_combined cylinder 100" /> 
 
 </launch>
