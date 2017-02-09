@@ -49,7 +49,7 @@ scope:
   - cake_length: {input-var: 16}
   - cake_width: {input-var: 17}
   - cake_height: {input-var: 18}
-  
+  - slice_width: 0.03
   
 
 
@@ -71,7 +71,7 @@ scope:
   - wrist_roll:
       frame: [{axis-angle: [unit_x, wrist_roll_joint]}, {vector3: [0, 0, 0]}]
   - knife_offset:
-      frame: [{axis-angle: [unit_x, 0]}, {vector3: [0.20, 0, 0]}]
+      frame: [{axis-angle: [unit_x, 0]}, {vector3: [0.30, 0, 0]}]
 
 
   - cake_pos: {vector3: [cake_pos_x, cake_pos_y, cake_pos_z]}
@@ -118,15 +118,29 @@ scope:
   # definition EE goals and control laws
   #  # right arm position
 
-
   - trans: {origin-of: gripper}
-  #  # right arm goal diff
-  - goal_diff: {vector-sub: [cake_pos, trans]}
+  - gripper_x_baselink: {rotate-vector: [{orientation-of: gripper}, unit_x]}
+  - cake_y_baselink: {rotate-vector: [{orientation-of: cake_frame}, unit_y]}
 
-  #- goal_diff: {vector-sub: [new_goal, trans]}
+  - dot_xy: {vector-dot: [cake_y_baselink, gripper_x_baselink]}
+  - rot_ctr_xy: {double-sub: [1, dot_xy]}
+
+  - gripper_z_baselink: {rotate-vector: [{orientation-of: gripper}, unit_z]}
+  - cake_z_baselink: {rotate-vector: [{orientation-of: cake_frame}, unit_z]}
+
+  - dot_zz: {vector-dot: [cake_z_baselink, gripper_z_baselink]}
+  - rot_ctr_zz: {double-sub: [1, dot_zz]}
+
+
+
+  # width of the slice
+  - cake_bottom: {vector-sub: [{origin-of: cake_frame}, scale-vector: [{double-div: [cake_height, 2]}, unit_z]]}
+  - goal_diff: {vector-sub: [cake_bottom, trans]}
   - goal_diff_x: {x-coord: goal_diff}
   - goal_diff_y: {y-coord: goal_diff}
   - goal_diff_z: {z-coord: goal_diff}
+
+
 
 controllable-constraints:
   # torso joint
@@ -145,8 +159,8 @@ controllable-constraints:
 soft-constraints:
   # Position constraint
   #- soft-constraint: [0, 0, weight_pos_goal, {vector-norm: goal_err}, right EE x-vel slack]
-  - soft-constraint: [goal_diff_x, goal_diff_x, 0.2, {x-coord: trans}, EE x-vel slack]
-  - soft-constraint: [goal_diff_y, goal_diff_y, 0.2, {y-coord: trans}, EE x-vel slack]
+  #- soft-constraint: [goal_diff_x, goal_diff_x, 0.2, {x-coord: trans}, EE x-vel slack]
+  #- soft-constraint: [goal_diff_y, goal_diff_y, 0.2, {y-coord: trans}, EE x-vel slack]
   - soft-constraint: [goal_diff_z, goal_diff_z, 0.2, {z-coord: trans}, EE x-vel slack]
   #- soft-constraint: [diff_y, diff_y, weight_pos_goal, {y-coord: trans}, EE y-vel slack]
   #- soft-constraint: [diff_z, diff_z, weight_pos_goal, {z-coord: trans}, EE z-vel slack]
@@ -154,6 +168,9 @@ soft-constraints:
   #- soft-constraint: [rate_elbow, {double-add: [rate_elbow, 0.6]}, weight_pos_goal, {z-coord: {origin-of: elbow}}, elbow vel slack]
 
   # Rotation constraint
+  - soft-constraint: [rot_ctr_xy, rot_ctr_xy, 1, dot_xy, EE rot slack]
+  #
+  - soft-constraint: [rot_ctr_zz, rot_ctr_zz, 1, dot_zz, EE rot slack]
   #- soft-constraint: [rot_ctr, rot_ctr, 0.1, dot_x, EE rot slack]
   #- soft-constraint: [rot_ctr2, rot_ctr2, 0.1, dot_y, EE rot slack]
   #- soft-constraint: [ori_ctrl, ori_ctrl, weight_rot_control, goal_dot, EE rot slack]

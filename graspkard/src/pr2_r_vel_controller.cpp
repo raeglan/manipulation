@@ -35,6 +35,7 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <tf_conversions/tf_eigen.h>
+#include <btQuaternion.h>
 
 int nWSR_;
 giskard::QPController controller_;
@@ -124,6 +125,8 @@ void goal_callback(const geometry_msgs::Pose::ConstPtr& msg)
 
   geometry_msgs::Pose asd = *msg;
 
+  double ssdfsdf = btQuaternion::getAxis(asd.orientation);
+
   tf::Pose temp;
   tf::poseMsgToTF(asd, temp);
   tf::transformTFToEigen(temp, cakepos);
@@ -155,6 +158,10 @@ void goal_callback(const geometry_msgs::Pose::ConstPtr& msg)
   state_[joint_names_.size() + 7] = cLength;
   state_[joint_names_.size() + 8] = cWidth;
   state_[joint_names_.size() + 9] = cHeight;
+
+  for( int i=joint_names_.size(); i<joint_names_.size()+10; i++){
+    ROS_INFO("asasdasd: %f\n", state_[i]);
+  }
 
 
   if (!controller_started_)
