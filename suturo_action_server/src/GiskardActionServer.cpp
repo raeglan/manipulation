@@ -144,6 +144,12 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 				}
 				paramLength += 7;
 				break;
+			case TypedParam::ELAPSEDTIME:
+				queries.push_back(boost::shared_ptr<AQuery>(
+						new ElapsedTimeQuery(this, paramLength + jntOffset)
+						));
+				paramLength++;
+				break;
 			default:
 				ROS_ERROR("Datatype of index %d is unknown! Aborting goal!", p.type);
 				MoveRobotResult res;

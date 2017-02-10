@@ -104,12 +104,11 @@ private:
 	const tf::TransformListener* tfListener;
 };
 
-struct ElapsedTime : public AQuery {
-	ElapsedTime(GiskardActionServer* _pServer, size_t _idx)
-	: pServer(_pServer)
-	, idx(_idx) {
-		start = ros::Time::now();
-	}
+struct ElapsedTimeQuery : public AQuery {
+	ElapsedTimeQuery(GiskardActionServer* _pServer, size_t _idx)
+	: AQuery(_pServer, _idx) 
+	, start(ros::Time::now())
+	{ }
 
 	bool eval() {
 		ros::Duration elapsed = ros::Time::now() - start;
