@@ -24,6 +24,7 @@ public:
 	void jointStateCallback(const sensor_msgs::JointState::ConstPtr& jointStateMsg);
 
 	void decodeDouble(size_t startIdx, string value);
+	void decodeDouble(size_t startIdx, double value);
 	void decodeTransform(size_t startIdx, string transform);
 	void decodeTransform(size_t startIdx, tf::Transform transform);
 protected:
@@ -101,4 +102,21 @@ private:
 	const string frameId;
 	const string refFrame;
 	const tf::TransformListener* tfListener;
+};
+
+struct ElapsedTimeQuery : public AQuery {
+	ElapsedTimeQuery(GiskardActionServer* _pServer, size_t _idx)
+	: AQuery(_pServer, _idx) 
+	, start(ros::Time::now())
+	{ }
+
+	bool eval() {
+		ros::Duration elapsed = ros::Time::now() - start;
+
+		pServer->decodeDouble(idx, elapsed.toSec());
+		return true;
+	}
+
+private:
+	const ros::Time start;
 };

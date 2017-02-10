@@ -144,6 +144,12 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 				}
 				paramLength += 7;
 				break;
+			case TypedParam::ELAPSEDTIME:
+				queries.push_back(boost::shared_ptr<AQuery>(
+						new ElapsedTimeQuery(this, paramLength + jntOffset)
+						));
+				paramLength++;
+				break;
 			default:
 				ROS_ERROR("Datatype of index %d is unknown! Aborting goal!", p.type);
 				MoveRobotResult res;
@@ -287,6 +293,10 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::Cons
 
 void GiskardActionServer::decodeDouble(size_t startIdx, string value) {
 	state[startIdx] = ::atof(value.c_str());
+}
+
+void GiskardActionServer::decodeDouble(size_t startIdx, double value) {
+	state[startIdx] = value;
 }
 
 void GiskardActionServer::decodeTransform(size_t startIdx, string transform) {
