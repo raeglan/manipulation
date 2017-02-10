@@ -140,7 +140,7 @@ scope:
   - goal_diff_y: {y-coord: goal_diff}
   - goal_diff_z: {z-coord: goal_diff}
 
-
+  - feedback: 1
 
 controllable-constraints:
   # torso joint

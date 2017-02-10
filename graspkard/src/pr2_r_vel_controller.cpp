@@ -35,7 +35,7 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <tf_conversions/tf_eigen.h>
-#include <btQuaternion.h>
+//#include <btQuaternion.h>
 
 int nWSR_;
 giskard::QPController controller_;
@@ -125,7 +125,7 @@ void goal_callback(const geometry_msgs::Pose::ConstPtr& msg)
 
   geometry_msgs::Pose asd = *msg;
 
-  double ssdfsdf = btQuaternion::getAxis(asd.orientation);
+  //double ssdfsdf = btQuaternion::getAxis(asd.orientation);
 
   tf::Pose temp;
   tf::poseMsgToTF(asd, temp);
