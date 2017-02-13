@@ -1,0 +1,9 @@
+- name: knife 
+  type: transform
+  const: false
+  value: knife baselink
+
+- name: knife_height
+  type: double
+  const: true
+  value: 0.03
