@@ -1,0 +1,19 @@
+- name: cake 
+  type: transform
+  const: false
+  value: cake baselink
+
+- name: cake_length
+  type: double
+  const: true
+  value: 0.29
+
+- name: cake_width
+  type: double
+  const: true
+  value: 0.09
+
+- name: cake_height
+  type: double
+  const: true
+  value: 0.09
