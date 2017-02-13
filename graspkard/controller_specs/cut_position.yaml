@@ -49,6 +49,15 @@ scope:
   - cake_length: {input-var: 16}
   - cake_width: {input-var: 17}
   - cake_height: {input-var: 18}
+
+  - knife_pos_x: {input-var: 19}
+  - knife_pos_y: {input-var: 20}
+  - knife_pos_z: {input-var: 21}
+
+  - knife_rot_x: {input-var: 22}
+  - knife_rot_y: {input-var: 23}
+  - knife_rot_z: {input-var: 24}
+  - knife_rot_a: {input-var: 25}
   - slice_width: 0.03
   
 
@@ -74,6 +83,13 @@ scope:
       frame: [{axis-angle: [unit_x, 0]}, {vector3: [0.30, 0, 0]}]
 
 
+  - knife_pos: {vector3: [knife_pos_x, knife_pos_y, knife_pos_z]}
+  - knife_rot_axis: {vector3: [knife_rot_x, knife_rot_y, knife_rot_z]}
+  - knife_rot: {axis-angle: [knife_rot_axis, knife_rot_a]}
+
+  - knife_frame:
+      frame: [knife_rot, knife_pos]
+
   - cake_pos: {vector3: [cake_pos_x, cake_pos_y, cake_pos_z]}
   - cake_rot_axis: {vector3: [cake_rot_x, cake_rot_y, cake_rot_z]}
   - cake_rot: {axis-angle: [cake_rot_axis, cake_rot_a]}
@@ -96,7 +112,7 @@ scope:
       - forearm_roll
       - wrist_flex
       - wrist_roll
-      - knife_offset
+      - knife_frame
 
   # control params
   - pos_p_gain: 1.0
@@ -104,7 +120,7 @@ scope:
   - pos_thresh: 0.05
   - rot_thresh: 0.1
   - weight_arm_joints: 0.001
-  - weight_torso_joint: 0.001
+  - weight_torso_joint: 0.01
   - weight_align_goal: 0.5
   - weight_elbow_control: 0.4
   - weight_grasp_goal: 2.0
@@ -114,7 +130,6 @@ scope:
   - pos_vel_limit_torso_joint: 0.02
   - gripper_safety_margin: 0.01
 
-  - height: 0.1
   # definition EE goals and control laws
   #  # right arm position
 
@@ -122,13 +137,13 @@ scope:
   - gripper_x_baselink: {rotate-vector: [{orientation-of: gripper}, unit_x]}
   - cake_y_baselink: {rotate-vector: [{orientation-of: cake_frame}, unit_y]}
 
-  - dot_xy: {vector-dot: [cake_y_baselink, gripper_x_baselink]}
+  - dot_xy: {abs: {vector-dot: [cake_y_baselink, gripper_x_baselink]}}
   - rot_ctr_xy: {double-sub: [1, dot_xy]}
 
   - gripper_z_baselink: {rotate-vector: [{orientation-of: gripper}, unit_z]}
   - cake_z_baselink: {rotate-vector: [{orientation-of: cake_frame}, unit_z]}
 
-  - dot_zz: {vector-dot: [cake_z_baselink, gripper_z_baselink]}
+  - dot_zz: {abs: {vector-dot: [cake_z_baselink, gripper_z_baselink]}}
   - rot_ctr_zz: {double-sub: [1, dot_zz]}
 
   # width of the slice

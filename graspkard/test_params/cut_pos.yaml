@@ -1,24 +1,29 @@
-- name: cake 
+- name: cake
   type: transform
   const: false
   value: cake base_link
 
-- name: cake_length
+- name: length
   type: double
   const: true
-  value: 0.29
+  value: 0.23
 
-- name: cake_width
-  type: double
-  const: true
-  value: 0.09
-
-- name: cake_height
+- name: width
   type: double
   const: true
   value: 0.09
 
-- name: knife 
+- name: height
+  type: double
+  const: true
+  value: 0.09
+
+- name: knife
   type: transform
   const: false
   value: knife r_wrist_roll_link
+
+- name: r_gripper_effort
+  type: double
+  const: true
+  value: 100
