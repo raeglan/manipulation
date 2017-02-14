@@ -143,7 +143,7 @@ scope:
   - knife_handle_offset_vector_rotated: {rotate-vector: [{orientation-of: target_frame}, knife_handle_offset_vector]}
 
   - new_goal1: {vector-sub: [target_pos, knife_handle_offset_vector_rotated]}
-  - new_goal: {vector-sub: [new_goal1, pre_goal_offset_vector_rotated]}
+  - new_goal: {vector-add: [new_goal1, pre_goal_offset_vector_rotated]}
  
   - new_goal_diff: {vector-sub: [new_goal, trans]}
   - new_goal_diff_x: {x-coord: new_goal_diff}
@@ -153,7 +153,7 @@ scope:
 
 
 
-  - knife_z_baselink: {rotate-vector: [{orientation-of: target_frame}, unit_z]}
+  - knife_z_baselink: {rotate-vector: [{orientation-of: target_frame}, vector3: [0,0,-1]]}
   - gripper_x_baselink: {rotate-vector: [{orientation-of: gripper}, unit_x]}
 
 
