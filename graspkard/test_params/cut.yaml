@@ -22,3 +22,8 @@
   type: transform
   const: false
   value: knife r_wrist_roll_link
+
+- name: knife_height
+  type: double
+  const: true
+  value: 0.068

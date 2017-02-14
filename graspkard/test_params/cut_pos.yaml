@@ -6,22 +6,33 @@
 - name: length
   type: double
   const: true
-  value: 0.23
+  value: 0.175
 
 - name: width
   type: double
   const: true
-  value: 0.09
+  value: 0.075
 
 - name: height
   type: double
   const: true
-  value: 0.09
+  value: 0.06
 
 - name: knife
   type: transform
   const: false
   value: knife r_wrist_roll_link
+
+- name: knife_height
+  type: double
+  const: true
+  value: 0.068
+
+- name: knife_handle_lenght
+  type: double
+  const: true
+  value: 0.12
+
 
 - name: r_gripper_effort
   type: double
