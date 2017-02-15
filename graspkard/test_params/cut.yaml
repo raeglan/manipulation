@@ -27,3 +27,13 @@
   type: double
   const: true
   value: 0.068
+
+- name: knife_handle_length
+  type: double
+  const: true
+  value: 0.12
+
+- name: slice_width
+  type: double
+  const: true
+  value: 0.015

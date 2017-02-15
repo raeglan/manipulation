@@ -61,7 +61,7 @@ scope:
 
   - knife_height: {input-var: 26}
 
-  - slice_width: 0.03
+  - slice_width: {input-var: 27}
   
 
 
@@ -141,13 +141,13 @@ scope:
   - cake_y_baselink: {rotate-vector: [{orientation-of: cake_frame}, unit_y]}
 
 
-  - dot_xy: {vector-dot: [cake_y_baselink, gripper_x_baselink]}
+  - dot_xy: {abs: {vector-dot: [cake_y_baselink, gripper_x_baselink]}}
   - rot_ctr_xy: {double-sub: [1, dot_xy]}
 
   - gripper_z_baselink: {rotate-vector: [{orientation-of: gripper}, unit_z]}
   - cake_z_baselink: {rotate-vector: [{orientation-of: cake_frame}, unit_z]}
 
-  - dot_zz: {vector-dot: [cake_z_baselink, gripper_z_baselink]}
+  - dot_zz: {abs: {vector-dot: [cake_z_baselink, gripper_z_baselink]}}
   - rot_ctr_zz: {double-sub: [1, dot_zz]}
 
 

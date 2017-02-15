@@ -61,7 +61,7 @@ scope:
 
   - knife_height: {input-var: 26}
   - knife_handle_length: {input-var: 27}
-  - slice_width: 0.03
+  - slice_width: {input-var: 28}
   
 
 
