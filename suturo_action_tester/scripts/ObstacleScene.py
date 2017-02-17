@@ -103,7 +103,7 @@ class ObstacleScene(object):
 			pass
 		
 		try:
-			(trans, rot) = self.tfLt.lookupTransform(name, to, rospy.Time(0))
+			(trans, rot) = self.tfLt.lookupTransform(to, name, rospy.Time(0))
 			self.objects[name]['pose']['translation'] = trans
 			self.objects[name]['pose']['orientation'] = rot
 			self.objects[name]['pose']['frame_id'] = to
