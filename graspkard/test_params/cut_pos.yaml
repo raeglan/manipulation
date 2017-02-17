@@ -6,17 +6,17 @@
 - name: length
   type: double
   const: true
-  value: 0.175
+  value: 0.146
 
 - name: width
   type: double
   const: true
-  value: 0.075
+  value: 0.08
 
 - name: height
   type: double
   const: true
-  value: 0.06
+  value: 0.055
 
 - name: knife
   type: transform
@@ -26,12 +26,12 @@
 - name: knife_height
   type: double
   const: true
-  value: 0.068
+  value: 0.03
 
 - name: knife_handle_length
   type: double
   const: true
-  value: 0.12
+  value: 0.125
 
 - name: slice_width
   type: double
