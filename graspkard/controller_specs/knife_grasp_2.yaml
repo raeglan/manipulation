@@ -153,18 +153,18 @@ scope:
 
 
 
-  - knife_z_baselink: {rotate-vector: [{orientation-of: target_frame}, vector3: [0,0,-1]]}
+  - knife_z_baselink: {rotate-vector: [{orientation-of: target_frame}, unit_z]}
   - gripper_x_baselink: {rotate-vector: [{orientation-of: gripper}, unit_x]}
 
 
   - dot_x: {vector-dot: [knife_z_baselink, gripper_x_baselink]}
-  - rot_ctr: {double-sub: [1, dot_x]}
+  - rot_ctr: {double-sub: [-1, dot_x]}
 
 
   - knife_x_baselink: {rotate-vector: [{orientation-of: target_frame}, unit_x]}
   - gripper_z_baselink: {rotate-vector: [{orientation-of: gripper}, unit_z]}
 
-  - dot_y: {vector-dot: [knife_x_baselink, gripper_z_baselink]}
+  - dot_y: {abs: {vector-dot: [knife_x_baselink, gripper_z_baselink]}}
   - rot_ctr2: {double-sub: [1, dot_y]}
 
   - feedback: {vector-norm: new_goal_diff}
