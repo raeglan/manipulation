@@ -47,6 +47,7 @@ scope:
   - target_rot_a: {input-var: 15}
 
   - knife_height: {input-var: 16}
+  - knife_handle_length: {input-var: 17}
 
 
   # definition of joint transforms
