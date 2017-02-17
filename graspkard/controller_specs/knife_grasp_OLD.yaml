@@ -47,6 +47,7 @@ scope:
   - target_rot_a: {input-var: 15}
 
   - knife_height: {input-var: 16}
+  - knife_handle_length: {input-var: 17}
 
 
   # definition of joint transforms
@@ -114,57 +115,43 @@ scope:
   # definition EE goals and control laws
   #  # right arm position
 
+
   - trans: {origin-of: gripper}
   #  # right arm goal diff
 
   - gripper_in_target: {rotate-vector: [inverse-rotation: {orientation-of: target_frame}, vector-sub: [trans, target_pos]]}
 
-  - goal_diff: {vector-sub: [vector3: [0.05,0,0], gripper_in_target]}
+  - goal_diff: {vector-sub: [vector3: [0,0,0], gripper_in_target]}
 
-  #- goal_dist: {vector-norm: goal_diff}
-  - goal_diff_xy: {vector3: [x-coord: goal_diff, y-coord: goal_diff, 0]}
-  - goal_dist_xy: {vector-norm: goal_diff_xy}
+  - goal_dist: {vector-norm: goal_diff}
+  - goal_diff_yz: {vector3: [0, y-coord: goal_diff, z-coord: goal_diff]}
+  - goal_dist_yz: {vector-norm: goal_diff_yz}
 
-  - pre_goal_offset: {double-sub: [1, double-div: [1, double-add: [double-mul: [200, goal_dist_xy], 1]]]}
+  - pre_goal_offset: {double-sub: [1, double-div: [1, double-add: [double-mul: [200, goal_dist_yz], 1]]]}
   - pre_goal_offset_scaled: {double-mul: [0.3, pre_goal_offset]}
-  - pre_goal_offset_vector: {vector3: [0, 0, pre_goal_offset_scaled]}
+  - pre_goal_offset_vector: {vector3: [pre_goal_offset_scaled, 0, 0]}
   - pre_goal_offset_vector_rotated: {rotate-vector: [{orientation-of: target_frame}, pre_goal_offset_vector]}
 
   #- pre_goal_offset: {double-div: [1, double-sub: [0.1, double-div: [0.1, double-add: [0.4,goal_dist_yz]]]]}
-  
-
-  #- new_goal: {vector-sub: [vector3: [0,0,0], pre_goal_offset_vector]}
-  #- new_goal_diff: {vector-sub: [new_goal, gripper_in_target]}
-  #- new_goal_diff_x: {x-coord: new_goal_diff}
-  #- new_goal_diff_y: {y-coord: new_goal_diff}
-  #- new_goal_diff_z: {z-coord: new_goal_diff}
-
-  - knife_handle_offset_vector: {vector3: [-0.05,0,0]}
-  - knife_handle_offset_vector_rotated: {rotate-vector: [{orientation-of: target_frame}, knife_handle_offset_vector]}
-
-  - new_goal1: {vector-sub: [target_pos, knife_handle_offset_vector_rotated]}
-  - new_goal: {vector-add: [new_goal1, pre_goal_offset_vector_rotated]}
+  - new_goal: {vector-sub: [target_pos, pre_goal_offset_vector_rotated]}
  
   - new_goal_diff: {vector-sub: [new_goal, trans]}
   - new_goal_diff_x: {x-coord: new_goal_diff}
   - new_goal_diff_y: {y-coord: new_goal_diff}
   - new_goal_diff_z: {z-coord: new_goal_diff}
 
-
-
-
-  - knife_z_baselink: {rotate-vector: [{orientation-of: target_frame}, unit_z]}
+  - knife_x_baselink: {rotate-vector: [{orientation-of: target_frame}, unit_x]}
   - gripper_x_baselink: {rotate-vector: [{orientation-of: gripper}, unit_x]}
 
 
-  - dot_x: {vector-dot: [knife_z_baselink, gripper_x_baselink]}
-  - rot_ctr: {double-sub: [-1, dot_x]}
+  - dot_x: {vector-dot: [knife_x_baselink, gripper_x_baselink]}
+  - rot_ctr: {double-sub: [1, dot_x]}
 
 
-  - knife_x_baselink: {rotate-vector: [{orientation-of: target_frame}, unit_x]}
-  - gripper_z_baselink: {rotate-vector: [{orientation-of: gripper}, unit_z]}
+  - knife_y_baselink: {rotate-vector: [{orientation-of: target_frame}, unit_y]}
+  - gripper_y_baselink: {rotate-vector: [{orientation-of: gripper}, unit_y]}
 
-  - dot_y: {abs: {vector-dot: [knife_x_baselink, gripper_z_baselink]}}
+  - dot_y: {vector-dot: [knife_y_baselink, gripper_y_baselink]}
   - rot_ctr2: {double-sub: [1, dot_y]}
 
   - feedback: {vector-norm: new_goal_diff}
