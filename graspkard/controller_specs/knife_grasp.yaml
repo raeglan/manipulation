@@ -124,9 +124,11 @@ scope:
   #- goal_dist: {vector-norm: goal_diff}
   - goal_diff_xy: {vector3: [x-coord: goal_diff, y-coord: goal_diff, 0]}
   - goal_dist_xy: {vector-norm: goal_diff_xy}
+  - test: {double-sub: [goal_dist_xy, 0.02]}
+  - test2: {double-if: [test, goal_dist_xy, 0]}
 
-  - pre_goal_offset: {double-sub: [1, double-div: [1, double-add: [double-mul: [200, goal_dist_xy], 1]]]}
-  - pre_goal_offset_scaled: {double-mul: [0.3, pre_goal_offset]}
+  - pre_goal_offset: {double-sub: [1, double-div: [1, double-add: [double-mul: [200, test2], 1]]]}
+  - pre_goal_offset_scaled: {double-mul: [0.2, pre_goal_offset]}
   - pre_goal_offset_vector: {vector3: [0, 0, pre_goal_offset_scaled]}
   - pre_goal_offset_vector_rotated: {rotate-vector: [{orientation-of: target_frame}, pre_goal_offset_vector]}
 
