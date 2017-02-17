@@ -153,7 +153,7 @@ scope:
   - dot_y: {vector-dot: [knife_y_baselink, gripper_y_baselink]}
   - rot_ctr2: {double-sub: [1, dot_y]}
 
-  - feedback: 1
+  - feedback: {vector-norm: new_goal_diff}
 
 
 controllable-constraints:
