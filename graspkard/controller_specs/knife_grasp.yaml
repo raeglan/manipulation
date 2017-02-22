@@ -122,6 +122,8 @@ scope:
 
   - goal_diff: {vector-sub: [vector3: [knife_handle_length,0,0], gripper_in_target]}
 
+  - gripper_ctrl: {double-if: [double-sub: [vector-norm: goal_diff, 0.02], 0.2, -0.2]}
+
   #- goal_dist: {vector-norm: goal_diff}
   - goal_diff_xy: {vector3: [x-coord: goal_diff, y-coord: goal_diff, 0]}
   - goal_dist_xy: {vector-norm: goal_diff_xy}
@@ -152,8 +154,6 @@ scope:
   - new_goal_diff_x: {x-coord: new_goal_diff}
   - new_goal_diff_y: {y-coord: new_goal_diff}
   - new_goal_diff_z: {z-coord: new_goal_diff}
-
-
 
 
   - knife_z_baselink: {rotate-vector: [{orientation-of: target_frame}, unit_z]}
@@ -195,6 +195,7 @@ soft-constraints:
   - soft-constraint: [new_goal_diff_z, new_goal_diff_z, 0.2, {z-coord: trans}, EE x-vel slack]
   #- soft-constraint: [diff_y, diff_y, weight_pos_goal, {y-coord: trans}, EE y-vel slack]
   #- soft-constraint: [diff_z, diff_z, weight_pos_goal, {z-coord: trans}, EE z-vel slack]
+  - soft-constraint: [gripper_ctrl, gripper_ctrl, 1, gripper_joint,EE gripper stack]
 
   #- soft-constraint: [rate_elbow, {double-add: [rate_elbow, 0.6]}, weight_pos_goal, {z-coord: {origin-of: elbow}}, elbow vel slack]
 
