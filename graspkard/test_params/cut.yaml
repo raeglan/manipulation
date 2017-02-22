@@ -26,14 +26,14 @@
 - name: knife_height
   type: double
   const: true
-  value: 0.068
-
-- name: knife_handle_length
-  type: double
-  const: true
-  value: 0.12
+  value: 0.057
 
 - name: slice_width
   type: double
   const: true
   value: 0.015
+
+- name: r_gripper_effort
+  type: double
+  const: true
+  value: 100

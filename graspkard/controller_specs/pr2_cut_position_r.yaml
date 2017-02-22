@@ -147,7 +147,7 @@ scope:
   - gripper_z_baselink: {rotate-vector: [{orientation-of: gripper}, unit_z]}
   - cake_z_baselink: {rotate-vector: [{orientation-of: cake_frame}, unit_z]}
 
-  - dot_zz: {abs: {vector-dot: [cake_z_baselink, gripper_z_baselink]}}
+  - dot_zz: {vector-dot: [cake_z_baselink, gripper_z_baselink]}
   - rot_ctr_zz: {double-sub: [1, dot_zz]}
 
   # width of the slice
@@ -173,7 +173,7 @@ scope:
   - feedback: 1
 
   - weight_pos_goal: 1
-  - weight_rot_goal: 4
+  - weight_rot_goal: 0.1
 
 controllable-constraints:
   # torso joint
@@ -210,6 +210,7 @@ soft-constraints:
   #- soft-constraint: [rot_ctr2, rot_ctr2, 0.1, dot_y, EE rot slack]
   #- soft-constraint: [ori_ctrl, ori_ctrl, weight_rot_control, goal_dot, EE rot slack]
   #- soft-constraint: [dist2, dist2, weight_rot_control, dist, EE rot stack]
+  - soft-constraint: [-0.01, -0.01, 1, gripper_joint, gripper_close]
 
   #- soft-constraint: [gripper_ctrl, 0.2, weight_grasp_goal, gripper_joint, EE gripper stack]
 
