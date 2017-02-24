@@ -170,7 +170,7 @@ scope:
   - height_ctr: {double-mul: [{double-sub: [height_offset, cake_xyplane_dist]}, xz_match]}
 
 
-  - feedback: 1
+  - feedback: {double-add: [height_ctr, slice_ctr, depth_ctr, rot_ctr_xy, rot_ctr_zz]}
 
   - weight_pos_goal: 1
   - weight_rot_goal: 0.1

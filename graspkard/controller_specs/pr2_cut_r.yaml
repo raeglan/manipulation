@@ -164,7 +164,7 @@ scope:
   # - depth_ctr_min: {double-sub: [cake_xzplane_dist, depth_offset]}
   # - depth_ctr_max: {double-sub: [double-add: [depth_offset, 0.05],  cake_xzplane_dist]}
 
-  - feedback: 1
+  - feedback: height_ctr
 
 controllable-constraints:
   # torso joint

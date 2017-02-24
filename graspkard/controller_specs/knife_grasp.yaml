@@ -68,7 +68,7 @@ scope:
   - wrist_roll:
       frame: [{axis-angle: [unit_x, wrist_roll_joint]}, {vector3: [0, 0, 0]}]
   - inner_gripper_offset:
-      frame: [{axis-angle: [unit_x, 0]}, {vector3: [double-sub: [0.17, double-div: [knife_handle_height, 2]], 0, 0]}]
+      frame: [{axis-angle: [unit_x, 0]}, {vector3: [double-sub: [0.175, double-div: [knife_handle_height, 2]], 0, 0]}]
 
 
   - target_pos: {vector3: [target_pos_x, target_pos_y, target_pos_z]}
@@ -170,7 +170,7 @@ scope:
   - dot_y: {abs: {vector-dot: [knife_x_baselink, gripper_z_baselink]}}
   - rot_ctr2: {double-sub: [1, dot_y]}
 
-  - feedback: {vector-norm: new_goal_diff}
+  - feedback: {double-add: [{vector-norm: new_goal_diff}, gripper_joint]}
 
 
 controllable-constraints:

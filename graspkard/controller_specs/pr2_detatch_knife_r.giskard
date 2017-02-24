@@ -71,7 +71,7 @@ controllableConstraints = {
 }
 
 softConstraints = {
-	softConstraint(-0.1, -0.1, weightPositionGoal, rack_dist, "Knife ZY-Dist");
+	softConstraint(0.1, 0.1, weightPositionGoal, rack_dist, "Knife ZY-Dist");
 	softConstraint(blade_align_err, blade_align_err, weightRotationGoal, blade_align, "Knife align")
 }	
 
