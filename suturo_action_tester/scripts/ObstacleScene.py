@@ -7,9 +7,11 @@ from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
 from suturo_action_tester.msg import SuturoCreateObject
 from suturo_action_tester.msg import AttachObject
-from std_msgs.msg import String
+from std_msgs.msg import *
+from suturo_perception_msgs.msg import ObjectDetection
+from geometry_msgs.msg import *
 
-from InteractionManager import InteractionManager
+from InteractionManager import *
 import rospkg
 
 from yaml import load, dump
@@ -39,6 +41,7 @@ class ObstacleScene(object):
 
 	def __init__(self, ns, refFrame):
 		self.visPub = rospy.Publisher('suturo/obstacle_vis', MarkerArray, queue_size=2)
+		self.percPub = rospy.Publisher('/percepteros/object_detection', ObjectDetection, queue_size=2)
 		self.tfBr = tf.TransformBroadcaster()
 		self.tfLt = tf.TransformListener()
 		self.objects = {}
@@ -113,6 +116,21 @@ class ObstacleScene(object):
 	def updateTfs(self):
 		for n, o in self.objects.iteritems():
 			self.tfBr.sendTransform(o['pose']['translation'], o['pose']['orientation'], rospy.Time.now(), n, o['pose']['frame_id'])
+			self.percPub.publish(ObjectDetection(
+	            name = n,
+	            type = 6,
+	            width = 0.015,
+	            height = 0.068,
+	            depth = 0.29,
+	            pose = PoseStamped(
+	                header = Header(
+	                    stamp = rospy.Time.now(),
+	                    frame_id = 'odom_combined'
+	                ),
+	                pose = makeMsgPose(o['pose'])
+	            )
+	        )
+)
 
 
 	def saveScene(self, msg):
@@ -147,7 +165,7 @@ if __name__ == '__main__':
 	rospy.init_node('suturo_obstacle_scene')
 	scene = ObstacleScene('suturo_obstacle_scene', 'base_link')
 
-	rate = rospy.Rate(50)
+	rate = rospy.Rate(25)
 	while not rospy.is_shutdown():
 		scene.updateTfs()
 
