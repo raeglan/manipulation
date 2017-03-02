@@ -35,7 +35,8 @@ scope = {
 	knife = wrist * frame(knife_rot_wrist, knife_pos_wrist);
 
 	# 
-	rack_dist = (knife.pos - rack_pos) * (rack_rot * unitY);
+	rack_normal = rack_rot * unitY;
+	rack_dist = (knife.pos - (rack_pos + rack_normal * 0.01)) * (rack_normal);
 
 	blade_rack_ang = knife.rot * unitY;
 
