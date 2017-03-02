@@ -115,7 +115,7 @@ class ObstacleScene(object):
 
 	def updateTfs(self):
 		for n, o in self.objects.iteritems():
-			self.tfBr.sendTransform(o['pose']['translation'], o['pose']['orientation'], rospy.Time.now(), n, o['pose']['frame_id'])
+			#self.tfBr.sendTransform(o['pose']['translation'], o['pose']['orientation'], rospy.Time.now(), n, o['pose']['frame_id'])
 			self.percPub.publish(ObjectDetection(
 	            name = n,
 	            type = 6,
