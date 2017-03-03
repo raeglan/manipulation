@@ -36,11 +36,11 @@ scope = {
 
 	# 
 	rack_normal = rack_rot * unitY;
-	rack_dist = (knife.pos - (rack_pos + rack_normal * 0.01)) * (rack_normal);
+	rack_dist = (knife.pos - rack_pos) * rack_normal;
 
 	blade_rack_ang = knife.rot * unitY;
 
-	blade_align = abs(blade_rack_ang * (rack_rot * unitY));
+	blade_align = abs(blade_rack_ang * rack_normal);
 	blade_align_err = 1 - blade_align;
 
 	# Limits, weights and the like
