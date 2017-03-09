@@ -72,7 +72,7 @@ scope = {
 
 	offset_x = 0.5 * cake_length - slice_width;
 	offset_z = cake_height + knife_height + 0.01;
-	offset_y = knifexy_sign * (knife_handle_length + 0.5 * cake_width + 0.01);
+	offset_y = knifexy_sign * (knife_handle_length + 0.5 * cake_width + 0.05);
 
 	pos_fac = if(knifezz_ctrl + knifexy_ctrl - 0.1, 0, 1);
 	dist_z_ctrl = pos_fac * (offset_z - dist_xy);
