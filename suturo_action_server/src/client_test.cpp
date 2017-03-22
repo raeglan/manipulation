@@ -21,6 +21,8 @@ namespace YAML {
         rhs.type = suturo_manipulation_msgs::TypedParam::DOUBLE;
       } else if (type.compare("transform") == 0) {
         rhs.type = suturo_manipulation_msgs::TypedParam::TRANSFORM;
+      } else if (type.compare("elapsedtime") == 0) {
+        rhs.type = suturo_manipulation_msgs::TypedParam::ELAPSEDTIME;
       } else {
         cerr << "Type '" << type << "' of node '" << rhs.name << "' is unknown!" << endl;
         return false;

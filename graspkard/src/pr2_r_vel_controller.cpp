@@ -34,6 +34,8 @@
 #include <r_libs/VisualizationManager.h>
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
+#include <tf_conversions/tf_eigen.h>
+//#include <btQuaternion.h>
 
 int nWSR_;
 giskard::QPController controller_;
@@ -101,41 +103,66 @@ void print_eigen(const Eigen::VectorXd& command)
   ROS_INFO("Command: (%s)", cmd_str.c_str());
 }
 
-void goal_callback(const geometry_msgs::PointStamped::ConstPtr& msg)
+void goal_callback(const geometry_msgs::Pose::ConstPtr& msg)
 {
 //  printGoal(*msg);
 
   //std::cout << "received new goal" << std::endl;
 
-  if(msg->header.frame_id.compare(frame_id_) != 0)
+  /*if(msg->header.frame_id.compare(frame_id_) != 0)
   {
     ROS_WARN("frame_id of right EE goal did not match expected '%s'. Ignoring goal", 
         frame_id_.c_str());
     return;
-  }
+  }*/
 
   visMan.beginNewDrawCycle();
   double cWidth = 0.06;
-  double cHeight = 0.2;
+  double cLength = 0.2;
+  double cHeight = 0.06;
+
+  Affine3d cakepos;
+
+  geometry_msgs::Pose asd = *msg;
+
+  //double ssdfsdf = btQuaternion::getAxis(asd.orientation);
+
+  tf::Pose temp;
+  tf::poseMsgToTF(asd, temp);
+  tf::transformTFToEigen(temp, cakepos);
 
   visualization_msgs::MarkerArray markers;
   markers.markers.push_back(visMan.shapeMarker(0, 
-                                  Affine3d::Identity(), 
-                                  visualization_msgs::Marker::CYLINDER, 
-                                  Vector3d(cWidth, cWidth, cHeight),
+                                  cakepos, 
+                                  visualization_msgs::Marker::CUBE, 
+                                  Vector3d(cLength, cHeight , cWidth ),
                                   0.f, 
                                   1.f, 
                                   0.f, 
                                   1.f, 
-                                  "cylinder"));
+                                  "base_link"));
 
   visMan.endDrawCycle(markers.markers);
   visPub.publish(markers);
 
   // copying position goal
-  state_[joint_names_.size() + 0] = msg->point.x;
-  state_[joint_names_.size() + 1] = msg->point.y;
-  state_[joint_names_.size() + 2] = msg->point.z;
+  state_[joint_names_.size() + 0] = msg->position.x;
+  state_[joint_names_.size() + 1] = msg->position.y;
+  state_[joint_names_.size() + 2] = msg->position.z;
+
+  state_[joint_names_.size() + 3] = msg->orientation.x;
+  state_[joint_names_.size() + 4] = msg->orientation.y;
+  state_[joint_names_.size() + 5] = msg->orientation.z;
+  state_[joint_names_.size() + 6] = msg->orientation.w;
+
+  state_[joint_names_.size() + 7] = cLength;
+  state_[joint_names_.size() + 8] = cWidth;
+  state_[joint_names_.size() + 9] = cHeight;
+
+  for( int i=joint_names_.size(); i<joint_names_.size()+10; i++){
+    ROS_INFO("asasdasd: %f\n", state_[i]);
+  }
+
 
   if (!controller_started_)
   {
@@ -181,7 +208,7 @@ int main(int argc, char **argv)
   YAML::Node node = YAML::Load(controller_description);
   giskard::QPControllerSpec spec = node.as< giskard::QPControllerSpec >();
   controller_ = giskard::generate(spec);
-  state_ = Eigen::VectorXd::Zero(joint_names_.size() + 2*6);
+  state_ = Eigen::VectorXd::Zero(joint_names_.size() + 10);
   controller_started_ = false;
 
   for (std::vector<std::string>::iterator it = joint_names_.begin(); it != joint_names_.end(); ++it)

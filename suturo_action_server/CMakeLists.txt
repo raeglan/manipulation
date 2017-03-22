@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf_conversions
   r_libs
   control_msgs
+  pluginlib
 )
 
 add_definitions(-std=c++11 -g)

@@ -37,19 +37,32 @@ scope:
   - gripper_joint: {input-var: 8}
 
   # definition goal input variables
-  - plate_pos_x: {input-var: 9}
-  - plate_pos_y: {input-var: 10}
-  - plate_pos_z: {input-var: 11}
+  - cake_pos_x: {input-var: 9}
+  - cake_pos_y: {input-var: 10}
+  - cake_pos_z: {input-var: 11}
 
-  - plate_rot_x: {input-var: 12}
-  - plate_rot_y: {input-var: 13}
-  - plate_rot_z: {input-var: 14}
-  - plate_rot_a: {input-var: 15}
+  - cake_rot_x: {input-var: 12}
+  - cake_rot_y: {input-var: 13}
+  - cake_rot_z: {input-var: 14}
+  - cake_rot_a: {input-var: 15}
 
-  - plate_width: {input-var: 16}
-  - plate_height: {double-mul: [{input-var: 17}, 0.5]}
-  - rim_angle: {input-var: 18} # In radians
-  - rim_width: {min: [{input-var: 19}, 0.04]}
+  - cake_length: {input-var: 16}
+  - cake_width: {input-var: 17}
+  - cake_height: {input-var: 18}
+
+  - knife_pos_x: {input-var: 19}
+  - knife_pos_y: {input-var: 20}
+  - knife_pos_z: {input-var: 21}
+
+  - knife_rot_x: {input-var: 22}
+  - knife_rot_y: {input-var: 23}
+  - knife_rot_z: {input-var: 24}
+  - knife_rot_a: {input-var: 25}
+
+  - knife_height: {input-var: 26}
+
+  - slice_width: {input-var: 27}
+  
 
 
   # definition of joint transforms
@@ -69,19 +82,23 @@ scope:
       frame: [{axis-angle: [unit_y, wrist_flex_joint]}, {vector3: [0.321, 0, 0]}]
   - wrist_roll:
       frame: [{axis-angle: [unit_x, wrist_roll_joint]}, {vector3: [0, 0, 0]}]
-  - gripper_offset:
-      frame: [{axis-angle: [unit_x, 0]}, {vector3: [0.18, 0, 0]}]
+  #- knife_offset:
+  #    frame: [{axis-angle: [unit_x, 0]}, {vector3: [0.30, 0, 0]}]
 
-  - plate_rot_axis: {vector3: [plate_rot_x, plate_rot_y, plate_rot_z]}
-  - plate_rot: {axis-angle: [plate_rot_axis, plate_rot_a]}
-  - inv_plate_rot: {inverse-rotation: plate_rot}
-  - plate_pos: {vector3: [plate_pos_x, plate_pos_y, plate_pos_z]}
-  
-  - plate_radius: {double-mul: [plate_width, 0.5]}
 
-  - plate_frame:
-      frame: [plate_rot, plate_pos]
+  - cake_pos: {vector3: [cake_pos_x, cake_pos_y, cake_pos_z]}
+  - cake_rot_axis: {vector3: [cake_rot_x, cake_rot_y, cake_rot_z]}
+  - cake_rot: {axis-angle: [cake_rot_axis, cake_rot_a]}
 
+  - cake_frame:
+      frame: [cake_rot, cake_pos]
+
+  - knife_pos: {vector3: [knife_pos_x, knife_pos_y, knife_pos_z]}
+  - knife_rot_axis: {vector3: [knife_rot_x, knife_rot_y, knife_rot_z]}
+  - knife_rot: {axis-angle: [knife_rot_axis, knife_rot_a]}
+
+  - knife_frame:
+      frame: [knife_rot, knife_pos]
 
   # definition of elbow FK
   - elbow:
@@ -92,14 +109,13 @@ scope:
       - upper_arm_roll
       - elbow_flex
 
-  # defintion of EE FK
-  - ee:
+  - gripper:
       frame-mul:
       - elbow
       - forearm_roll
       - wrist_flex
       - wrist_roll
-      - gripper_offset
+      - knife_frame
 
   # control params
   - pos_p_gain: 1.0
@@ -109,98 +125,51 @@ scope:
   - weight_arm_joints: 0.001
   - weight_torso_joint: 0.001
   - weight_align_goal: 0.5
-  - weight_elbow_control: 2.0
+  - weight_elbow_control: 0.4
   - weight_grasp_goal: 2.0
   - neg_vel_limit_arm_joints: -0.6
   - pos_vel_limit_arm_joints: 0.6
   - neg_vel_limit_torso_joint: -0.02
   - pos_vel_limit_torso_joint: 0.02
-  - gripper_safety_margin: 0.02
-
-  # Shorthands
-  - rim_sin: {sin: rim_angle}
-  - rim_cos: {cos: rim_angle}
-
-  # Default pre-rim position
-  - pre_rim_xy: {double-add: [{double-mul: [rim_cos, 0.03]}, plate_radius]}
-  - pre_rim_z: {double-add: [plate_height, {double-mul: [rim_sin, 0.03]}]}
-
-  # Goal positions
-  - g_rim_xy: {double-add: [{double-mul: [{double-sub: [0, rim_width]}, rim_cos]}, plate_radius]}
-  - g_rim_z: {double-add: [plate_height, {double-mul: [rim_sin, rim_width]}]}
+  - gripper_safety_margin: 0.01
 
   # definition EE goals and control laws
-  # Align gripper to center axis of plate
-  - trans: {origin-of: ee}
-  - plate_z: {rotate-vector: [plate_rot, unit_z]} # Z axis of the plate
-  - gr_rot: {orientation-of: ee} # Rotation of the gripper
-  - gr_x: {rotate-vector: [gr_rot, unit_x]} # Forward axis of gripper in ws
-  - gr_z: {rotate-vector: [gr_rot, unit_z]} # Sideways axis of gripper in ws
+  #  # right arm position
 
-  - dist_center: {abs: {vector-dot: [{vector-sub: [trans, plate_pos]}, {vector-cross: [gr_x, plate_z]}]}}
-  - dist_c_err: {double-sub: [0, dist_center]}
+  - trans: {origin-of: gripper}
+  - gripper_x_baselink: {rotate-vector: [{orientation-of: gripper}, unit_x]}
+  - cake_y_baselink: {rotate-vector: [{orientation-of: cake_frame}, unit_y]}
 
-  # Make gripper match the angle of the rim
-  - gr_x_pl: {rotate-vector: [inv_plate_rot, gr_x]}
-  - gr_z_pl: {rotate-vector: [inv_plate_rot, gr_z]}
-  
-  - pitch_dist: {abs: {double-sub: [rim_sin, {z-coord: gr_x_pl}]}}
-  - pitch_err: {double-sub: [0, pitch_dist]}
 
-  - roll_dist: {z-coord: gr_z_pl}
-  - roll_err: {double-sub: [0, roll_dist]}
+  - dot_xy: {abs: {vector-dot: [cake_y_baselink, gripper_x_baselink]}}
+  - rot_ctr_xy: {double-sub: [1, dot_xy]}
 
-  # Gripper in plate
-  - trans_pl: {rotate-vector: [inv_plate_rot, {vector-sub: [trans, plate_pos]}]}
-  - trans_pl_xy: {vector3: [{x-coord: trans_pl}, {y-coord: trans_pl}, 0]}
-  - trans_pl_z: {z-coord: trans_pl}
-  - trans_pl_xy_n: {vector-norm: trans_pl_xy}
+  - gripper_z_baselink: {rotate-vector: [{orientation-of: gripper}, unit_z]}
+  - cake_z_baselink: {rotate-vector: [{orientation-of: cake_frame}, unit_z]}
 
-  # Distances in rim-world
-  - trans_x_rim: {double-sub: [trans_pl_xy_n, plate_radius]}
-  - trans_y_rim: {double-sub: [trans_pl_z, plate_height]}
+  - dot_zz: {vector-dot: [cake_z_baselink, gripper_z_baselink]}
+  - rot_ctr_zz: {double-sub: [1, dot_zz]}
 
-  # Distance to the rim's plane
-  - hp_dist: {abs: {double-add: [{double-mul: [trans_x_rim, rim_sin]}, {double-mul: [rim_cos, trans_y_rim]}]}}
-  - hp_err: {double-sub: [0, hp_dist]}
 
-  # Gripper opening
-  - gripper_err: {double-sub: [0.01, gripper_joint]}
-  
-  - weight_rot: 3
 
-  - pre_factor:
-      min:
-        - double-add:
-            - {double-div: [hp_dist, 0.003]} # Move gripper into rim-plane; Margin 3mm
-            - {double-mul: [weight_rot, dist_center]} # Yaw orientation
-            - {double-mul: [weight_rot, pitch_err]}
-            - {double-mul: [weight_rot, {z-coord: gr_z_pl}]}
-            - {double-div: [gripper_joint, 0.01]}
-        - 1
-  - goal_factor: {max: [{double-sub: [1, pre_factor]}, 0]}
+  # width of the slice
+  - cake_yzplane_dist: {vector-dot: [vector-sub: [trans, cake_pos], rotate-vector: [cake_rot, unit_x]]}
 
-  - xy_vel:
-      double-add:
-        - 0.0 # {double-mul: [pre_factor, {double-sub: [pre_rim_xy, trans_pl_xy_n]}]}
-        - {double-mul: [1.0, {double-sub: [g_rim_xy, trans_pl_xy_n]}]} # goal_factor
-  - z_vel:
-      double-add:
-        - 0.0 # {double-mul: [pre_factor, {double-sub: [pre_rim_z, trans_pl_z]}]}
-        - {double-mul: [1.0, {double-sub: [g_rim_z, trans_pl_z]}]} # goal_factor
-  # Elbow things
-  - elbow_diff: {z-coord: {vector-sub: [{origin-of: ee}, {origin-of: elbow}]}}
-  - elbow_ctrl: {double-sub: [0, elbow_diff]}
+  - cake_xzplane_dist: {abs: {vector-dot: [vector-sub: [trans, cake_pos], rotate-vector: [cake_rot, unit_y]]}}
 
-  - weight_pos_goal: 1 
-  - weight_rot_control: 1
+  - cake_xyplane_dist: {vector-dot: [vector-sub: [trans, cake_pos], rotate-vector: [cake_rot, unit_z]]}
+  - height_offset: {double-add: [double-mul: [cake_height, -0.5], knife_height]}
+  - height_ctr: {double-sub: [height_offset, cake_xyplane_dist]}
+  # - depth_offset: {double-add: [double-mul: [cake_width, 0.5], knife_height]}
+  # - depth_ctr_min: {double-sub: [cake_xzplane_dist, depth_offset]}
+  # - depth_ctr_max: {double-sub: [double-add: [depth_offset, 0.05],  cake_xzplane_dist]}
 
-  - feedback: {double-add: [{double-sub: [g_rim_xy, trans_x_rim]}, hp_dist]}
+  - feedback: {abs: height_ctr}
 
 controllable-constraints:
   # torso joint
   - controllable-constraint: [neg_vel_limit_torso_joint, pos_vel_limit_torso_joint, weight_torso_joint, 0, torso_lift_joint]
-  # arm joints
+  # left arm joints
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 1, shoulder_pan_joint]
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 2, shoulder_lift_joint]
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 3, upper_arm_roll_joint]
@@ -208,24 +177,31 @@ controllable-constraints:
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 5, forearm_roll_joint]
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 6, wrist_flex_joint]
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 7, wrist_roll_joint]
+  # right arm joints
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 8, gripper_joint]
 
 soft-constraints:
   # Position constraint
-  #- soft-constraint: [0, 0, weight_pos_goal, {vector-norm: goal_err}, right EE x-vel slack]
-  #- soft-constraint: [xy_vel, xy_vel, weight_pos_goal, trans_pl_xy_n, EE xy-vel slack]
-  - soft-constraint: [z_vel, z_vel, weight_pos_goal, trans_pl_z, EE z-vel slack]
-  - soft-constraint: [hp_err, hp_err, weight_pos_goal, hp_dist, EE hp-dist slack]
+  - soft-constraint: [height_ctr, height_ctr, 1, cake_xyplane_dist, EE cake xy slack]
+  - soft-constraint: [0, 0, 10, cake_yzplane_dist, EE cake yz slack]
+  - soft-constraint: [0, 0, 10, cake_xzplane_dist, EE cake xz slack]
+
+  #- soft-constraint: [rate_elbow, {double-add: [rate_elbow, 0.6]}, weight_pos_goal, {z-coord: {origin-of: elbow}}, elbow vel slack]
 
   # Rotation constraint
-  - soft-constraint: [pitch_err, pitch_err, weight_rot_control, pitch_dist, EE pitch slack]
-  - soft-constraint: [dist_c_err, dist_c_err, weight_rot_control, dist_center, EE yaw stack]
-  - soft-constraint: [roll_err, roll_err, weight_rot_control, roll_dist, EE roll stack]
+  - soft-constraint: [rot_ctr_xy, rot_ctr_xy, 10, dot_xy, EE rot slack]
+  #
+  - soft-constraint: [rot_ctr_zz, rot_ctr_zz, 10, dot_zz, EE rot slack]
+  #- soft-constraint: [rot_ctr, rot_ctr, 0.1, dot_x, EE rot slack]
+  #- soft-constraint: [rot_ctr2, rot_ctr2, 0.1, dot_y, EE rot slack]
+  #- soft-constraint: [ori_ctrl, ori_ctrl, weight_rot_control, goal_dot, EE rot slack]
+  #- soft-constraint: [dist2, dist2, weight_rot_control, dist, EE rot stack]
+  - soft-constraint: [-0.01, -0.01, 1, gripper_joint, gripper_close]
 
-  - soft-constraint: [gripper_err, gripper_err, weight_grasp_goal, gripper_joint, EE gripper stack]
+  #- soft-constraint: [gripper_ctrl, 0.2, weight_grasp_goal, gripper_joint, EE gripper stack]
 
   # Level elbow and gripper control
-  - soft-constraint: [{double-sub: [elbow_ctrl, 0.6]}, elbow_ctrl, weight_elbow_control, elbow_diff, elbow up control slack]
+  #- soft-constraint: [0.01, 0.01, weight_elbow_control, {y-coord: elbow_diff}, elbow up control slack]
 
 hard-constraints:
   - hard-constraint:

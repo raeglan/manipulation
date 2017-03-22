@@ -1,0 +1,9 @@
+- name: goal_l
+  type: transform
+  const: false
+  value: goal_l base_link
+
+- name: goal_r
+  type: transform
+  const: false
+  value: goal_r base_link

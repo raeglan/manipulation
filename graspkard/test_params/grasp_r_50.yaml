@@ -6,4 +6,4 @@
 - name: r_gripper_effort
   type: double
   const: true
-  value: 50.0
+  value: 100.0

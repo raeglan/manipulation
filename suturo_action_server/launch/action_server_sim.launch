@@ -7,5 +7,5 @@
 <node pkg="tf" type="static_transform_publisher" name="fake_odom"
         output="screen" args="0 0 0 0 0 0 1 odom odom_combined 100" />
 
-	<include file="$(find suturo_action_server)/launch/pub_cylinder_sim.launch"/>
+	<!-- <include file="$(find suturo_action_server)/launch/pub_cylinder_sim.launch"/> -->
 </launch>

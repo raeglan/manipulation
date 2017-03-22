@@ -1,0 +1,29 @@
+- name: object_name
+  type: transform
+  const: false
+  value: plate base_link
+
+- name: r_gripper_effort
+  type: double
+  const: true
+  value: 50.0
+
+- name: plate_width
+  type: double
+  const: false
+  value: 0.25
+
+- name: plate_height
+  type: double
+  const: true
+  value: 0.014
+
+- name: rim_angle
+  type: double
+  const: true
+  value: -0.21221
+
+- name: rim_width
+  type: double
+  const: true
+  value: 0.038

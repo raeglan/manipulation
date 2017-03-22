@@ -1,0 +1,10 @@
+<library path="lib/libsuturo_action_tester">
+	<class name="Suturo Simulation Panel"
+		   type="SuturoSim::SuturoSimPanel"
+		   base_class_type="rviz::Panel">
+		<description>
+			A panel to interface with the light-weight Suturo-obstacle simulation.
+		</description>
+	</class>
+
+</library>
