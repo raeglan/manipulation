@@ -68,7 +68,7 @@ scope:
   - wrist_roll:
       frame: [{axis-angle: [unit_x, wrist_roll_joint]}, {vector3: [0, 0, 0]}]
   - inner_gripper_offset:
-      frame: [{axis-angle: [unit_x, 0]}, {vector3: [double-sub: [0.175, double-div: [knife_handle_height, 2]], 0, 0]}]
+      frame: [{axis-angle: [unit_x, 0]}, {vector3: [double-sub: [0.200, double-div: [knife_handle_height, 2]], 0, 0]}]
 
 
   - target_pos: {vector3: [target_pos_x, target_pos_y, target_pos_z]}
