@@ -1,0 +1,19 @@
+- name: knife 
+  type: transform
+  const: false
+  value: knife base_link
+
+- name: knife_handle_height
+  type: double
+  const: true
+  value: 0.03
+
+- name: knife_handle_length
+  type: double
+  const: true
+  value: 0.05
+
+- name: r_gripper_effort
+  type: double
+  const: true
+  value: 100

@@ -1,0 +1,2 @@
+string object
+string frame

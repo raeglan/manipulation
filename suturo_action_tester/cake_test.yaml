@@ -1,0 +1,37 @@
+cake:
+  id: 0
+  pose:
+    frame_id: odom_combined
+    orientation: !!python/tuple [3.518666957802452e-08, -1.3573545842859858e-08, -0.6230279803276062,
+      0.7821996808052063]
+    translation: !!python/tuple [0.47541606426239014, -0.021114766597747803, 0.8989732265472412]
+  vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
+    state:
+    - !!python/object/new:std_msgs.msg._Header.Header
+      state:
+      - 0
+      - !!python/object/new:genpy.rostime.Time
+        state: [0, 0]
+      - cake
+    - suturo_obstacle_scene
+    - 0
+    - 1
+    - 0
+    - !!python/object/new:geometry_msgs.msg._Pose.Pose
+      state:
+      - !!python/object/new:geometry_msgs.msg._Point.Point
+        state: [0.0, 0.0, 0.0]
+      - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
+        state: [0.0, 0.0, 0.0, 1.0]
+    - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
+      state: [0.20000000298023224, 0.07999999821186066, 0.07999999821186066]
+    - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
+      state: [0.5176470875740051, 0.26274511218070984, 0.03529411926865578, 1.0]
+    - !!python/object/new:genpy.rostime.Duration
+      state: [0, 0]
+    - false
+    - []
+    - []
+    - ''
+    - ''
+    - true

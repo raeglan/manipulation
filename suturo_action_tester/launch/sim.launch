@@ -1,0 +1,8 @@
+<launch>
+	<include file="$(find suturo_action_server)/launch/action_server_sim.launch"/>
+
+	<node pkg="suturo_action_tester" type="ObstacleScene.py" name="suturo_obstacle_scene"
+        output="screen"/>
+
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find suturo_action_tester)/starter.rviz"/>
+</launch>
