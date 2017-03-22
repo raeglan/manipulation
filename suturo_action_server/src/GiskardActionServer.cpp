@@ -37,11 +37,11 @@ GiskardActionServer::GiskardActionServer(string _name)
 	lGripperPub = nh.advertise<control_msgs::GripperCommand>("l_pr2_gripper_command", 1);
 
 	posControllers["head_tilt_joint"] = {
-		nh.advertise<std_msgs::Float64>("head_tilt_position_controller/command", 1),
+		nh.advertise<std_msgs::Float64>("/head_tilt_position_controller/command", 1),
 		-1
 	};
 	posControllers["head_pan_joint"] = {
-		nh.advertise<std_msgs::Float64>("head_pan_position_controller/command", 1),
+		nh.advertise<std_msgs::Float64>("/head_pan_position_controller/command", 1),
 		-1
 	};
 
@@ -91,7 +91,7 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 			giskard::QPControllerSpec spec = glParser.parseQPController(goal->controller_yaml);
 			
 			YAML::Node yamlSpec = YAML::Load("");
-			yamlSpec["spec"] = spec;
+			yamlSpec[																																																																																																																																																																																																																																																																																																																																																																																																											"spec"] = spec;
 
 			std::ofstream fout("last-gk-controller.yaml");
 			fout << yamlSpec;
