@@ -1,10 +1,10 @@
 cake:
-  id: 0
+  id: 2
   pose:
     frame_id: odom_combined
-    orientation: !!python/tuple [-0.0050501213409006596, 0.0029786722734570503, -0.6908819675445557,
-      0.7229438424110413]
-    translation: !!python/tuple [0.770369827747345, 0.10582731664180756, 0.9064787030220032]
+    orientation: !!python/tuple [-0.0006550883990712464, 0.0016532979207113385, 0.9450643658638,
+      0.32687947154045105]
+    translation: !!python/tuple [0.7408031225204468, 0.08606663346290588, 0.911913275718689]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
@@ -14,7 +14,7 @@ cake:
         state: [0, 0]
       - cake
     - suturo_obstacle_scene
-    - 0
+    - 2
     - 1
     - 0
     - !!python/object/new:geometry_msgs.msg._Pose.Pose
@@ -24,9 +24,9 @@ cake:
       - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
         state: [0.0, 0.0, 0.0, 1.0]
     - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
-      state: [0.17499999701976776, 0.07500000298023224, 0.05999999865889549]
+      state: [0.14499999582767487, 0.07999999821186066, 0.054999999701976776]
     - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
-      state: [0.16862745583057404, 0.09019608050584793, 0.01568627543747425, 1.0]
+      state: [0.18431372940540314, 0.11372549086809158, 0.04313725605607033, 1.0]
     - !!python/object/new:genpy.rostime.Duration
       state: [0, 0]
     - false
@@ -36,12 +36,12 @@ cake:
     - package://suturo_action_tester/meshes/knife01.dae
     - true
 knife:
-  id: 1
+  id: 3
   pose:
-    frame_id: r_wrist_roll_link
-    orientation: !!python/tuple [-0.7046591675127954, 0.05638787933373994, 0.7050147416643058,
-      -0.056833781683341945]
-    translation: !!python/tuple [0.13184446855446075, 0.018751094962714876, 0.12386131295251057]
+    frame_id: odom_combined
+    orientation: !!python/tuple [0.7075661420822144, -0.006905899383127689, -0.7057180404663086,
+      0.03556555509567261]
+    translation: !!python/tuple [0.7270139455795288, -0.4552490711212158, 1.2770355939865112]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
@@ -51,7 +51,7 @@ knife:
         state: [0, 0]
       - knife
     - suturo_obstacle_scene
-    - 1
+    - 3
     - 10
     - 0
     - !!python/object/new:geometry_msgs.msg._Pose.Pose
@@ -63,12 +63,12 @@ knife:
     - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
       state: [1.0, 1.0, 1.0]
     - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
-      state: [0.6470588445663452, 0.6470588445663452, 0.6470588445663452, 1.0]
+      state: [1.0, 1.0, 0.0470588244497776, 1.0]
     - !!python/object/new:genpy.rostime.Duration
       state: [0, 0]
     - false
     - []
     - []
     - ''
-    - package://suturo_action_tester/meshes/knife01.dae
+    - package://suturo_action_tester/meshes/knife_lab.dae
     - true

@@ -29,6 +29,7 @@ class SuturoSimPanel : public rviz::Panel {
 	Q_OBJECT
 public:
 	SuturoSimPanel(QWidget* parent = 0);
+	virtual ~SuturoSimPanel() {}
 
 	virtual void load(const rviz::Config& config);
 	virtual void save(rviz::Config config) const;

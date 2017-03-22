@@ -11,7 +11,7 @@
 - name: knife_handle_length
   type: double
   const: true
-  value: 0.1
+  value: 0.05
 
 - name: r_gripper_effort
   type: double
