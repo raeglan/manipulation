@@ -9,11 +9,17 @@ class MutexMap {
 public:
 	MutexMap();
 
-	void set(const K &key, V &value);
-	bool get(const K &key, V &value);
+	void set(const K &key, V &value, int pid);
+	bool get(const K &key, V &value, int pid);
 	void clear();
 
 private:
+	void enter(int pid);
+	void leave(int pid);
+
+	bool interested[2];
+	int turn;
+
 	// 1 Mutex
 	unordered_map<K,V> map;
 }
