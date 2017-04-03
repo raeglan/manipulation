@@ -1,4 +1,6 @@
 #include <ros/ros.h>
+#include <ros/callback_queue.h>
+
 
 #include <unordered_map>
 
@@ -8,7 +10,7 @@ public:
 	MutexMap();
 
 	void set(const K &key, V &value);
-	void get(const K &key, V &value);
+	bool get(const K &key, V &value);
 	void clear();
 
 private:
@@ -28,14 +30,24 @@ public:
 		Vector3d inScene;
 	};
 
-	CollisionScene(ros::NodeHandle &nh);
+	typedef MutexMap<string, CollisionScene::SQueryPoints> QueryMap;
 
+	CollisionScene(QueryMap &_map);
+
+	void init();
 	void setRobotDescription(const string& urdfStr);
-	void setQueryLinks(const vector<string> &links);
-	void setPointMap(MutexMap<string, SQueryPoints>* _map);
+	void addQueryLink(const string& link);
+	void clearQueryLinks();
 
 private:
+	void updateQuery();
+
+	ros::NodeHandle nh;
+	ros::CallbackQueue cbQueue;
+	ros::Timer updateTimer;
+
 	urdf::Model robot;
-	MutexMap<string, SQueryPoints>* map;
+	QueryMap& map;
+	set<string> links;
 
 };

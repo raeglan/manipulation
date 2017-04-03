@@ -25,6 +25,8 @@ public:
 
 	void decodeDouble(size_t startIdx, string value);
 	void decodeDouble(size_t startIdx, double value);
+	void decodeVector(size_t startIdx, string vector);
+	void decodeVector(size_t startIdx, Vector3d vector);
 	void decodeTransform(size_t startIdx, string transform);
 	void decodeTransform(size_t startIdx, tf::Transform transform);
 protected:
@@ -54,6 +56,9 @@ private:
 	KDL::Expression<double>::Ptr feedbackExpr;
 	ros::Publisher rGripperPub, lGripperPub;
 	ros::Subscriber rGripperSub, lGripperSub;
+
+	CollisionScene collisionScene;
+	CollisionScene::QueryMap collQueryMap;
 
 	suturo_manipulation_msgs::MoveRobotFeedback feedback;
 	suturo_manipulation_msgs::MoveRobotResult result;
@@ -119,4 +124,28 @@ struct ElapsedTimeQuery : public AQuery {
 
 private:
 	const ros::Time start;
+};
+
+struct CollisionQuery : public AQuery {
+	CollisionQuery(GiskardActionServer* _pServer, size_t _idx, string _link, CollisionScene::QueryMap& _map)
+	: AQuery(_pServer, _idx) 
+	, link(_link)
+	, map(_map)
+	{ }
+
+	bool eval() {
+		CollisionScene::SQueryPoints points;
+		if (map.get(link, points)) {
+			pServer->decodeVector(idx, points.onLink);
+			pServer->decodeVector(idx + 3, points.inScene);
+			return true;
+		}
+
+		ROS_WARN("Collision query for link '%s' failed!", link.c_str());
+		return false;
+	}
+
+private:
+	const string link;
+	const CollisionScene::QueryMap map;
 };

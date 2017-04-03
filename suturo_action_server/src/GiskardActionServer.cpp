@@ -32,9 +32,14 @@ GiskardActionServer::GiskardActionServer(string _name)
 , nWSR(1000)
 , nh("~")
 , server(nh, name, boost::bind(&GiskardActionServer::setGoal, this, _1), false)
+, collisionScene(collQueryMap)
 {
 	rGripperPub = nh.advertise<control_msgs::GripperCommand>("r_pr2_gripper_command", 1);
 	lGripperPub = nh.advertise<control_msgs::GripperCommand>("l_pr2_gripper_command", 1);
+
+	string urdf;
+	rosparam::get("robot_description", urdf);
+	collisionScene.setRobotDescription(urdf);
 
 	server.start();
 }
@@ -62,6 +67,8 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	}
 
 	controllerInitialized = false;
+	collisionScene.clearQueryLinks();
+	collQueryMap.clear();
 	
 	try {
 		Node yamlController = YAML::Load(goal->controller_yaml);
@@ -150,6 +157,17 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 						));
 				paramLength++;
 				break;
+			case TypedParam::VECTOR:
+				paramLength += 3;
+				break;
+			case TypedParam::COLLISIONQUERY:
+				if (!p.isConst) {
+					queries.push_back(boost::shared_ptr<AQuery>(
+						new CollisionQuery(this, paramLength + jntOffset, p.value, collQueryMap)
+						));	
+
+					collisionScene.addQueryLink(p.value);
+				}
 			default:
 				ROS_ERROR("Datatype of index %d is unknown! Aborting goal!", p.type);
 				MoveRobotResult res;
@@ -165,6 +183,9 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		switch (bp.param.type) {
 			case TypedParam::DOUBLE:
 				decodeDouble(bp.idx, bp.param.value);				
+				break;
+			case TypedParam::VECTOR:
+				decodeVector(bp.idx, bp.param.value);
 				break;
 			case TypedParam::TRANSFORM:
 				decodeTransform(bp.idx, bp.param.value);
@@ -297,6 +318,17 @@ void GiskardActionServer::decodeDouble(size_t startIdx, string value) {
 
 void GiskardActionServer::decodeDouble(size_t startIdx, double value) {
 	state[startIdx] = value;
+}
+
+void GiskardActionServer::decodeVector(size_t startIdx, string vector) {
+	for (size_t i = 0; i < 3; i++)
+		state[startIdx + i] = ::atof(vector.c_str());
+}
+
+void GiskardActionServer::decodeVector(size_t startIdx, Vector3d vector) {
+	state[startIdx + 0] = vector[0];
+	state[startIdx + 1] = vector[1];
+	state[startIdx + 2] = vector[2];
 }
 
 void GiskardActionServer::decodeTransform(size_t startIdx, string transform) {
