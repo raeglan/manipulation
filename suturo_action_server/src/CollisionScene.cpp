@@ -1,58 +1,35 @@
-#include "CollisionScene.h"
+#include <suturo_action_server/CollisionScene.h>
+//#include <occupancy_map_monitor.h>
+#include <moveit/depth_image_octomap_updater/depth_image_octomap_updater.h>
+#include <moveit/occupancy_map_monitor/occupancy_map_monitor.h>
 
-CollisionScene::CollisionScene() {
+CollisionScene::CollisionScene(QueryMap &_map) 
+ : map(_map)
+{
 	nh.setCallbackQueue(&cbQueue);
 	updateTimer = nh.createTimer(ros::Duration(0.025), &CollisionScene::updateQuery, this);
+	ros::Subscriber sub = nh.subscribe("octomap_binary", 1000, &CollisionScene::update,this);
 }
 
-void CollisionScene::init() {
+void CollisionScene::update(octomap_msgs::Octomap::ConstPtr& omap) {
+	//occupancy_map_monitor::OccupancyMapMonitor monitor();
+	//occupancy_map_monitor::DepthImageOctomapUpdater updater();
 
 
-	nh.spin(); // Thread should be started by this
 }
 
 void CollisionScene::setRobotDescription(const string& urdfStr) {
-
+	// TODO: GENERATE URDF
 }
 
 void CollisionScene::addQueryLink(const string& link) {
-
+	links.insert(link);
 }
 
-template <typename K, typename V>
-MutexMap::MutexMap() 
-: turn(0)
-{
-	interested = {0,0};
+void CollisionScene::clearQueryLinks() {
+	links.clear();
 }
 
-template <typename K, typename V>
-void MutexMap::set(const K &key, V &value, int pid) {
-	enter(pid);
-	map[key] = value;
-	leave(pid);
-}
-
-template <typename K, typename V>
-bool MutexMap::get(const K &key, V &value, int pid) {
-	enter(pid);
-	if (map.find(key) != map.end()) {
-		value = map[key];
-		leave(pid);
-		return true;
-	}
-	leave(pid);
-	return false;
-}
-
-template <typename K, typename V>
-void MutexMap::enter(int pid) {
-	interested[pid] = true;
-	turn = pid;
-	while(turn == pid && interested[1 - pid]);
-}
-
-template <typename K, typename V>
-void MutexMap::leave(int pid) {
-	interested[pid] = false;
+void CollisionScene::updateQuery(const ros::TimerEvent& event) {
+	// TODO: MAGIC
 }

@@ -5,6 +5,7 @@
 #include <tf/transform_listener.h>
 #include <suturo_manipulation_msgs/MoveRobotAction.h>
 #include <actionlib/server/simple_action_server.h>
+#include "suturo_action_server/CollisionScene.h"
 
 #include <giskard/giskard.hpp>
 
@@ -26,7 +27,7 @@ public:
 	void decodeDouble(size_t startIdx, string value);
 	void decodeDouble(size_t startIdx, double value);
 	void decodeVector(size_t startIdx, string vector);
-	void decodeVector(size_t startIdx, Vector3d vector);
+	void decodeVector(size_t startIdx, Eigen::Vector3d vector);
 	void decodeTransform(size_t startIdx, string transform);
 	void decodeTransform(size_t startIdx, tf::Transform transform);
 protected:
@@ -135,7 +136,7 @@ struct CollisionQuery : public AQuery {
 
 	bool eval() {
 		CollisionScene::SQueryPoints points;
-		if (map.get(link, points)) {
+		if (map.get(link, points, READER_PID)) {
 			pServer->decodeVector(idx, points.onLink);
 			pServer->decodeVector(idx + 3, points.inScene);
 			return true;
@@ -147,5 +148,5 @@ struct CollisionQuery : public AQuery {
 
 private:
 	const string link;
-	const CollisionScene::QueryMap map;
+	CollisionScene::QueryMap& map;
 };
