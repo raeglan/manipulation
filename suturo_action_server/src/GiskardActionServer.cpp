@@ -38,7 +38,7 @@ GiskardActionServer::GiskardActionServer(string _name)
 	lGripperPub = nh.advertise<control_msgs::GripperCommand>("l_pr2_gripper_command", 1);
 
 	string urdf;
-	rosparam::get("robot_description", urdf);
+	ros::param::get("robot_description", urdf);
 	collisionScene.setRobotDescription(urdf);
 
 	server.start();
@@ -68,7 +68,7 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 
 	controllerInitialized = false;
 	collisionScene.clearQueryLinks();
-	collQueryMap.clear();
+	collQueryMap.clear(READER_PID);
 	
 	try {
 		Node yamlController = YAML::Load(goal->controller_yaml);
@@ -325,7 +325,7 @@ void GiskardActionServer::decodeVector(size_t startIdx, string vector) {
 		state[startIdx + i] = ::atof(vector.c_str());
 }
 
-void GiskardActionServer::decodeVector(size_t startIdx, Vector3d vector) {
+void GiskardActionServer::decodeVector(size_t startIdx, Eigen::Vector3d vector) {
 	state[startIdx + 0] = vector[0];
 	state[startIdx + 1] = vector[1];
 	state[startIdx + 2] = vector[2];
