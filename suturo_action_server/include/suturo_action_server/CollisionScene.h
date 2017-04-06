@@ -46,6 +46,11 @@ public:
 	void clearQueryLinks();
 
 private:
+	struct SRobotLink {
+		Eigen::Vector3d posBound;
+		Eigen::Vector3d negBound;
+	}
+
 	void updateQuery();
 
 	ros::NodeHandle nh;
@@ -53,6 +58,7 @@ private:
 	ros::Timer updateTimer;
 
 	urdf::Model robot;
+	unordered_map<string, SRobotLink> linkMap;
 	QueryMap& map;
 	set<string> links;
 
