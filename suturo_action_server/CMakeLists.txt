@@ -4,6 +4,8 @@ project(suturo_action_server)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+find_package(octomap REQUIRED)
+
 find_package(catkin REQUIRED COMPONENTS
   giskard
   message_generation
@@ -127,7 +129,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${r_libs_INCLUDE_DIRS}
   ${YAML_CPP_INCLUDE_DIRS}
+  ${OCTOMAP_INCLUDE_DIRS}
 )
+
 
 ## Declare a C++ library
 # add_library(suturo_action_server
@@ -145,6 +149,7 @@ target_link_libraries(suturo_action_server
   r_libs_visualization
   r_libs_conversions
   yaml-cpp
+  ${OCTOMAP_LIBRARIES}
 )
 
 add_executable(client_test src/client_test.cpp)

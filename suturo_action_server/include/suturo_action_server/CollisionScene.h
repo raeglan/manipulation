@@ -8,6 +8,9 @@
 #include <unordered_map>
 
 #include <octomap_msgs/Octomap.h>
+#include <octomap/octomap.h>
+#include <tf/transform_listener.h>
+
 
 using namespace std;
 
@@ -83,16 +86,17 @@ public:
 
 	CollisionScene(QueryMap &_map);
 
-	void update(octomap_msgs::Octomap::ConstPtr& omap);
+	void update(octomap_msgs::Octomap omap);
 	void setRobotDescription(const string& urdfStr);
 	void addQueryLink(const string& link);
 	void clearQueryLinks();
+	void traverseTree(octomap::OcTreeNode *currentNode, double& minDist);
 
 private:
 	struct SRobotLink {
 		Eigen::Vector3d posBound;
 		Eigen::Vector3d negBound;
-	}
+	};
 
 	void updateQuery(const ros::TimerEvent& event);
 
@@ -104,5 +108,9 @@ private:
 	unordered_map<string, SRobotLink> linkMap;
 	QueryMap& map;
 	set<string> links;
+	tf::TransformListener tfListener;
+	Eigen::Affine3d transform;
+	string refFrame;
+	octomap::OcTree *octree;
 
 };
