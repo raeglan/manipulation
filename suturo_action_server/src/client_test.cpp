@@ -23,6 +23,10 @@ namespace YAML {
         rhs.type = suturo_manipulation_msgs::TypedParam::TRANSFORM;
       } else if (type.compare("elapsedtime") == 0) {
         rhs.type = suturo_manipulation_msgs::TypedParam::ELAPSEDTIME;
+      } else if (type.compare("collisionquery") == 0) {
+        rhs.type = suturo_manipulation_msgs::TypedParam::COLLISIONQUERY;
+      } else if (type.compare("vector") == 0) {
+        rhs.type = suturo_manipulation_msgs::TypedParam::VECTOR;
       } else {
         cerr << "Type '" << type << "' of node '" << rhs.name << "' is unknown!" << endl;
         return false;

@@ -1,0 +1,14 @@
+- name: goal_r
+  type: transform
+  const: false
+  value: cylinder base_link
+
+- name: r_forearm_collision
+  type: collisionquery
+  const: false
+  value: r_forearm_roll_link
+
+- name: r_gripper_collision
+  type: collisionquery
+  const: false
+  value: r_gripper_palm_link

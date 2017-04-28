@@ -168,8 +168,9 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 
 					collisionScene.addQueryLink(p.value);
 				}
+				break;
 			default:
-				ROS_ERROR("Datatype of index %d is unknown! Aborting goal!", p.type);
+				ROS_ERROR("Datatype of index %d is unknown! Parameter number %zu. Aborting goal!", p.type, i+1);
 				MoveRobotResult res;
 				res.reason_for_termination = MoveRobotResult::INVALID_DATATYPE;
 				server.setAborted(res);
