@@ -1,0 +1,4 @@
+- name: poi
+  type: transform
+  const: false
+  value: poi base_link

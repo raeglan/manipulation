@@ -1,0 +1,36 @@
+poi:
+  id: 0
+  pose:
+    frame_id: odom_combined
+    orientation: !!python/tuple [0.0, 0.0, 0.0, 1.0]
+    translation: !!python/tuple [0.5541286468505859, -0.07632666826248169, 0.9749270677566528]
+  vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
+    state:
+    - !!python/object/new:std_msgs.msg._Header.Header
+      state:
+      - 0
+      - !!python/object/new:genpy.rostime.Time
+        state: [0, 0]
+      - poi
+    - suturo_obstacle_scene
+    - 0
+    - 2
+    - 0
+    - !!python/object/new:geometry_msgs.msg._Pose.Pose
+      state:
+      - !!python/object/new:geometry_msgs.msg._Point.Point
+        state: [0.0, 0.0, 0.0]
+      - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
+        state: [0.0, 0.0, 0.0, 1.0]
+    - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
+      state: [0.05999999865889549, 0.05999999865889549, 0.05999999865889549]
+    - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
+      state: [0.7333333492279053, 1.0, 0.0, 0.4000000059604645]
+    - !!python/object/new:genpy.rostime.Duration
+      state: [0, 0]
+    - false
+    - []
+    - []
+    - ''
+    - ''
+    - true
