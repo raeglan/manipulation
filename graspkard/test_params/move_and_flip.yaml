@@ -1,0 +1,19 @@
+- name: spatula
+  type: transform
+  const: false
+  value: spatula r_wrist_roll_link
+
+- name: goal
+  type: transform
+  const: false
+  value: plate base_link
+
+- name: spatula_width
+  type: double
+  const: true
+  value: 0.06
+
+- name: goal_radius
+  type: double
+  const: true
+  value: 0.08
