@@ -62,14 +62,14 @@ scope = {
 	rot_align = tilt_err + yaw_roll_err;
 	pre_err = 5 * (abs(gh_yd) + abs(gh_zd)) + rot_align;
 
-	decision = pre_err - 0.01 + abs(grasp_err);
-	x_low_err = if(decision, -0.05 - finger_length, 0.5 * handle_depth) - gh_xd;
-	x_hig_err = if(decision, 100, 0.5 * handle_depth - gh_xd);
+	decision = pre_err - 0.05 + abs(grasp_err);
+	x_low_err = if(decision, -100, 0.5 * handle_depth - finger_length - gh_xd);
+	x_hig_err = if(decision, -0.05, 0.5 * handle_depth) - finger_length - gh_xd;
 
 	pre_x = if(x_low_err, 1, 0.1);
 
-	gh_yd_err = pre_x * -gh_yd;
-	gh_zd_err = pre_x * -gh_zd;
+	gh_yd_err = -gh_yd;
+	gh_zd_err = -gh_zd;
 
 	# Limits, weights and the like
 	negVelLimitTorso = -0.02;
@@ -96,7 +96,7 @@ controllableConstraints = {
 	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, 5, "j_forearm_roll_r");
 	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, 6, "j_wrist_flex_r");
 	controllableConstraint(negVelLimitArm, posVelLimitArm, weightGripper, 7, "j_wrist_roll_r");
-	controllableConstraint(negVelLimitArm, posVelLimitArm, 1, 8, "j_gripper")
+	controllableConstraint(negVelLimitArm, posVelLimitArm, 0.001, 8, "j_gripper")
 }
 
 softConstraints = {
