@@ -1,0 +1,37 @@
+knife:
+  id: 0
+  pose:
+    frame_id: odom_combined
+    orientation: !!python/tuple [0.4650106132030487, -0.5060552954673767, -0.5291211605072021,
+      -0.4976988434791565]
+    translation: !!python/tuple [-1.6679816246032715, -1.05355966091156, 1.2728098630905151]
+  vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
+    state:
+    - !!python/object/new:std_msgs.msg._Header.Header
+      state:
+      - 0
+      - !!python/object/new:genpy.rostime.Time
+        state: [0, 0]
+      - knife
+    - suturo_obstacle_scene
+    - 0
+    - 10
+    - 0
+    - !!python/object/new:geometry_msgs.msg._Pose.Pose
+      state:
+      - !!python/object/new:geometry_msgs.msg._Point.Point
+        state: [0.0, 0.0, 0.0]
+      - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
+        state: [0.0, 0.0, 0.0, 1.0]
+    - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
+      state: [1.0, 1.0, 1.0]
+    - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
+      state: [1.0, 1.0, 0.0470588244497776, 1.0]
+    - !!python/object/new:genpy.rostime.Duration
+      state: [0, 0]
+    - false
+    - []
+    - []
+    - ''
+    - package://suturo_action_tester/meshes/knife_lab.dae
+    - true

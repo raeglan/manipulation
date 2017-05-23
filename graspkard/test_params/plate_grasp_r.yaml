@@ -6,12 +6,12 @@
 - name: edge_r
   type: double
   const: true
-  value: 0.125
+  value: 0.12
 
 - name: edge_z
   type: double
   const: true
-  value: 0.009
+  value: 0.0
 
 - name: edge_d
   type: double
@@ -21,4 +21,4 @@
 - name: edge_ang
   type: double
   const: true
-  value: -1.7712
+  value: -1.92

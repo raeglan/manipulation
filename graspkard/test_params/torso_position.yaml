@@ -1,7 +1,7 @@
 - name: position
   type: double
   const: true
-  value: 0.0
+  value: 0.1
 
 - name: time
   type: elapsedtime

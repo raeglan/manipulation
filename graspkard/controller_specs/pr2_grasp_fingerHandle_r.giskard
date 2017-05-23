@@ -62,7 +62,7 @@ scope = {
 	rot_align = tilt_err + yaw_roll_err;
 	pre_err = 5 * (abs(gh_yd) + abs(gh_zd)) + rot_align;
 
-	decision = pre_err - 0.05 + abs(grasp_err);
+	decision = pre_err - 0.1 + abs(grasp_err);
 	x_low_err = if(decision, -100, 0.5 * handle_depth - finger_length - gh_xd);
 	x_hig_err = if(decision, -0.05, 0.5 * handle_depth) - finger_length - gh_xd;
 
