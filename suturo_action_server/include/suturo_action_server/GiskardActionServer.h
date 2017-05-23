@@ -42,6 +42,13 @@ protected:
 	giskard::QPController controller;
 	Eigen::VectorXd state;
 	vector<ros::Publisher> velControllers;
+	
+	struct posController {
+		ros::Publisher pub;
+		int idx;	
+	};
+	unordered_map<string, posController> posControllers;
+
 
 	unordered_map<string, size_t> jointIndexMap;
 

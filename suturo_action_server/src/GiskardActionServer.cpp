@@ -41,6 +41,15 @@ GiskardActionServer::GiskardActionServer(string _name)
 	ros::param::get("robot_description", urdf);
 	collisionScene.setRobotDescription(urdf);
 
+	posControllers["head_tilt_joint"] = {
+		nh.advertise<std_msgs::Float64>("/head_tilt_position_controller/command", 1),
+		-1
+	};
+	posControllers["head_pan_joint"] = {
+		nh.advertise<std_msgs::Float64>("/head_pan_position_controller/command", 1),
+		-1
+	};
+
 	server.start();
 }
 
@@ -56,6 +65,9 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	velControllers.clear();
 	jointIndexMap.clear();
 	queries.clear();
+	for (auto it = posControllers.begin(); it != posControllers.end(); it++)
+		it->second.idx = -1;
+
 	for (size_t i = 0; i < goal->controlled_joints.size(); i++) {
 		string jointName = goal->controlled_joints[i];
 		jointIndexMap[goal->controlled_joints[i]] = i;
@@ -64,6 +76,9 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 			rGripperIdx = i;
 		else if (jointName.compare("l_gripper_joint") == 0)
 			lGripperIdx = i;
+
+		if (posControllers.find(jointName) != posControllers.end())
+			posControllers[jointName].idx = i;
 	}
 
 	controllerInitialized = false;
@@ -83,7 +98,7 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 			giskard::QPControllerSpec spec = glParser.parseQPController(goal->controller_yaml);
 			
 			YAML::Node yamlSpec = YAML::Load("");
-			yamlSpec["spec"] = spec;
+			yamlSpec[																																																																																																																																																																																																																																																																																																																																																																																																											"spec"] = spec;
 
 			std::ofstream fout("last-gk-controller.yaml");
 			fout << yamlSpec;
@@ -285,6 +300,14 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::Cons
 			std_msgs::Float64 command;
 			command.data = commands[i];
 			velControllers[i].publish(command);
+		}
+
+		for (auto it = posControllers.begin(); it != posControllers.end(); it++) {
+			if (it->second.idx > -1) {
+				std_msgs::Float64 command;
+				command.data = state[it->second.idx] + commands[it->second.idx] * dT;
+				it->second.pub.publish(command);		
+			}
 		}
 
 		if (rGripperIdx > -1) {

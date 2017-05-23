@@ -1,0 +1,29 @@
+scope = {
+	j_head_pan = input(0);
+	j_head_tilt = input(1);
+	
+	pan_goal = input(2);
+	time = input(3);
+
+
+	panErr = pan_goal + cos(time * 2) * 0.4 - j_head_pan;
+
+	tiltErr = sin(time * 2) * 0.4 + 0.1 - j_head_tilt; 
+
+	feedback = abs(panErr + tiltErr)
+}
+
+controllableConstraints = {
+	controllableConstraint(-0.6, 0.6, 0.01, 0, "j_head_pan");
+	controllableConstraint(-0.6, 0.6, 0.01, 1, "j_head_tilt")
+}
+
+softConstraints = {
+	softConstraint(panErr, panErr, 1, j_head_pan, "bla");
+	softConstraint(tiltErr, tiltErr, 1, j_head_tilt, "bla 2")
+}
+
+hardConstraints = {
+	hardConstraint(-0.471238 - j_head_tilt, 1.39626 - j_head_tilt, j_head_tilt);
+	hardConstraint(-3.007 - j_head_pan, 3.007 - j_head_pan, j_head_pan)
+}
