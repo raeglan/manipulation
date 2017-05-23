@@ -16,4 +16,9 @@
 - name: goal_radius
   type: double
   const: true
-  value: 0.08
+  value: 0.06
+
+- name: r_gripper_effort
+  type: double
+  const: true
+  value: 100
