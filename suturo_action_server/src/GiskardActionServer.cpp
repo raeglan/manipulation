@@ -41,6 +41,8 @@ GiskardActionServer::GiskardActionServer(string _name)
 	ros::param::get("robot_description", urdf);
 	collisionScene.setRobotDescription(urdf);
 
+	ros::Subscriber octmap_sub = nh.subscribe("/occupied_cells_vis_array", 1, &CollisionScene::update, &collisionScene);
+
 	server.start();
 }
 
