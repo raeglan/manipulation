@@ -1,0 +1,14 @@
+- name: knife2
+  type: transform
+  const: false
+  value: knife2 r_wrist_roll_link
+
+- name: cake
+  type: transform
+  const: false
+  value: cake base_link
+
+- name: spatula
+  type: transform
+  const: false
+  value: spatula base_link
