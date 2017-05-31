@@ -46,8 +46,34 @@ void CollisionScene::clearQueryLinks() {
 }
 
 
-void CollisionScene::traverseTree(octomap::OcTreeNode *currentNode, double& minDist){
-	double occupancy = currentNode->getOccupancy();
+void CollisionScene::traverseTree(SQueryPoints& qPoint){
+
+	double dist = -1;
+
+	for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
+        end=octree->end_leafs(); it!= end; ++it)
+ 	{
+   		//manipulate node, e.g.:
+   		octomath::Vector3 point = it.getCoordinate();
+
+   		Eigen::Vector3d pointEigen(point.x(), point.y(), point.z());
+
+   		if(double newdist = (pointEigen - qPoint.onLink).norm() < dist || dist < 0){
+   			qPoint.inScene = pointEigen;
+   			dist = newdist;
+   		}
+
+
+   		
+
+
+   		//std::cout << "Node center: " << it.getCoordinate() << std::endl;
+   		//std::cout << "Node size: " << it.getSize() << std::endl;
+   		//std::cout << "Node value: " << it->getValue() << std::endl;
+	 }
+
+
+	/*double occupancy = currentNode->getOccupancy();
 	if(occupancy == 0){
 		return;
 	}
@@ -55,12 +81,12 @@ void CollisionScene::traverseTree(octomap::OcTreeNode *currentNode, double& minD
 	if(currentNode->hasChildren()){
 		for(int i = 0; i<8; i++){
 			if(currentNode->childExists(i)){
-				traverseTree(currentNode->getChild(i), minDist);
+				traverseTree(currentNode->getChild(i), minDist, qPoint);
 			}
 		}
 	}else{
-		//calc dist
-	}
+		octomath::Vector3 point3d = currentNode->getCoordinate();
+	}*/
 }
 
 void CollisionScene::updateQuery(const ros::TimerEvent& event) {
@@ -82,26 +108,15 @@ void CollisionScene::updateQuery(const ros::TimerEvent& event) {
 
 				// Iterate over Octomap
 
-				//typedef NODE octomap::OcTreeBaseImpl< NODE, INTERFACE >::NodeType;
+				//octomap::OcTreeNode *node = octree->getRoot();
 
-				octomap::OcTreeNode *node = octree->getRoot();
+				SQueryPoints qPoint;
+				qPoint.onLink = iLink.translation();
 
 				double dist;
-				traverseTree(node, dist);
+				traverseTree(qPoint);
 
-				/*
-				double asd = node->getOccupancy();
-				octomap::OcTreeNode *node2 = node->getChild(1);
-
-				unsigned int tree_depth = octree->getTreeDepth();
-
-				for (octomap::OcTree::iterator it = octree->begin(tree_depth), end = octree->end(); it != end; ++it){
-
-				}*/
-
-				SQueryPoints points;
-
-				map.set(linkName, points, 1);
+				map.set(linkName, qPoint, 1);
 				
 
 			} catch(tf::TransformException ex) {

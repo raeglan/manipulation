@@ -90,7 +90,7 @@ public:
 	void setRobotDescription(const string& urdfStr);
 	void addQueryLink(const string& link);
 	void clearQueryLinks();
-	void traverseTree(octomap::OcTreeNode *currentNode, double& minDist);
+	void traverseTree(SQueryPoints& qPoint);
 
 private:
 	struct SRobotLink {
