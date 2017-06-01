@@ -1,4 +1,4 @@
-- name: poi
+- name: focal_point
   type: transform
   const: false
-  value: poi base_link
+  value: plate base_link

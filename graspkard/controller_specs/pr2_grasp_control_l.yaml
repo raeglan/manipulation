@@ -26,28 +26,21 @@ scope:
 
 
   # definition of joint input variables
-  - torso_lift_joint: {input-var: 0}
-  - shoulder_pan_joint: {input-var: 1}
-  - shoulder_lift_joint: {input-var: 2}
-  - upper_arm_roll_joint: {input-var: 3}
-  - elbow_flex_joint: {input-var: 4}
-  - forearm_roll_joint: {input-var: 5}
-  - wrist_flex_joint: {input-var: 6}
-  - wrist_roll_joint: {input-var: 7}
-  - gripper_joint: {input-var: 8}
+  - torso_lift_joint: {input-joint: torso_lift_joint}
+  - shoulder_pan_joint: {input-joint: l_shoulder_pan_joint}
+  - shoulder_lift_joint: {input-joint: l_shoulder_lift_joint}
+  - upper_arm_roll_joint: {input-joint: l_upper_arm_roll_joint}
+  - elbow_flex_joint: {input-joint: l_elbow_flex_joint}
+  - forearm_roll_joint: {input-joint: l_forearm_roll_joint}
+  - wrist_flex_joint: {input-joint: l_wrist_flex_joint}
+  - wrist_roll_joint: {input-joint: l_wrist_roll_joint}
+  - gripper_joint: {input-joint: l_gripper_joint}
 
   # definition goal input variables
-  - cylinder_pos_x: {input-var: 9}
-  - cylinder_pos_y: {input-var: 10}
-  - cylinder_pos_z: {input-var: 11}
+  - cylinder_frame: {input-frame: cylinder_frame}
 
-  - cylinder_rot_x: {input-var: 12}
-  - cylinder_rot_y: {input-var: 13}
-  - cylinder_rot_z: {input-var: 14}
-  - cylinder_rot_a: {input-var: 15}
-
-  - cylinder_width: {input-var: 16}
-  - cylinder_height: {double-mul: [{input-var: 17}, 0.5]}
+  - cylinder_width: {input-scalar: cylinder_width}
+  - cylinder_height: {double-mul: [{input-scalar: cylinder_height}, 0.5]}
 
   # definition of joint transforms
   - torso_lift:
@@ -69,13 +62,8 @@ scope:
   - gripper_offset:
       frame: [{axis-angle: [unit_x, 0]}, {vector3: [0.18, 0, 0]}]
 
-  - cylinder_rot_axis: {vector3: [cylinder_rot_x, cylinder_rot_y, cylinder_rot_z]}
-  - cylinder_rot: {axis-angle: [cylinder_rot_axis, cylinder_rot_a]}
-  - cylinder_pos: {vector3: [cylinder_pos_x, cylinder_pos_y, cylinder_pos_z]}
-
-  - cylinder_frame:
-      frame: [cylinder_rot, cylinder_pos]
-
+  - cylinder_rot: {orientation-of: cylinder_frame}
+  - cylinder_pos: {origin-of: cylinder_frame}
 
   # definition of elbow FK
   - elbow:
@@ -170,17 +158,18 @@ scope:
   - feedback: {double-add: [dist_xy, {max: [{double-sub: [dist_z, cylinder_safety_height]}, 0]}]}
 
 controllable-constraints:
-  # torso joint
-  - controllable-constraint: [neg_vel_limit_torso_joint, pos_vel_limit_torso_joint, weight_torso_joint, 0, torso_lift_joint]
-  # arm joints
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 1, shoulder_pan_joint]
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 2, shoulder_lift_joint]
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 3, upper_arm_roll_joint]
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 4, elbow_flex_joint]
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 5, forearm_roll_joint]
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 6, wrist_flex_joint]
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 7, wrist_roll_joint]
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 8, gripper_joint]
+# torso joint
+  - controllable-constraint: [neg_vel_limit_torso_joint, pos_vel_limit_torso_joint, weight_torso_joint, torso_lift_joint]
+  # left arm joints
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, l_shoulder_pan_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, l_shoulder_lift_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, l_upper_arm_roll_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, l_elbow_flex_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, l_forearm_roll_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, l_wrist_flex_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, l_wrist_roll_joint]
+  # right arm joints
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, l_gripper_joint]
 
 soft-constraints:
   # Position constraint

@@ -111,6 +111,7 @@ add_definitions(-std=c++11 -g)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
+  INCLUDE_DIRS include
   CATKIN_DEPENDS suturo_manipulation_msgs giskard r_libs roscpp
 )
 

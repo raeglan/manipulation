@@ -9,6 +9,7 @@
 #include <giskard/giskard.hpp>
 
 #include <unordered_map>
+#include <unordered_set>
 
 using namespace std;
 
@@ -23,10 +24,12 @@ public:
 	virtual void updateLoop() {};
 	void jointStateCallback(const sensor_msgs::JointState::ConstPtr& jointStateMsg);
 
-	void decodeDouble(size_t startIdx, string value);
-	void decodeDouble(size_t startIdx, double value);
-	void decodeTransform(size_t startIdx, string transform);
-	void decodeTransform(size_t startIdx, tf::Transform transform);
+	bool decodeDouble(const string& name, string value);
+	bool decodeDouble(const string& name, double value);
+	bool decodeVector(const string& name, string vector);
+	bool decodeVector(const string& name, Eigen::Vector3d vector);
+	bool decodeTransform(const string& name, string transform);
+	bool decodeTransform(const string& name, tf::Transform transform);
 protected:
 	int nWSR;
 	bool terminateExecution;
@@ -47,7 +50,7 @@ protected:
 	unordered_map<string, posController> posControllers;
 
 
-	unordered_map<string, size_t> jointIndexMap;
+	unordered_set<string> jointSet;
 
 	vector<boost::shared_ptr<AQuery>> queries;
 
@@ -67,22 +70,22 @@ private:
 };
 
 struct AQuery {
-	AQuery(GiskardActionServer* _pServer, size_t _idx)
+	AQuery(GiskardActionServer* _pServer, string _name)
 	: pServer(_pServer)
-	, idx(_idx) 
+	, name(_name) 
 	{
 		assert(pServer);
 	}
 
 	virtual bool eval() = 0;
 protected:
-	const size_t idx;
+	const string name;
 	GiskardActionServer* pServer;
 };
 
 struct TFQuery : public AQuery {
-	TFQuery(GiskardActionServer* pS, size_t idx, string _frameId, string _refFrame, tf::TransformListener* _tfListener) 
-	: AQuery(pS, idx)
+	TFQuery(GiskardActionServer* pS, string name, string _frameId, string _refFrame, tf::TransformListener* _tfListener) 
+	: AQuery(pS, name)
 	, frameId(_frameId)
 	, refFrame(_refFrame)
 	, tfListener(_tfListener)
@@ -96,7 +99,7 @@ struct TFQuery : public AQuery {
 			tfListener->waitForTransform(refFrame, frameId, ros::Time(0), ros::Duration(0.5));
 			tfListener->lookupTransform(refFrame, frameId, ros::Time(0), temp);
 			
-			pServer->decodeTransform(idx, temp);
+			pServer->decodeTransform(name, temp);
 		} catch(tf::TransformException ex) {
 			cerr << ex.what() << endl;
 			ROS_WARN("Query for frame '%s' in '%s' failed!", frameId.c_str(), refFrame.c_str());
@@ -112,15 +115,15 @@ private:
 };
 
 struct ElapsedTimeQuery : public AQuery {
-	ElapsedTimeQuery(GiskardActionServer* _pServer, size_t _idx)
-	: AQuery(_pServer, _idx) 
+	ElapsedTimeQuery(GiskardActionServer* _pServer, string _name)
+	: AQuery(_pServer, _name) 
 	, start(ros::Time::now())
 	{ }
 
 	bool eval() {
 		ros::Duration elapsed = ros::Time::now() - start;
 
-		pServer->decodeDouble(idx, elapsed.toSec());
+		pServer->decodeDouble(name, elapsed.toSec());
 		return true;
 	}
 

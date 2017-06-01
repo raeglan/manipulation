@@ -26,44 +26,31 @@ scope:
 
 
   # definition of joint input variables
-  - torso_lift_joint: {input-var: 0}
-  - shoulder_pan_joint: {input-var: 1}
-  - shoulder_lift_joint: {input-var: 2}
-  - upper_arm_roll_joint: {input-var: 3}
-  - elbow_flex_joint: {input-var: 4}
-  - forearm_roll_joint: {input-var: 5}
-  - wrist_flex_joint: {input-var: 6}
-  - wrist_roll_joint: {input-var: 7}
-  - gripper_joint: {input-var: 8}
+  - torso_lift_joint: {input-joint: torso_lift_joint}
+  - shoulder_pan_joint: {input-joint: r_shoulder_pan_joint}
+  - shoulder_lift_joint: {input-joint: r_shoulder_lift_joint}
+  - upper_arm_roll_joint: {input-joint: r_upper_arm_roll_joint}
+  - elbow_flex_joint: {input-joint: r_elbow_flex_joint}
+  - forearm_roll_joint: {input-joint: r_forearm_roll_joint}
+  - wrist_flex_joint: {input-joint: r_wrist_flex_joint}
+  - wrist_roll_joint: {input-joint: r_wrist_roll_joint}
+  - gripper_joint: {input-joint: r_gripper_joint}
 
   # definition goal input variables
-  - cake_pos_x: {input-var: 9}
-  - cake_pos_y: {input-var: 10}
-  - cake_pos_z: {input-var: 11}
+  - cake_frame: {input-frame: cake_frame}
 
-  - cake_rot_x: {input-var: 12}
-  - cake_rot_y: {input-var: 13}
-  - cake_rot_z: {input-var: 14}
-  - cake_rot_a: {input-var: 15}
+  - cake_length: {input-scalar: cake_length}
+  - cake_width: {input-scalar: cake_width}
+  - cake_height: {input-scalar: cake_height}
 
-  - cake_length: {input-var: 16}
-  - cake_width: {input-var: 17}
-  - cake_height: {input-var: 18}
+  - cake_pos: {origin-of: cake_frame}
+  - cake_rot: {orientation-of: cake_frame}
 
-  - knife_pos_x: {input-var: 19}
-  - knife_pos_y: {input-var: 20}
-  - knife_pos_z: {input-var: 21}
-
-  - knife_rot_x: {input-var: 22}
-  - knife_rot_y: {input-var: 23}
-  - knife_rot_z: {input-var: 24}
-  - knife_rot_a: {input-var: 25}
-
-  - knife_height: {input-var: 26}
-
-  - slice_width: {input-var: 27}
+  - knife_frame: {input-frame: knife_in_gripper}
   
-
+  - knife_height: {input-scalar: knife_height}
+  - slice_width: {input-scalar: slice_width}
+  
 
   # definition of joint transforms
   - torso_lift:
@@ -84,21 +71,6 @@ scope:
       frame: [{axis-angle: [unit_x, wrist_roll_joint]}, {vector3: [0, 0, 0]}]
   #- knife_offset:
   #    frame: [{axis-angle: [unit_x, 0]}, {vector3: [0.30, 0, 0]}]
-
-
-  - cake_pos: {vector3: [cake_pos_x, cake_pos_y, cake_pos_z]}
-  - cake_rot_axis: {vector3: [cake_rot_x, cake_rot_y, cake_rot_z]}
-  - cake_rot: {axis-angle: [cake_rot_axis, cake_rot_a]}
-
-  - cake_frame:
-      frame: [cake_rot, cake_pos]
-
-  - knife_pos: {vector3: [knife_pos_x, knife_pos_y, knife_pos_z]}
-  - knife_rot_axis: {vector3: [knife_rot_x, knife_rot_y, knife_rot_z]}
-  - knife_rot: {axis-angle: [knife_rot_axis, knife_rot_a]}
-
-  - knife_frame:
-      frame: [knife_rot, knife_pos]
 
   # definition of elbow FK
   - elbow:
@@ -151,7 +123,6 @@ scope:
   - rot_ctr_zz: {double-sub: [1, dot_zz]}
 
 
-
   # width of the slice
   - cake_yzplane_dist: {vector-dot: [vector-sub: [trans, cake_pos], rotate-vector: [cake_rot, unit_x]]}
 
@@ -168,17 +139,17 @@ scope:
 
 controllable-constraints:
   # torso joint
-  - controllable-constraint: [neg_vel_limit_torso_joint, pos_vel_limit_torso_joint, weight_torso_joint, 0, torso_lift_joint]
+  - controllable-constraint: [neg_vel_limit_torso_joint, pos_vel_limit_torso_joint, weight_torso_joint, torso_lift_joint]
   # left arm joints
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 1, shoulder_pan_joint]
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 2, shoulder_lift_joint]
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 3, upper_arm_roll_joint]
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 4, elbow_flex_joint]
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 5, forearm_roll_joint]
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 6, wrist_flex_joint]
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 7, wrist_roll_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, r_shoulder_pan_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, r_shoulder_lift_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, r_upper_arm_roll_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, r_elbow_flex_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, r_forearm_roll_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, r_wrist_flex_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, r_wrist_roll_joint]
   # right arm joints
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, 8, gripper_joint]
+  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, r_gripper_joint]
 
 soft-constraints:
   # Position constraint

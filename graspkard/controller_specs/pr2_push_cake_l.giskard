@@ -14,13 +14,11 @@ scope = {
 	j_wrist_roll    = inputJoint("l_wrist_roll_joint");
 	j_gripper       = inputJoint("l_gripper_joint");
 
-	old = inputFrame("start_pose");
-	old_pos = old.pos;
-	old_rot = old.rot;
+	cake = inputFrame("cake_frame");
+	cake_pos = cake.pos;
+	cake_rot = cake.rot;
 
-	opening = inputScalar("gripper_opening"); 
-
-	torso_lift       = frame(rotation(unitX, 0), vec3(-0.05, 0, 0.739675 + j_torso_lift));
+	torso_lift    = frame(rotation(unitX, 0), vec3(-0.05, 0, 0.739675 + j_torso_lift));
 	shoulder_pan  = frame(rotation(unitZ, j_shoulder_pan),   vec3(0, 0.188, 0));
 	shoulder_lift = frame(rotation(unitY, j_shoulder_lift),  vec3(0.1, 0, 0));
 	upper_arm_roll= frame(rotation(unitX, j_upper_arm_roll), vec3(0, 0, 0));
@@ -31,42 +29,23 @@ scope = {
 
 	elbow = torso_lift * shoulder_pan * shoulder_lift * upper_arm_roll * elbow_flex ;
 	wrist = elbow * forearm_roll * wrist_flex * wrist_roll;
-	
-	finger_length = 0.06;
+	knife = wrist * inputFrame("knife_in_wrist");
 
-	# Open the gripper
-	grasp_err = opening - j_gripper;
+	# 
+	cake_dist = abs((knife.pos - cake_pos) * (cake_rot * unitX));
 
-	pre_scale = if(grasp_err - 0.002, 0, 1);
+	knife_rot = knife.rot;
 
-	# Freeze rotation
-	wrist_x = wrist.rot * unitX;
-	wrist_z = wrist.rot * unitZ;
-	w_pos = wrist.pos;
+	blade_x = knife_rot * unitX;
+	blade_z = knife_rot * unitZ;
 
-	goal_x = old_rot * unitX;
-	goal_y = old_rot * unitY;
-	goal_z = old_rot * unitZ;
+	blade_align_x = abs(blade_x * (cake_rot * unitY));
+	blade_align_x_err = 1 - blade_align_x;
 
-	align_scale = 10;
+	blade_roll = blade_z * (cake_rot * unitZ);
+	blade_roll_err = 1 - blade_roll ;
 
-	pitch_ctrl = 1 - wrist_x * goal_x;
-	pitch_err = -pitch_ctrl * align_scale;
-
-	yaw_ctrl = 1 - wrist_z * goal_z;
-	yaw_err = -yaw_ctrl * align_scale;	
-
-	diff = wrist.pos - old_pos;
-
-	y_align_ctrl = diff * goal_y;
-	y_align_err = -y_align_ctrl * align_scale;
-
-	z_align_ctrl = diff * goal_z;
-	z_align_err = -z_align_ctrl * align_scale;
-
-	x_goal_ctrl = -finger_length - 0.05 - diff * goal_x;
-	x_goal_err = -x_goal_ctrl * pre_scale;
-
+	# Limits, weights and the like
 	negVelLimitTorso = -0.02;
 	posVelLimitTorso =  0.02;
 	negVelLimitArm   = -0.6;
@@ -76,10 +55,10 @@ scope = {
 	weightArm   = weightGripper * 10;
 	weightTorso = weightArm * 10;
 
-	weightPositionGoal = 2;
+	weightPositionGoal = 1;
 	weightRotationGoal = 4;
 
-	feedback = -x_goal_ctrl
+	feedback = 1
 }
 
 controllableConstraints = {
@@ -95,20 +74,16 @@ controllableConstraints = {
 }
 
 softConstraints = {
-	softConstraint(grasp_err, grasp_err, 10, j_gripper, "Gripper opening");
-	
-	softConstraint(pitch_err, pitch_err, weightRotationGoal, pitch_ctrl, "Pitch freeze");
-	softConstraint(yaw_err, yaw_err, weightRotationGoal, yaw_ctrl, "Yaw freeze");
-	softConstraint(y_align_err, y_align_err, weightRotationGoal, y_align_ctrl, "Y-freeze");
-	softConstraint(z_align_err, z_align_err, weightRotationGoal, z_align_ctrl, "Z-freeze");
-	softConstraint(x_goal_err, x_goal_err, weightRotationGoal, x_goal_ctrl, "X-Goal")
+	softConstraint(0.02, 0.02, weightPositionGoal, cake_dist, "Knife ZY-Dist");
+	softConstraint(blade_align_x_err, blade_align_x_err, weightRotationGoal, blade_align_x, "Knife align");
+	softConstraint(blade_roll_err, blade_roll_err, weightRotationGoal, blade_roll, "Knife roll")
 }	
 
 hardConstraints = {
 	hardConstraint(0.0115 - j_torso_lift, 0.325 - j_torso_lift, j_torso_lift);
 	
 	# # Right arm constraints
-	hardConstraint(-0.5646 - j_shoulder_pan,  2.1353 - j_shoulder_pan,   j_shoulder_pan);
+	hardConstraint(-2.1353 - j_shoulder_pan,  0.5646 - j_shoulder_pan,   j_shoulder_pan);
 	hardConstraint(-0.3536 - j_shoulder_lift, 1.2963 - j_shoulder_lift,  j_shoulder_lift);
 	hardConstraint(-3.75   - j_upper_arm_roll,  0.65 - j_upper_arm_roll, j_upper_arm_roll);
 	hardConstraint(-2.1213 - j_elbow_flex,     -0.15 - j_elbow_flex,     j_elbow_flex);

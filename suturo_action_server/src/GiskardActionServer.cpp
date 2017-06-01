@@ -14,11 +14,6 @@ void print_eigen(const Eigen::VectorXd& command)
   ROS_INFO("Command: (%s)", cmd_str.c_str());
 }
 
-struct SBacklogParam {
-	suturo_manipulation_msgs::TypedParam param;
-	size_t idx;
-};
-
 GiskardActionServer::GiskardActionServer(string _name) 
 : controllerInitialized(false)
 , terminateExecution(false)
@@ -58,23 +53,11 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	lGripperIdx = -1;
 
 	velControllers.clear();
-	jointIndexMap.clear();
+	jointSet.clear();
 	queries.clear();
 	for (auto it = posControllers.begin(); it != posControllers.end(); it++)
 		it->second.idx = -1;
 
-	for (size_t i = 0; i < goal->controlled_joints.size(); i++) {
-		string jointName = goal->controlled_joints[i];
-		jointIndexMap[goal->controlled_joints[i]] = i;
-		velControllers.push_back(nh.advertise<std_msgs::Float64>("/" + jointName.substr(0, jointName.size() - 6) + "_velocity_controller/command", 1));
-		if (jointName.compare("r_gripper_joint") == 0)
-			rGripperIdx = i;
-		else if (jointName.compare("l_gripper_joint") == 0)
-			lGripperIdx = i;
-
-		if (posControllers.find(jointName) != posControllers.end())
-			posControllers[jointName].idx = i;
-	}
 
 	controllerInitialized = false;
 	
@@ -91,7 +74,7 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 			giskard::QPControllerSpec spec = glParser.parseQPController(goal->controller_yaml);
 			
 			YAML::Node yamlSpec = YAML::Load("");
-			yamlSpec[																																																																																																																																																																																																																																																																																																																																																																																																											"spec"] = spec;
+			yamlSpec["spec"] = spec;
 
 			std::ofstream fout("last-gk-controller.yaml");
 			fout << yamlSpec;
@@ -121,16 +104,25 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		server.setAborted(res);
 		return;
 	}
+	
+	const std::vector<std::string>& controlled_joints = controller.get_controllable_names();
+	for (size_t i = 0; i < controlled_joints.size(); i++) {
+		string jointName = controlled_joints[i];
+		jointSet.insert(jointName);
+		velControllers.push_back(nh.advertise<std_msgs::Float64>("/" + jointName.substr(0, jointName.size() - 6) + "_velocity_controller/command", 1));
+		if (jointName.compare("r_gripper_joint") == 0)
+			rGripperIdx = i;
+		else if (jointName.compare("l_gripper_joint") == 0)
+			lGripperIdx = i;
 
-	size_t paramLength = 0;
-	size_t jntOffset = jointIndexMap.size();
-	vector<SBacklogParam> backlog;
+		if (posControllers.find(jointName) != posControllers.end())
+			posControllers[jointName].idx = i;
+	}
+
+	vector<suturo_manipulation_msgs::TypedParam> backlog;
 
 	for (size_t i = 0; i < goal->params.size(); i++) {
 		TypedParam p = goal->params[i];
-		SBacklogParam bp;
-		bp.param = p;
-		bp.idx = jntOffset + paramLength;
 
 		if (p.name.compare("r_gripper_effort") == 0) {
 			rGripperEffort = ::atof(p.value.c_str());
@@ -141,11 +133,10 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		}
 
 		if (p.isConst)
-			backlog.push_back(bp);
+			backlog.push_back(p);
 
 		switch (p.type) {
 			case TypedParam::DOUBLE:
-				paramLength++;
 				break;
 			case TypedParam::TRANSFORM:
 				if (!p.isConst) {
@@ -154,16 +145,14 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 					ss >> childframe;
 					ss >> refFrame;
 					queries.push_back(boost::shared_ptr<AQuery>(
-						new TFQuery(this, paramLength + jntOffset, childframe, refFrame, &tfListener)
+						new TFQuery(this, p.name, childframe, refFrame, &tfListener)
 						));
 				}
-				paramLength += 7;
 				break;
 			case TypedParam::ELAPSEDTIME:
 				queries.push_back(boost::shared_ptr<AQuery>(
-						new ElapsedTimeQuery(this, paramLength + jntOffset)
+						new ElapsedTimeQuery(this, p.name)
 						));
-				paramLength++;
 				break;
 			default:
 				ROS_ERROR("Datatype of index %d is unknown! Aborting goal!", p.type);
@@ -174,18 +163,21 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		}
 	}
 
-	state = Eigen::VectorXd::Zero(jointIndexMap.size() + paramLength);
+	state = Eigen::VectorXd::Zero(controller.get_scope().get_input_size());
 
-	for (SBacklogParam bp: backlog) {
-		switch (bp.param.type) {
+	for (auto p: backlog) {
+		switch (p.type) {
 			case TypedParam::DOUBLE:
-				decodeDouble(bp.idx, bp.param.value);				
+				decodeDouble(p.name, p.value);				
+				break;
+			case TypedParam::VECTOR:
+				decodeVector(p.name, p.value);
 				break;
 			case TypedParam::TRANSFORM:
-				decodeTransform(bp.idx, bp.param.value);
+				decodeTransform(p.name, p.value);
 				break;
 			default:
-				ROS_ERROR("Param type %d is unknown. Param: %s", bp.param.type, bp.param.name.c_str());
+				ROS_ERROR("Param type %d is unknown. Param: %s", p.type, p.name.c_str());
 				break;
 		}
 	}
@@ -244,9 +236,9 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::Cons
 	lastUpdate = now;
 
 	for (size_t i = 0; i < jointStateMsg->name.size(); i++) {
-		auto it = jointIndexMap.find(jointStateMsg->name[i]);
-		if (it != jointIndexMap.end()) {
-			state[it->second] = jointStateMsg->position[i];
+		auto it = jointSet.find(jointStateMsg->name[i]);
+		if (it != jointSet.end()) {
+			controller.get_scope().set_input(jointStateMsg->name[i], jointStateMsg->position[i], state);
 		}
 	}
 
@@ -314,30 +306,38 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::Cons
 	}
 }
 
-void GiskardActionServer::decodeDouble(size_t startIdx, string value) {
-	state[startIdx] = ::atof(value.c_str());
+bool GiskardActionServer::decodeDouble(const std::string& name, string value) {
+	return controller.get_scope().set_input(name, ::atof(value.c_str()), state);
 }
 
-void GiskardActionServer::decodeDouble(size_t startIdx, double value) {
-	state[startIdx] = value;
+bool GiskardActionServer::decodeDouble(const std::string& name, double value) {
+	return controller.get_scope().set_input(name, value, state);
 }
 
-void GiskardActionServer::decodeTransform(size_t startIdx, string transform) {
-	for (size_t i = 0; i < 7; i++)
-		state[startIdx + i] = ::atof(transform.c_str());
+bool GiskardActionServer::decodeVector(const std::string& name, string vector) {
+	const char* c_v = vector.c_str();
+	return controller.get_scope().set_input(name, 
+		Eigen::Vector3d(::atof(c_v), ::atof(c_v), ::atof(c_v)),
+		state);
 }
 
-void GiskardActionServer::decodeTransform(size_t startIdx, tf::Transform transform) {
+bool GiskardActionServer::decodeVector(const std::string& name, Eigen::Vector3d vector) {
+	return controller.get_scope().set_input(name, vector, state);
+}
+
+bool GiskardActionServer::decodeTransform(const std::string& name, string transform) {
+	const char* c_t = transform.c_str();
+	return controller.get_scope().set_input(name, 
+		Eigen::Vector3d(::atof(c_t), ::atof(c_t), ::atof(c_t)), ::atof(c_t),
+		Eigen::Vector3d(::atof(c_t), ::atof(c_t), ::atof(c_t)), 
+		state);
+}
+
+bool GiskardActionServer::decodeTransform(const std::string& name, tf::Transform transform) {
 	tf::Vector3 pos = transform.getOrigin();
     tf::Vector3 rot = transform.getRotation().getAxis();
     double angle = transform.getRotation().getAngle();
-
-	state[startIdx + 0] = pos.x();
-    state[startIdx + 1] = pos.y();
-    state[startIdx + 2] = pos.z();
-
-    state[startIdx + 3] = rot.x();
-    state[startIdx + 4] = rot.y();
-    state[startIdx + 5] = rot.z();
-    state[startIdx + 6] = angle;
+	return controller.get_scope().set_input(name, 
+			Eigen::Vector3d(rot.x(), rot.y(), rot.z()), angle,
+			Eigen::Vector3d(pos.x(), pos.y(), pos.z()), state);
 }
