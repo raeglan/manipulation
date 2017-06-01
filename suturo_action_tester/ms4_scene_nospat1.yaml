@@ -115,7 +115,7 @@ plate:
     frame_id: odom_combined
     orientation: !!python/tuple [0.0025723776780068874, -0.00599681818857789, -0.004379698075354099,
       0.9999691247940063]
-    translation: !!python/tuple [-1.9060320854187012, -0.5980283617973328, 0.8859447240829468]
+    translation: !!python/tuple [0.48044323921203613, 0.012159682810306549, 1.026578426361084]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
