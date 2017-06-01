@@ -86,11 +86,11 @@ public:
 
 	CollisionScene(QueryMap &_map);
 
-	void update(octomap_msgs::Octomap omap);
+	void update(const octomap_msgs::Octomap &omap);
 	void setRobotDescription(const string& urdfStr);
 	void addQueryLink(const string& link);
 	void clearQueryLinks();
-	void traverseTree(SQueryPoints& qPoint);
+	void updateQuery();
 
 private:
 	struct SRobotLink {
@@ -98,12 +98,13 @@ private:
 		Eigen::Vector3d negBound;
 	};
 
-	void updateQuery(const ros::TimerEvent& event);
+	void traverseTree(SQueryPoints& qPoint);
 
 	ros::NodeHandle nh;
 	ros::CallbackQueue cbQueue;
 	ros::Timer updateTimer;
 
+	ros::Subscriber sub;
 	urdf::Model robot;
 	unordered_map<string, SRobotLink> linkMap;
 	QueryMap& map;
@@ -111,6 +112,6 @@ private:
 	tf::TransformListener tfListener;
 	Eigen::Affine3d transform;
 	string refFrame;
-	octomap::OcTree *octree;
+	octomap::OcTree *octree = NULL;
 
 };

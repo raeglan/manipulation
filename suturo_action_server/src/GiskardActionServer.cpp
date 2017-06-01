@@ -41,7 +41,6 @@ GiskardActionServer::GiskardActionServer(string _name)
 	ros::param::get("robot_description", urdf);
 	collisionScene.setRobotDescription(urdf);
 
-	ros::Subscriber octmap_sub = nh.subscribe("/occupied_cells_vis_array", 1, &CollisionScene::update, &collisionScene);
 	posControllers["head_tilt_joint"] = {
 		nh.advertise<std_msgs::Float64>("/head_tilt_position_controller/command", 1),
 		-1
@@ -272,6 +271,8 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::Cons
 			state[it->second] = jointStateMsg->position[i];
 		}
 	}
+
+	collisionScene.updateQuery();
 
 	bool ok = true;
 	for (size_t i = 0; i < queries.size() && ok; i++) {

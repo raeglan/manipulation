@@ -11,14 +11,17 @@ using namespace Eigen;
 CollisionScene::CollisionScene(QueryMap &_map) 
  : map(_map)		
 {
-	nh.setCallbackQueue(&cbQueue);
-	updateTimer = nh.createTimer(ros::Duration(0.025), &CollisionScene::updateQuery, this);
-	ros::Subscriber sub = nh.subscribe("octomap_binary", 1000, &CollisionScene::update,this);
+	//nh.setCallbackQueue(&cbQueue);
+	//updateTimer = nh.createTimer(ros::Duration(0.025), &CollisionScene::updateQuery, this);
+	sub = nh.subscribe("/octomap_binary", 10, &CollisionScene::update, this);
+	//ros::spin();
 }
 
-void CollisionScene::update(octomap_msgs::Octomap omap) {
+void CollisionScene::update(const octomap_msgs::Octomap &omap) {
 	//occupancy_map_monitor::OccupancyMapMonitor monitor();
 	//occupancy_map_monitor::DepthImageOctomapUpdater updater();
+
+	refFrame = omap.header.frame_id;
 
 	octomap::AbstractOcTree* tree = octomap_msgs::binaryMsgToMap(omap);
 
@@ -49,6 +52,10 @@ void CollisionScene::clearQueryLinks() {
 void CollisionScene::traverseTree(SQueryPoints& qPoint){
 
 	double dist = -1;
+
+	if(octree == NULL){
+		return;
+	}
 
 	for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
         end=octree->end_leafs(); it!= end; ++it)
@@ -89,12 +96,12 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint){
 	}*/
 }
 
-void CollisionScene::updateQuery(const ros::TimerEvent& event) {
+void CollisionScene::updateQuery() {
 	// TODO: MAGIC
 
 	for (const string& linkName: links) {
-		if (linkMap.find(linkName) != linkMap.end()) {
-			SRobotLink& link = linkMap[linkName];
+		//if (linkMap.find(linkName) != linkMap.end()) {
+			//SRobotLink& link = linkMap[linkName];
 
 			try {
 				tf::StampedTransform temp;
@@ -123,6 +130,6 @@ void CollisionScene::updateQuery(const ros::TimerEvent& event) {
 				cerr << ex.what() << endl;
 				ROS_WARN("TF-Query for link '%s' in '%s' failed!", linkName.c_str(), refFrame.c_str());
 			}
-		}
+		//}
 	}
 }
