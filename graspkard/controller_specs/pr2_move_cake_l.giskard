@@ -5,14 +5,14 @@ scope = {
 
 	j_torso_lift    = inputJoint("torso_lift_joint");
 
-	j_shoulder_pan  = inputJoint("r_shoulder_pan_joint");
-	j_shoulder_lift = inputJoint("r_shoulder_lift_joint");
-	j_upper_arm_roll= inputJoint("r_upper_arm_roll_joint");
-	j_elbow_flex    = inputJoint("r_elbow_flex_joint");
-	j_forearm_roll  = inputJoint("r_forearm_roll_joint");
-	j_wrist_flex    = inputJoint("r_wrist_flex_joint");
-	j_wrist_roll    = inputJoint("r_wrist_roll_joint");
-	j_gripper       = inputJoint("r_gripper_joint");
+	j_shoulder_pan  = inputJoint("l_shoulder_pan_joint");
+	j_shoulder_lift = inputJoint("l_shoulder_lift_joint");
+	j_upper_arm_roll= inputJoint("l_upper_arm_roll_joint");
+	j_elbow_flex    = inputJoint("l_elbow_flex_joint");
+	j_forearm_roll  = inputJoint("l_forearm_roll_joint");
+	j_wrist_flex    = inputJoint("l_wrist_flex_joint");
+	j_wrist_roll    = inputJoint("l_wrist_roll_joint");
+	j_gripper       = inputJoint("l_gripper_joint");
 
 	plate = inputFrame("plate");
 	plate_pos = plate.pos;
@@ -70,14 +70,14 @@ scope = {
 
 controllableConstraints = {
 	controllableConstraint(negVelLimitTorso, posVelLimitTorso, weightTorso, "torso_lift_joint");
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_shoulder_pan_joint");
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_shoulder_lift_joint");
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_upper_arm_roll_joint");
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_elbow_flex_joint");
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_forearm_roll_joint");
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_wrist_flex_joint");
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_wrist_roll_joint");
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_gripper_joint")
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_shoulder_pan_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_shoulder_lift_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_upper_arm_roll_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_elbow_flex_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_forearm_roll_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_wrist_flex_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_wrist_roll_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_gripper_joint")
 }
 
 softConstraints = {
