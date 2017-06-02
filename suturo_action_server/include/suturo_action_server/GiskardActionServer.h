@@ -6,6 +6,8 @@
 #include <suturo_manipulation_msgs/MoveRobotAction.h>
 #include <actionlib/server/simple_action_server.h>
 
+#include <r_libs/VisualizationManager.h>
+
 #include <giskard/giskard.hpp>
 
 #include <unordered_map>
@@ -16,13 +18,19 @@ using namespace std;
 struct AQuery; 
 
 class GiskardActionServer {
+	enum VisTypes : int {
+		vVector,
+		vFrame
+	};
 public:
 	GiskardActionServer(string _name);
 
 	virtual void setGoal(const suturo_manipulation_msgs::MoveRobotGoalConstPtr& goal);
 
 	virtual void updateLoop() {};
-	void jointStateCallback(const sensor_msgs::JointState::ConstPtr& jointStateMsg);
+	void jointStateCallback(const sensor_msgs::JointState jointStateMsg);
+
+	void updatejointState(const sensor_msgs::JointState::ConstPtr& jointState);
 
 	bool decodeDouble(const string& name, string value);
 	bool decodeDouble(const string& name, double value);
@@ -55,6 +63,9 @@ protected:
 	vector<boost::shared_ptr<AQuery>> queries;
 
 private:
+	bool newJS;
+	sensor_msgs::JointState currentJS;
+
 	ros::Time lastUpdate;
 	double dT;
 	tf::TransformListener tfListener;
@@ -64,6 +75,14 @@ private:
 	KDL::Expression<double>::Ptr feedbackExpr;
 	ros::Publisher rGripperPub, lGripperPub;
 	ros::Subscriber rGripperSub, lGripperSub;
+	
+	typedef std::pair<KDL::Expression<KDL::Vector>::Ptr, KDL::Expression<KDL::Vector>::Ptr> TVecPair;
+	unordered_map<string, KDL::Expression<double>::Ptr> visScalars;
+	unordered_map<string, TVecPair> visVectors;
+	unordered_map<string, KDL::Expression<KDL::Frame>::Ptr> visFrames;
+
+	ros::Publisher visPub, visScalarPub;
+	VisualizationManager visManager;
 
 	suturo_manipulation_msgs::MoveRobotFeedback feedback;
 	suturo_manipulation_msgs::MoveRobotResult result;

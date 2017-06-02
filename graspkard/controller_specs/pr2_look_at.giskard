@@ -19,6 +19,8 @@ scope = {
 	c_vDir = opt_frame.rot * unitX;
 	g_vDir = poi - opt_frame.pos; 
 
+	opt_pos = opt_frame.pos;
+
 	speed_scale = 4;
 	feedback = 1 - (c_vDir * g_vDir) / norm(g_vDir)
 }

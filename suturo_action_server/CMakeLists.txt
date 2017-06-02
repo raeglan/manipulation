@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   suturo_manipulation_msgs
   tf_conversions
+  eigen_conversions
   r_libs
   control_msgs
   pluginlib
@@ -112,7 +113,7 @@ add_definitions(-std=c++11 -g)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS suturo_manipulation_msgs giskard r_libs roscpp
+  CATKIN_DEPENDS suturo_manipulation_msgs giskard r_libs roscpp tf_conversions
 )
 
 ###########

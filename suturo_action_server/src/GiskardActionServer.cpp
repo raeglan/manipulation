@@ -1,7 +1,11 @@
 #include "suturo_action_server/GiskardActionServer.h"
 #include <suturo_manipulation_msgs/TypedParam.h>
+#include <suturo_manipulation_msgs/Float64Map.h>
 #include <control_msgs/GripperCommand.h>
 #include <giskard/GiskardLangParser.h>
+#include <eigen_conversions/eigen_kdl.h>
+
+#include <visualization_msgs/MarkerArray.h>
 
 using namespace YAML;
 using namespace suturo_manipulation_msgs;
@@ -23,6 +27,7 @@ GiskardActionServer::GiskardActionServer(string _name)
 , lGripperIdx(-1)
 , rGripperEffort(30)
 , lGripperEffort(30)
+, newJS(false)
 , name(_name)
 , nWSR(1000)
 , nh("~")
@@ -30,6 +35,14 @@ GiskardActionServer::GiskardActionServer(string _name)
 {
 	rGripperPub = nh.advertise<control_msgs::GripperCommand>("r_pr2_gripper_command", 1);
 	lGripperPub = nh.advertise<control_msgs::GripperCommand>("l_pr2_gripper_command", 1);
+
+	visPub = nh.advertise<visualization_msgs::MarkerArray>("visualization", 1);
+	visScalarPub = nh.advertise<suturo_manipulation_msgs::Float64Map>("debug_scalar", 1);
+
+	jsSub = nh.subscribe("/joint_states", 1, &GiskardActionServer::updatejointState, this);
+
+	visManager.addNamespace(vVector, "Vectors");
+	visManager.addNamespace(vFrame, "Frames");
 
 	posControllers["head_tilt_joint"] = {
 		nh.advertise<std_msgs::Float64>("/head_tilt_position_controller/command", 1),
@@ -43,6 +56,11 @@ GiskardActionServer::GiskardActionServer(string _name)
 	server.start();
 }
 
+void GiskardActionServer::updatejointState(const sensor_msgs::JointState::ConstPtr& jointState) {
+	currentJS = *jointState;
+	newJS = true;
+}
+
 void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	//Node ctrlJoints = YAML::Load(goal->controlled_joints);
 	terminateExecution = false;
@@ -51,6 +69,10 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	lastUpdate = ros::Time::now();
 	rGripperIdx = -1;
 	lGripperIdx = -1;
+
+	visScalars.clear();
+	visVectors.clear();
+	visFrames.clear();
 
 	velControllers.clear();
 	jointSet.clear();
@@ -121,6 +143,8 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 
 	vector<suturo_manipulation_msgs::TypedParam> backlog;
 
+	const giskard::Scope& scope = controller.get_scope();
+
 	for (size_t i = 0; i < goal->params.size(); i++) {
 		TypedParam p = goal->params[i];
 
@@ -154,6 +178,46 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 						new ElapsedTimeQuery(this, p.name)
 						));
 				break;
+			case TypedParam::VISUALIZE: {
+				istringstream ss(p.value);
+				string primaryValue, refPoint;
+				ss >> primaryValue;
+				ss >> refPoint;
+
+				if (refPoint == "") {
+					try {
+						KDL::Expression<double>::Ptr dblExpr = scope.find_double_expression(primaryValue);
+						visScalars[primaryValue] = dblExpr;
+						break;
+					} catch (const std::invalid_argument& e) { }
+
+					try {
+						KDL::Expression<KDL::Frame>::Ptr frameExpr = scope.find_frame_expression(primaryValue);
+						visFrames[primaryValue] = frameExpr;
+						break;
+					} catch (const std::invalid_argument& e) { }
+
+					ROS_ERROR("Failed to find frame or scalar value with name '%s'", primaryValue.c_str());
+				} else {
+					KDL::Expression<KDL::Vector>::Ptr a, b;
+					try {
+						a = scope.find_vector_expression(primaryValue);
+					} catch (const std::invalid_argument& e) { 
+						ROS_ERROR("Failed to find vector value with name '%s'", primaryValue.c_str());
+						break;
+					}
+
+					try {
+						b = scope.find_vector_expression(refPoint);
+					} catch (const std::invalid_argument& e) { 
+						ROS_ERROR("Failed to find vector value with name '%s'", refPoint.c_str());
+						break;
+					}
+
+					visVectors[primaryValue] = TVecPair(a,b);
+				}
+			}
+			break;
 			default:
 				ROS_ERROR("Datatype of index %d is unknown! Aborting goal!", p.type);
 				MoveRobotResult res;
@@ -163,7 +227,7 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		}
 	}
 
-	state = Eigen::VectorXd::Zero(controller.get_scope().get_input_size());
+	state = Eigen::VectorXd::Zero(scope.get_input_size());
 
 	for (auto p: backlog) {
 		switch (p.type) {
@@ -184,10 +248,9 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 
 	ROS_INFO("Controller started");
 	//jsSub = nh.subscribe("/joint_state", 1, &GiskardActionServer::jointStateCallback, this);
-	const giskard::Scope& scope = controller.get_scope();
 	try {
     	feedbackExpr = scope.find_double_expression(goal->feedbackValue);
-	} catch (std::invalid_argument e) {
+	} catch (const std::invalid_argument& e) {
 		ROS_ERROR("%s", e.what());
 		MoveRobotResult res;
 		res.reason_for_termination = MoveRobotResult::INVALID_FEEDBACK;
@@ -197,8 +260,10 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
     ros::spinOnce();
 
 	while (!server.isPreemptRequested() && ros::ok() && !terminateExecution) {
-		boost::shared_ptr<const sensor_msgs::JointState> js = ros::topic::waitForMessage<sensor_msgs::JointState>("joint_states");
-		jointStateCallback(js);
+		if (newJS) {
+			jointStateCallback(currentJS);
+			newJS = false;
+		}
 	}
 
 	if (ros::ok()) {
@@ -227,18 +292,21 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		velControllers[i].publish(command);
 	}
 
+	visManager.clearAllMarkers(&visPub);
+
 	ros::spinOnce();
 }	
 
-void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::ConstPtr& jointStateMsg) {
+
+void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState jointStateMsg) {
 	ros::Time now = ros::Time::now();
 	dT = (now - lastUpdate).toSec();
 	lastUpdate = now;
 
-	for (size_t i = 0; i < jointStateMsg->name.size(); i++) {
-		auto it = jointSet.find(jointStateMsg->name[i]);
+	for (size_t i = 0; i < jointStateMsg.name.size(); i++) {
+		auto it = jointSet.find(jointStateMsg.name[i]);
 		if (it != jointSet.end()) {
-			controller.get_scope().set_input(jointStateMsg->name[i], jointStateMsg->position[i], state);
+			controller.get_scope().set_input(jointStateMsg.name[i], jointStateMsg.position[i], state);
 		}
 	}
 
@@ -295,6 +363,41 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState::Cons
 
 			lGripperPub.publish(cmd);
 		}
+
+		/// ---------------- VISUALIZATION --------------------
+
+		suturo_manipulation_msgs::Float64Map scalars;
+
+		for (auto it = visScalars.begin(); it != visScalars.end(); it++) {
+			scalars.names.push_back(it->first);
+			scalars.values.push_back(it->second->value());
+		}
+
+		visScalarPub.publish(scalars);
+
+		visManager.beginNewDrawCycle();
+		visualization_msgs::MarkerArray ma;
+
+		for (auto it = visVectors.begin(); it != visVectors.end(); it++) {
+			KDL::Vector vaKDL = it->second.first->value();
+			KDL::Vector vbKDL = it->second.second->value(); 
+			Eigen::Vector3d va, vb;
+			tf::vectorKDLToEigen(vaKDL, va);
+			tf::vectorKDLToEigen(vbKDL, vb);
+			visManager.annotatedVector(ma.markers, vVector, vb, va, it->first, 0, 0.8f, 0, 1, "base_link");
+		}
+
+		for (auto it = visFrames.begin(); it != visFrames.end(); it++) {
+			KDL::Frame fKDL = it->second->value();
+			Eigen::Affine3d f = Affine3d::Identity();
+			tf::transformKDLToEigen(fKDL,f);
+			visManager.poseMarker(ma.markers, vFrame, f, 0.1, 1.f, "base_link");
+		}
+
+		visManager.endDrawCycle(ma.markers);
+		visPub.publish(ma);
+
+		/// ---------------------------------------------------
 
 		feedback.current_value = feedbackExpr->value();
 		feedback.alteration_rate = lastFeedback - feedback.current_value;
