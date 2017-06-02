@@ -121,7 +121,7 @@ int main(int argc, char **argv)
             }
             fout << "------------------------------------------------------" << std::endl;
             worked++;
-          } catch (std::exception e) {
+          } catch (const std::exception& e) {
             cerr << "Error while generating controller from file '" << (filePath) << "':" << endl << e.what() << endl; 
             failed = true;
           }
