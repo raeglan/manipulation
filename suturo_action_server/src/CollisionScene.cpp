@@ -33,10 +33,10 @@ void CollisionScene::update(const octomap_msgs::Octomap &omap) {
     	octree = dynamic_cast<octomap::OcTree*>(tree);
 	 }
 
-	 if (!octree)
-	 {
-	  	return;
-	 }
+	 //if (!octree)
+	 //{
+	 // 	return;
+	 //}
 
 }
 
@@ -52,33 +52,16 @@ void CollisionScene::clearQueryLinks() {
 	links.clear();
 }
 
+void CollisionScene::traverseTree(SQueryPoints& qPoint, Vector3d linkPos){
+	//tf::TransformBroadcaster br;
+	//tf::Transform transform;
 
+	//transform.setOrigin( tf::Vector3(qPoint.onLink.x(), qPoint.onLink.y(), qPoint.onLink.z()) );
+	//transform.setRotation( tf::Quaternion(0, 0, 0, 1) );
 
-
-void CollisionScene::traverseTree(SQueryPoints& qPoint){
-
-
-	tf::TransformBroadcaster br;
-	tf::Transform transform;
-
-	transform.setOrigin( tf::Vector3(qPoint.onLink.x(), qPoint.onLink.y(), qPoint.onLink.z()) );
-	transform.setRotation( tf::Quaternion(0, 0, 0, 1) );
-
-	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom_combined", "asdLink"));
-
-
+	//br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom_combined", "asdLink"));
 
 	double dist = -1;
-
-	tf::StampedTransform temp;
-	tfListener.waitForTransform("odom_combined", "base_link", ros::Time(0), ros::Duration(0.5));
-	tfListener.lookupTransform("odom_combined", "base_link", ros::Time(0), temp);
-
-	Affine3d tPoint = Affine3d::Identity();
-	tf::transformTFToEigen (temp, tPoint);
-
-	//Affine3d tPoint = tPoint.inverse();
-
 
 	if(octree == NULL){
 		return;
@@ -87,187 +70,61 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint){
 	for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
         end=octree->end_leafs(); it!= end; ++it)
  	{
+ 		if(it->getOccupancy() > 0.5){
+ 			//manipulate node, e.g.:
+   			octomath::Vector3 cellPos = it.getCoordinate();
+
+   			Eigen::Vector3d cellPosEigen(cellPos.x(), cellPos.y(), cellPos.z());
+
+   			Vector3d cellToLink = linkPos - cellPosEigen;
+
+   			double newdist = (cellToLink).norm();
+
+   			Vector3d pointOnCell = cellPosEigen + (cellToLink * (0.025/newdist));
+
+   			double occupancy = it->getOccupancy();
 
 
-   		//manipulate node, e.g.:
-   		octomath::Vector3 point = it.getCoordinate();
+   			//if(it->getOccupancy() > 0.2){
+   				//transform.setOrigin( tf::Vector3(point.x(), point.y(), point.z()) );
+				//transform.setRotation( tf::Quaternion(0, 0, 0, 1) );
 
-   		Eigen::Vector3d pointEigen(point.x(), point.y(), point.z());
+				//std::cout << "Node value: " << it->getValue() << std::endl;
+				//std::cout << "Node size: " << it.getSize() << std::endl;
+				//std::cout << "Node asd: " << it->getOccupancy() << std::endl;
 
-   		double newdist = (pointEigen - qPoint.onLink).norm();
-
-   		if(newdist < 0.15){
-   			transform.setOrigin( tf::Vector3(point.x(), point.y(), point.z()) );
-			transform.setRotation( tf::Quaternion(0, 0, 0, 1) );
-
-			std::cout << "Node value: " << it->getValue() << std::endl;
-			std::cout << "Node size: " << it.getSize() << std::endl;
-			//std::cout << "Node asd: " << it.getOccupancy() << std::endl;
-
-			br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom_combined", "currentPoint"));
-   		}
-
-   		double nodeValue = it->getValue();
-
-   		if((newdist < dist && nodeValue > 0) || (dist < 0 && nodeValue > 0)){
-
-   			qPoint.inScene = tPoint * pointEigen;
-   			dist = newdist;
-   		}
-
+				//br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom_combined", "currentPoint"));
+   			//}
 
    		
-
-
-   		//std::cout << "Node center: " << it.getCoordinate() << std::endl;
-   		//std::cout << "Node size: " << it.getSize() << std::endl;
-   		//std::cout << "Node value: " << it->getValue() << std::endl;
+   			if(newdist < dist || dist < 0){
+   			
+   				qPoint.inScene = pointOnCell;
+   				dist = newdist;
+   			}
+ 		}
 	 }
-
+	 std::cout << "distance: " << dist << std::endl;
 	 qPoint.onLink = Eigen::Vector3d(0, 0, 0);
-
-
-	/*double occupancy = currentNode->getOccupancy();
-	if(occupancy == 0){
-		return;
-	}
-
-	if(currentNode->hasChildren()){
-		for(int i = 0; i<8; i++){
-			if(currentNode->childExists(i)){
-				traverseTree(currentNode->getChild(i), minDist, qPoint);
-			}
-		}
-	}else{
-		octomath::Vector3 point3d = currentNode->getCoordinate();
-	}*/
 }
 
 
 
-/*
-void CollisionScene::traverseTree(SQueryPoints& qPoint, double &minDist, octomap::OcTreeNode *currentNode){
+void CollisionScene::updateQuery() {
+	// TODO: MAGIC
+	ros::Time t1 = ros::Time::now();
 
-
-	tf::TransformBroadcaster br;
-	tf::Transform transform;
-
-	transform.setOrigin( tf::Vector3(qPoint.onLink.x(), qPoint.onLink.y(), qPoint.onLink.z()) );
-	transform.setRotation( tf::Quaternion(0, 0, 0, 1) );
-
-	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom_combined", "asdLink"));
-
-
-/*
-	double dist = -1;
 
 	tf::StampedTransform temp;
-	tfListener.waitForTransform("odom_combined", "base_link", ros::Time(0), ros::Duration(0.5));
-	tfListener.lookupTransform("odom_combined", "base_link", ros::Time(0), temp);
+	tfListener.waitForTransform(refFrame, "base_link", ros::Time(0), ros::Duration(0.5));
+	tfListener.lookupTransform(refFrame, "base_link", ros::Time(0), temp);
 
 	Affine3d tPoint = Affine3d::Identity();
 	tf::transformTFToEigen (temp, tPoint);
 
-	//Affine3d tPoint = tPoint.inverse();
-
-
-	if(octree == NULL){
-		return;
-	}
-
-	for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
-        end=octree->end_leafs(); it!= end; ++it)
- 	{
-
-
-   		//manipulate node, e.g.:
-   		octomath::Vector3 point = it.getCoordinate();
-
-   		Eigen::Vector3d pointEigen(point.x(), point.y(), point.z());
-
-   		double newdist = (pointEigen - qPoint.onLink).norm();
-
-   		if(newdist < 0.15){
-   			transform.setOrigin( tf::Vector3(point.x(), point.y(), point.z()) );
-			transform.setRotation( tf::Quaternion(0, 0, 0, 1) );
-
-			std::cout << "Node value: " << it->getValue() << std::endl;
-			std::cout << "Node size: " << it.getSize() << std::endl;
-			//std::cout << "Node asd: " << it.isOccupied() << std::endl;
-
-			br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom_combined", "currentPoint"));
-   		}
-
-   		if(newdist < dist || dist < 0){
-
-   			qPoint.inScene = tPoint * pointEigen;
-   			dist = newdist;
-   		}
-
-
-   		
-
-
-   		//std::cout << "Node center: " << it.getCoordinate() << std::endl;
-   		//std::cout << "Node size: " << it.getSize() << std::endl;
-   		//std::cout << "Node value: " << it->getValue() << std::endl;
-	 }
-
-	 */
-
-/*
-	double occupancy = currentNode->getOccupancy();
-	if(occupancy == 0){
-		return;
-	}
-
-	if(currentNode->hasChildren()){
-		for(int i = 0; i<8; i++){
-			if(currentNode->childExists(i)){
-				traverseTree(qPoint, minDist, currentNode->getChild(i));
-			}
-		}
-	}else{
-		octomath::Vector3 point = currentNode->getCoordinate();
-
-
-		Eigen::Vector3d pointEigen(point.x(), point.y(), point.z());
-
-   		double newdist = (pointEigen - qPoint.onLink).norm();
-
-   		if(newdist < 0.15){
-   			transform.setOrigin( tf::Vector3(point.x(), point.y(), point.z()) );
-			transform.setRotation( tf::Quaternion(0, 0, 0, 1) );
-
-			//std::cout << "Node value: " << it->getValue() << std::endl;
-			//std::cout << "Node size: " << it.getSize() << std::endl;
-			//std::cout << "Node asd: " << it.isOccupied() << std::endl;
-
-			br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom_combined", "currentPoint"));
-   		}
-
-   		if(newdist < minDist || minDist < 0){
-
-   			qPoint.inScene = tPoint * pointEigen;
-   			minDist = newdist;
-   		}
-
-
-
-
-
-	}
-}*/
-
-void CollisionScene::updateQuery() {
-	// TODO: MAGIC
 
 	for (const string& linkName: links) {
-		//if (linkMap.find(linkName) != linkMap.end()) {
-			//SRobotLink& link = linkMap[linkName];
-
 			try {
-				tf::StampedTransform temp;
 				tfListener.waitForTransform(refFrame, linkName, ros::Time(0), ros::Duration(0.5));
 				tfListener.lookupTransform(refFrame, linkName, ros::Time(0), temp);
 
@@ -281,13 +138,11 @@ void CollisionScene::updateQuery() {
 				octomap::OcTreeNode *node = octree->getRoot();
 
 				SQueryPoints qPoint;
-				qPoint.onLink = tLink.translation();
-				//qPoint.onLink = Eigen::Vector3d(0, 0, 0);
+				Vector3d linkPos = tLink.translation();
 
-				double dist = -1;
-				traverseTree(qPoint);
+				traverseTree(qPoint, linkPos);
 
-				qPoint.onLink = Eigen::Vector3d(0, 0, 0);
+				qPoint.inScene = tPoint * qPoint.inScene;
 
 				map.set(linkName, qPoint, 1);
 				
@@ -298,4 +153,6 @@ void CollisionScene::updateQuery() {
 			}
 		//}
 	}
+	ros::Duration d1 = ros::Time::now() - t1;
+	std::cout << "Duration: " << d1.toSec() << std::endl;
 }

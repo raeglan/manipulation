@@ -98,7 +98,7 @@ private:
 		Eigen::Vector3d negBound;
 	};
 
-	void traverseTree(SQueryPoints& qPoint);
+	void traverseTree(SQueryPoints& qPoint, Eigen::Vector3d linkPos);
 
 	ros::NodeHandle nh;
 	ros::CallbackQueue cbQueue;
