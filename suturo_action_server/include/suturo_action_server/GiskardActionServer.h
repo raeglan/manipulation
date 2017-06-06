@@ -73,7 +73,7 @@ private:
 	sensor_msgs::JointState currentJS;
 
 	ros::Time lastUpdate;
-	double dT;
+	double dT, rGripper_dT, lGripper_dT;
 	tf::TransformListener tfListener;
 	double lastFeedback;
 	ros::Subscriber jsSub;

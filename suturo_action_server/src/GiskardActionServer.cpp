@@ -23,6 +23,8 @@ GiskardActionServer::GiskardActionServer(string _name)
 , terminateExecution(false)
 , lastFeedback(0)
 , dT(0)
+, rGripper_dT(0)
+, lGripper_dT(0)
 , rGripperIdx(-1)
 , lGripperIdx(-1)
 , rGripperEffort(30)
@@ -72,6 +74,8 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	terminateExecution = false;
 	lastFeedback = 0;
 	dT = 0;
+	rGripper_dT = 0;
+	lGripper_dT = 0;
 	lastUpdate = ros::Time::now();
 	rGripperIdx = -1;
 	lGripperIdx = -1;
@@ -417,19 +421,27 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 		}
 
 		if (rGripperIdx > -1) {
-			control_msgs::GripperCommand cmd;
-			cmd.position = state[rGripperIdx] + commands[rGripperIdx] * dT;
-			cmd.max_effort = rGripperEffort;
+			rGripper_dT += dT;
+			if (rGripper_dT > 0.2) {
+				control_msgs::GripperCommand cmd;
+				cmd.position = state[rGripperIdx] + commands[rGripperIdx] * rGripper_dT;
+				cmd.max_effort = rGripperEffort;
 
-			rGripperPub.publish(cmd);
+				rGripperPub.publish(cmd);
+				rGripper_dT = 0;
+			}
 		}
 
 		if (lGripperIdx > -1) {
-			control_msgs::GripperCommand cmd;
-			cmd.position = state[lGripperIdx] + commands[lGripperIdx] * dT;
-			cmd.max_effort = lGripperEffort;
+			lGripper_dT += dT;
+			if (lGripper_dT > 0.2) {
+				control_msgs::GripperCommand cmd;
+				cmd.position = state[lGripperIdx] + commands[lGripperIdx] * lGripper_dT;
+				cmd.max_effort = lGripperEffort;
 
-			lGripperPub.publish(cmd);
+				lGripperPub.publish(cmd);
+				lGripper_dT = 0;
+			}
 		}
 
 		/// ---------------- VISUALIZATION --------------------
