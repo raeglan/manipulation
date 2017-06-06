@@ -21,8 +21,14 @@ scope = {
 
 	opt_pos = opt_frame.pos;
 
+
 	speed_scale = 4;
-	feedback = 1 - (c_vDir * g_vDir) / norm(g_vDir)
+	feedback = 1 - (c_vDir * g_vDir) / norm(g_vDir);
+	
+	VIS__poi = poi;
+	VIS__g_vDir__opt_pos = g_vDir;
+	VIS__c_vDir__opt_pos = c_vDir;
+	VIS__feedback = feedback
 }
 
 controllableConstraints = {

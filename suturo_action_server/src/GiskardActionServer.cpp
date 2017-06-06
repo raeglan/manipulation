@@ -32,6 +32,7 @@ GiskardActionServer::GiskardActionServer(string _name)
 , nWSR(1000)
 , nh("~")
 , server(nh, name, boost::bind(&GiskardActionServer::setGoal, this, _1), false)
+, collisionScene(collQueryMap)
 {
 	rGripperPub = nh.advertise<control_msgs::GripperCommand>("r_pr2_gripper_command", 1);
 	lGripperPub = nh.advertise<control_msgs::GripperCommand>("l_pr2_gripper_command", 1);
@@ -41,8 +42,13 @@ GiskardActionServer::GiskardActionServer(string _name)
 
 	jsSub = nh.subscribe("/joint_states", 1, &GiskardActionServer::updatejointState, this);
 
+	visManager.addNamespace(vPoint, "Points");
 	visManager.addNamespace(vVector, "Vectors");
 	visManager.addNamespace(vFrame, "Frames");
+
+	string urdf;
+	ros::param::get("robot_description", urdf);
+	collisionScene.setRobotDescription(urdf);
 
 	posControllers["head_tilt_joint"] = {
 		nh.advertise<std_msgs::Float64>("/head_tilt_position_controller/command", 1),
@@ -82,6 +88,8 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 
 
 	controllerInitialized = false;
+	collisionScene.clearQueryLinks();
+	collQueryMap.clear(READER_PID);
 	
 	try {
 		Node yamlController = YAML::Load(goal->controller_yaml);
@@ -174,9 +182,15 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 				}
 				break;
 			case TypedParam::ELAPSEDTIME:
-				queries.push_back(boost::shared_ptr<AQuery>(
-						new ElapsedTimeQuery(this, p.name)
-						));
+				queries.push_back(boost::shared_ptr<AQuery>(new ElapsedTimeQuery(this, p.name)));
+				break;
+			case TypedParam::VECTOR:
+				break;
+			case TypedParam::COLLISIONQUERY:
+				if (!p.isConst) {
+					queries.push_back(boost::shared_ptr<AQuery>(new CollisionQuery(this, p.value, collQueryMap)));	
+					collisionScene.addQueryLink(p.value);
+				}
 				break;
 			case TypedParam::VISUALIZE: {
 				istringstream ss(p.value);
@@ -192,12 +206,19 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 					} catch (const std::invalid_argument& e) { }
 
 					try {
+						KDL::Expression<KDL::Vector>::Ptr vectorExpr = scope.find_vector_expression(primaryValue);
+						visPoints[primaryValue] = vectorExpr;
+						break;
+					} catch (const std::invalid_argument& e) { }
+
+
+					try {
 						KDL::Expression<KDL::Frame>::Ptr frameExpr = scope.find_frame_expression(primaryValue);
 						visFrames[primaryValue] = frameExpr;
 						break;
 					} catch (const std::invalid_argument& e) { }
 
-					ROS_ERROR("Failed to find frame or scalar value with name '%s'", primaryValue.c_str());
+					ROS_ERROR("Failed to find frame, point or scalar value with name '%s'", primaryValue.c_str());
 				} else {
 					KDL::Expression<KDL::Vector>::Ptr a, b;
 					try {
@@ -219,13 +240,58 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 			}
 			break;
 			default:
-				ROS_ERROR("Datatype of index %d is unknown! Aborting goal!", p.type);
+				ROS_ERROR("Datatype of index %d is unknown! Parameter number %zu. Aborting goal!", p.type, i+1);
 				MoveRobotResult res;
 				res.reason_for_termination = MoveRobotResult::INVALID_DATATYPE;
 				server.setAborted(res);
 				return;
 		}
 	}
+
+	auto inputMap = scope.get_inputs();
+	unordered_map<string, pair<bool, bool>> collisionMap;
+	for(auto it = inputMap.begin(); it != inputMap.end(); it++){
+		std::string name = it->first;
+		
+		if(name.find("COLL:") == 0 && name.size() > 7 && name[6] == ':'){
+			string linkName = name.substr(7);
+			auto lit = collisionMap.find(linkName);
+			if (lit == collisionMap.end())
+				collisionMap[linkName] = pair<bool, bool>(false, false);
+
+			switch(name[5]) {
+				case 'L':
+					collisionMap[linkName].first = true;
+				break;
+				case 'W':
+					collisionMap[linkName].second = true;
+				break;
+				default:
+					ROS_ERROR("Malformed collision input '%s': Expected 'L' or 'W' as identification.", name.c_str());				
+				break;
+			}
+		}
+	}
+
+	for (auto it = collisionMap.begin(); it != collisionMap.end(); it++) {
+		if (it->second.first && it->second.second) {
+			queries.push_back(boost::shared_ptr<AQuery>(new CollisionQuery(this, it->first, collQueryMap)));	
+			collisionScene.addQueryLink(it->first);
+		} else {
+			if (!it->second.first)
+				ROS_ERROR("Collision input for link '%s' is missing on link point!", it->first.c_str());
+			
+			if (!it->second.second)
+				ROS_ERROR("Collision input for link '%s' is missing in world point!", it->first.c_str());
+			
+			MoveRobotResult res;
+			res.reason_for_termination = MoveRobotResult::DEFECT_CONTROLLER;
+			server.setAborted(res);
+			return;
+		}
+	}
+
+	generateVisualsFromScope(scope);
 
 	state = Eigen::VectorXd::Zero(scope.get_input_size());
 
@@ -310,6 +376,8 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 		}
 	}
 
+	collisionScene.updateQuery();
+
 	bool ok = true;
 	for (size_t i = 0; i < queries.size() && ok; i++) {
 		ok &= queries[i]->eval();
@@ -378,6 +446,13 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 		visManager.beginNewDrawCycle();
 		visualization_msgs::MarkerArray ma;
 
+		for (auto it = visPoints.begin(); it != visPoints.end(); it++) {
+			KDL::Vector pKDL = it->second->value();
+			Eigen::Vector3d p;
+			tf::vectorKDLToEigen(pKDL, p);
+			visManager.annotatedPoint(ma.markers, vPoint, p, it->first, 0, 0.8f, 0, 1, "base_link");
+		}
+
 		for (auto it = visVectors.begin(); it != visVectors.end(); it++) {
 			KDL::Vector vaKDL = it->second.first->value();
 			KDL::Vector vbKDL = it->second.second->value(); 
@@ -406,6 +481,50 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 	} else {
 		ROS_WARN("Update failed!");
 		cerr << "State: " << state << endl;
+	}
+}
+
+void GiskardActionServer::generateVisualsFromScope(const giskard::Scope& scope) {
+	map<string, KDL::Expression<double>::Ptr > scalars = scope.get_scalar_expressions();
+	for (auto it = scalars.begin(); it != scalars.end(); it++) {
+		string name = it->first;
+		if (name.find("VIS__") == 0 && name.size() > 5) {
+			string visName = name.substr(5);
+			visScalars[visName] = it->second;	
+		}
+	}
+
+	// VECTORS AND POINTS
+	map<string, KDL::Expression<KDL::Vector>::Ptr > vectors = scope.get_vector_expressions(); 
+	for (auto it = vectors.begin(); it != vectors.end(); it++) {
+		string name = it->first;
+		if (name.find("VIS__") == 0 && name.size() > 5) {
+			size_t secondSep = name.find("__", 5);
+			if (secondSep != string::npos) {
+				string refPoint = name.substr(secondSep + 2);
+				try {
+					KDL::Expression<KDL::Vector>::Ptr b = scope.find_vector_expression(refPoint);
+					string visName = name.substr(5, secondSep - 5);
+					visVectors[visName] = TVecPair(it->second, b);
+				} catch (const std::invalid_argument& e) { 
+					ROS_ERROR("Failed to find vector value with name '%s'", refPoint.c_str());
+					continue;
+				}
+			} else {
+				string visName = name.substr(5);
+				visPoints[visName] = it->second;
+			}
+		}
+	}
+
+	//map<string, KDL::Expression<KDL::Rotation>::Ptr > rotations = scope.get_rotation_expressions();
+	map<string, KDL::Expression<KDL::Frame>::Ptr > frames = scope.get_frame_expressions(); 
+	for (auto it = frames.begin(); it != frames.end(); it++) {
+		string name = it->first;
+		if (name.find("VIS__") == 0 && name.size() > 5) {
+			string visName = name.substr(5);
+			visFrames[visName] = it->second;	
+		}
 	}
 }
 

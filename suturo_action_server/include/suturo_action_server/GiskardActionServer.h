@@ -5,6 +5,7 @@
 #include <tf/transform_listener.h>
 #include <suturo_manipulation_msgs/MoveRobotAction.h>
 #include <actionlib/server/simple_action_server.h>
+#include "suturo_action_server/CollisionScene.h"
 
 #include <r_libs/VisualizationManager.h>
 
@@ -19,6 +20,7 @@ struct AQuery;
 
 class GiskardActionServer {
 	enum VisTypes : int {
+		vPoint,
 		vVector,
 		vFrame
 	};
@@ -38,6 +40,8 @@ public:
 	bool decodeVector(const string& name, Eigen::Vector3d vector);
 	bool decodeTransform(const string& name, string transform);
 	bool decodeTransform(const string& name, tf::Transform transform);
+
+
 protected:
 	int nWSR;
 	bool terminateExecution;
@@ -63,6 +67,8 @@ protected:
 	vector<boost::shared_ptr<AQuery>> queries;
 
 private:
+	void generateVisualsFromScope(const giskard::Scope& scope);
+	
 	bool newJS;
 	sensor_msgs::JointState currentJS;
 
@@ -78,11 +84,15 @@ private:
 	
 	typedef std::pair<KDL::Expression<KDL::Vector>::Ptr, KDL::Expression<KDL::Vector>::Ptr> TVecPair;
 	unordered_map<string, KDL::Expression<double>::Ptr> visScalars;
+	unordered_map<string, KDL::Expression<KDL::Vector>::Ptr> visPoints;
 	unordered_map<string, TVecPair> visVectors;
 	unordered_map<string, KDL::Expression<KDL::Frame>::Ptr> visFrames;
 
 	ros::Publisher visPub, visScalarPub;
 	VisualizationManager visManager;
+
+	CollisionScene collisionScene;
+	CollisionScene::QueryMap collQueryMap;
 
 	suturo_manipulation_msgs::MoveRobotFeedback feedback;
 	suturo_manipulation_msgs::MoveRobotResult result;
@@ -148,4 +158,31 @@ struct ElapsedTimeQuery : public AQuery {
 
 private:
 	const ros::Time start;
+};
+
+struct CollisionQuery : public AQuery {
+	CollisionQuery(GiskardActionServer* _pServer, string _link, CollisionScene::QueryMap& _map)
+	: AQuery(_pServer, "Collision:"+_link) 
+	, link(_link)
+	, on_link("COLL:L:"+_link)
+	, in_world("COLL:W:"+_link)
+	, map(_map)
+	{ }
+
+	bool eval() {
+		CollisionScene::SQueryPoints points;
+		if (map.get(link, points, READER_PID)) {
+			pServer->decodeVector(on_link, points.onLink);
+			pServer->decodeVector(in_world, points.inScene);
+			return true;
+		}
+
+		ROS_WARN("Collision query for link '%s' failed!", link.c_str());
+		return false;
+	}
+
+private:
+	const string link;
+	const string on_link, in_world;
+	CollisionScene::QueryMap& map;
 };
