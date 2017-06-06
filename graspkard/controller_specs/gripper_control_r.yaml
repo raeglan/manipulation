@@ -12,6 +12,8 @@ scope:
 
   - feedback: {abs: pos_diff}
 
+  - VIS__gripper_pos: gripper_joint
+
 controllable-constraints:
   - controllable-constraint: [neg_vel_limit_gripper, pos_vel_limit_gripper, 1, r_gripper_joint]
 

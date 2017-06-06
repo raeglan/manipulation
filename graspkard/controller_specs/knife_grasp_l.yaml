@@ -162,7 +162,9 @@ scope:
   - rot_ctr2: {double-sub: [1, dot_y]}
 
   - feedback: {double-add: [{vector-norm: new_goal_diff}, gripper_joint]}
-
+  
+  - VIS__grasp_decision: goal_dist_xy_final
+  - VIS__target_z__target_pos: {rotate-vector: [target_rot, unit_z]} 
 
 controllable-constraints:
   # torso joint
@@ -207,16 +209,16 @@ hard-constraints:
       - {double-sub: [0.325, torso_lift_joint]}
       - torso_lift_joint
   - hard-constraint:
-      - {double-sub: [-2.1353, shoulder_pan_joint]}
-      - {double-sub: [0.5646, shoulder_pan_joint]}
+      - {double-sub: [-0.5646, shoulder_pan_joint]}
+      - {double-sub: [2.1353, shoulder_pan_joint]}
       - shoulder_pan_joint
   - hard-constraint:
       - {double-sub: [-0.3536, shoulder_lift_joint]}
       - {double-sub: [1.2963, shoulder_lift_joint]}
       -  shoulder_lift_joint
   - hard-constraint:
-      - {double-sub: [-3.75, upper_arm_roll_joint]}
-      - {double-sub: [0.65, upper_arm_roll_joint]}
+      - {double-sub: [-0.65, upper_arm_roll_joint]}
+      - {double-sub: [3.75, upper_arm_roll_joint]}
       - upper_arm_roll_joint
   - hard-constraint:
       - {double-sub: [-2.1213, elbow_flex_joint]}

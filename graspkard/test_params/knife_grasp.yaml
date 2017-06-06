@@ -1,14 +1,14 @@
-- name: knife 
+- name: target_frame 
   type: transform
   const: false
-  value: knife base_link
+  value: knife1 base_link
 
-- name: knife_handle_height
+- name: handle_height
   type: double
   const: true
   value: 0.03
 
-- name: knife_handle_length
+- name: handle_length
   type: double
   const: true
   value: 0.05

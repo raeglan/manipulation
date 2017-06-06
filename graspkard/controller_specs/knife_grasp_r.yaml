@@ -163,6 +163,9 @@ scope:
 
   - feedback: {double-add: [{vector-norm: new_goal_diff}, gripper_joint]}
 
+  - VIS__target_z__target_pos: {rotate-vector: [target_rot, unit_z]} 
+  - VIS__grasp_decision: goal_dist_xy_final
+  - VIS__grasp_ctrl: gripper_ctrl
 
 controllable-constraints:
   # torso joint
