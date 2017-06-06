@@ -1,7 +1,7 @@
 #include <suturo_action_server/CollisionScene.h>
 //#include <occupancy_map_monitor.h>
-#include <moveit/depth_image_octomap_updater/depth_image_octomap_updater.h>
-#include <moveit/occupancy_map_monitor/occupancy_map_monitor.h>
+//#include <moveit/depth_image_octomap_updater/depth_image_octomap_updater.h>
+//#include <moveit/occupancy_map_monitor/occupancy_map_monitor.h>
 
 #include <tf_conversions/tf_eigen.h>
 #include <octomap_msgs/conversions.h>
