@@ -30,8 +30,10 @@ void CollisionScene::update(const octomap_msgs::Octomap &omap) {
 	octomap::AbstractOcTree* tree = octomap_msgs::binaryMsgToMap(omap);
 
 	if (tree){
+		// octoMapMutex.lock();
     	octree = dynamic_cast<octomap::OcTree*>(tree);
-	 }
+		// octoMapMutex.unlock();
+	}
 
 	 //if (!octree)
 	 //{
@@ -63,7 +65,9 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, Vector3d linkPos){
 
 	double dist = -1;
 
+	// octoMapMutex.lock();
 	if(octree == NULL){
+		// octoMapMutex.unlock();
 		return;
 	}
 
@@ -104,6 +108,7 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, Vector3d linkPos){
    			}
  		}
 	 }
+	 // octoMapMutex.unlock();
 	 std::cout << "distance: " << dist << std::endl;
 	 qPoint.onLink = Eigen::Vector3d(0, 0, 0);
 }
@@ -146,7 +151,7 @@ void CollisionScene::updateQuery() {
 
 				qPoint.inScene = tPoint * qPoint.inScene;
 
-				map.set(linkName, qPoint, 1);
+				map.set(linkName, qPoint);
 				
 
 			} catch(tf::TransformException ex) {

@@ -65,8 +65,10 @@ GiskardActionServer::GiskardActionServer(string _name)
 }
 
 void GiskardActionServer::updatejointState(const sensor_msgs::JointState::ConstPtr& jointState) {
+	jsMutex.lock();
 	currentJS = *jointState;
 	newJS = true;
+	jsMutex.unlock();
 }
 
 void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
@@ -139,23 +141,41 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		return;
 	}
 	
-	const std::vector<std::string>& controlled_joints = controller.get_controllable_names();
-	for (size_t i = 0; i < controlled_joints.size(); i++) {
-		string jointName = controlled_joints[i];
-		jointSet.insert(jointName);
-		velControllers.push_back(nh.advertise<std_msgs::Float64>("/" + jointName.substr(0, jointName.size() - 6) + "_velocity_controller/command", 1));
-		if (jointName.compare("r_gripper_joint") == 0)
-			rGripperIdx = i;
-		else if (jointName.compare("l_gripper_joint") == 0)
-			lGripperIdx = i;
+	const giskard::Scope& scope = controller.get_scope();
 
-		if (posControllers.find(jointName) != posControllers.end())
-			posControllers[jointName].idx = i;
+	vector<string> jointInputs = scope.get_joint_inputs();
+	unordered_set<string> controlledSet(controller.get_controllable_names().begin(), controller.get_controllable_names().end());
+	
+	bool bControlledJointsEnded = false;
+
+	for (size_t i = 0; i < jointInputs.size(); i++) {
+		string jointName = jointInputs[i];
+		jointSet.insert(jointName);
+		
+		if (controlledSet.find(jointName) != controlledSet.end()) {
+			if (bControlledJointsEnded) {
+				ROS_ERROR("The segment of controlled joints has ended, yet %s is added as controlled joint. This will not end well!", jointName.c_str());
+				MoveRobotResult res;
+				res.reason_for_termination = MoveRobotResult::DEFECT_CONTROLLER;
+				server.setAborted(res);
+				return;
+			}
+
+			velControllers.push_back(nh.advertise<std_msgs::Float64>("/" + jointName.substr(0, jointName.size() - 6) + "_velocity_controller/command", 1));
+			if (jointName.compare("r_gripper_joint") == 0)
+				rGripperIdx = i;
+			else if (jointName.compare("l_gripper_joint") == 0)
+				lGripperIdx = i;
+
+			if (posControllers.find(jointName) != posControllers.end())
+				posControllers[jointName].idx = i;
+		} else {
+			bControlledJointsEnded = true;
+		}
 	}
 
 	vector<suturo_manipulation_msgs::TypedParam> backlog;
 
-	const giskard::Scope& scope = controller.get_scope();
 
 	for (size_t i = 0; i < goal->params.size(); i++) {
 		TypedParam p = goal->params[i];
@@ -330,10 +350,12 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
     ros::spinOnce();
 
 	while (!server.isPreemptRequested() && ros::ok() && !terminateExecution) {
+		jsMutex.lock();
 		if (newJS) {
 			jointStateCallback(currentJS);
 			newJS = false;
 		}
+		jsMutex.unlock();
 	}
 
 	if (ros::ok()) {

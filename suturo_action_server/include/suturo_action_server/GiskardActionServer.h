@@ -14,6 +14,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include <mutex>
+
 using namespace std;
 
 struct AQuery; 
@@ -67,6 +69,8 @@ protected:
 	vector<boost::shared_ptr<AQuery>> queries;
 
 private:
+	mutex jsMutex;
+
 	void generateVisualsFromScope(const giskard::Scope& scope);
 	
 	bool newJS;
@@ -171,7 +175,7 @@ struct CollisionQuery : public AQuery {
 
 	bool eval() {
 		CollisionScene::SQueryPoints points;
-		if (map.get(link, points, READER_PID)) {
+		if (map.get(link, points)) {
 			pServer->decodeVector(on_link, points.onLink);
 			pServer->decodeVector(in_world, points.inScene);
 			return true;

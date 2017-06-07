@@ -11,6 +11,7 @@
 #include <octomap/octomap.h>
 #include <tf/transform_listener.h>
 
+#include <mutex>
 
 using namespace std;
 
@@ -20,53 +21,35 @@ using namespace std;
 template<typename K, typename V>
 class MutexMap {
 public:
-	MutexMap() 
-	: turn(0)
-	{
-		interested[0] = 0;
-		interested[1] = 0;
-	}
+	MutexMap() {}
 
-	void set(const K &key, V &value, int pid) {
-		enter(pid);
+	void set(const K &key, V &value) {
+		mtex.lock();
 		map[key] = value;
-		leave(pid);
+		mtex.unlock();
 	}
 
-	bool get(const K &key, V &value, int pid) {
-		enter(pid);
+	bool get(const K &key, V &value) {
+		mtex.lock();
 		if (map.find(key) != map.end()) {
 			value = map[key];
-			leave(pid);
+			mtex.unlock();
 			return true;
 		}
-		leave(pid);
+		mtex.unlock();
 		return false;
 	}
 
 	
 	void clear(int pid) {
-		enter(pid);
+		mtex.lock();
 		map.clear();
-		leave(pid);
+		mtex.unlock();
 	}
 
 private:
-	void enter(int pid) {
-		interested[pid] = true;
-		turn = pid;
-		while(turn == pid && interested[1 - pid]);
-	}
-
-	void leave(int pid) {
-		interested[pid] = false;
-	}
-
-
-	bool interested[2];
-	int turn;
-
 	// 1 Mutex
+	mutex mtex;
 	unordered_map<K,V> map;
 };
 
@@ -114,4 +97,5 @@ private:
 	string refFrame;
 	octomap::OcTree *octree = NULL;
 
+	mutex octoMapMutex;
 };
