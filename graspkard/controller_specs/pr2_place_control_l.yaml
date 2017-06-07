@@ -129,7 +129,7 @@ scope:
   - goal_dot: {abs: {vector-dot: [unit_z, target_z]}}
   - ori_ctrl: {double-sub: [1, goal_dot]}
 
-  - feedback: {double-add: [ori_ctrl, diff_x, diff_y, diff_z]}
+  - feedback: {double-add: [ori_ctrl, {abs: diff_x}, {abs: diff_y}, {abs: diff_z}]}
 
   - weight_pos_goal: 1 
   - weight_rot_control: 1
