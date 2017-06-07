@@ -93,15 +93,15 @@ int main(int argc, char **argv)
   ac.sendGoal(goal);
 
   //wait for the action to return
-  bool finished_before_timeout = ac.waitForResult(ros::Duration(20.0));
+  // bool finished_before_timeout = ac.waitForResult(ros::Duration(20.0));
 
-  if (finished_before_timeout) {
-    actionlib::SimpleClientGoalState state = ac.getState();
-    ROS_INFO("Action finished: %s",state.toString().c_str());
-  } else {
-    //ac.cancelGoal();
-    ROS_INFO("Action did not finish before the time out.");
-  }
+  // if (finished_before_timeout) {
+  //   actionlib::SimpleClientGoalState state = ac.getState();
+  //   ROS_INFO("Action finished: %s",state.toString().c_str());
+  // } else {
+  //   //ac.cancelGoal();
+  //   ROS_INFO("Action did not finish before the time out.");
+  // }
 
   //exit
   return 0;
