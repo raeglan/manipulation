@@ -170,6 +170,7 @@ scope:
   - VIS__grasp_decision: goal_dist_xy_final
   - VIS__grasp_ctrl: gripper_ctrl
   - VIS__goal_diff__trans: {vector-add: [goal_diff, ZERO]}
+  - VIS__elbow_ctrl: elbow_low_err
 
 controllable-constraints:
   # torso joint

@@ -164,7 +164,7 @@ scope:
 
   - elbow_z: {z-coord: {origin-of: elbow}}
   - gripper_z: {z-coord: trans}
-  - elbow_low_err: {double-sub: [gripper_z, elbow_z, 0.3]}
+  - elbow_low_err: {double-sub: [gripper_z, elbow_z, 0.25]}
 
   - feedback: {double-add: [{vector-norm: new_goal_diff}, gripper_joint]}
 
@@ -172,6 +172,7 @@ scope:
   - VIS__grasp_decision: goal_dist_xy_final
   - VIS__grasp_ctrl: gripper_ctrl
   - VIS__goal_diff__trans: {vector-add: [goal_diff, ZERO]}
+  - VIS__elbow_ctrl: elbow_low_err
 
 controllable-constraints:
   # torso joint
