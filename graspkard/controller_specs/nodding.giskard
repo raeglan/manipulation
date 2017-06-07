@@ -10,7 +10,10 @@ scope = {
 
 	tiltErr = sin(time * 2) * 0.4 + 0.1 - j_head_tilt; 
 
-	feedback = abs(panErr + tiltErr)
+	feedback = abs(panErr + tiltErr);
+
+	clock_center = vec3(0.6, 0, 1.2);
+	VIS__clockhand__clock_center = vec3(abs(sin(time * 2) * 0.4), cos(time * 2) * 0.4, sin(time * 2) * 0.4)
 }
 
 controllableConstraints = {

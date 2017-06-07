@@ -24,13 +24,13 @@ public:
 	MutexMap() {}
 
 	void set(const K &key, V &value) {
-		mtex.lock();
+		while(!mtex.try_lock());
 		map[key] = value;
 		mtex.unlock();
 	}
 
 	bool get(const K &key, V &value) {
-		mtex.lock();
+		while(!mtex.try_lock());
 		if (map.find(key) != map.end()) {
 			value = map[key];
 			mtex.unlock();
@@ -41,8 +41,8 @@ public:
 	}
 
 	
-	void clear(int pid) {
-		mtex.lock();
+	void clear() {
+		while(!mtex.try_lock());
 		map.clear();
 		mtex.unlock();
 	}

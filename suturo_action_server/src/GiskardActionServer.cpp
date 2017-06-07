@@ -67,10 +67,11 @@ GiskardActionServer::GiskardActionServer(string _name)
 }
 
 void GiskardActionServer::updatejointState(const sensor_msgs::JointState::ConstPtr& jointState) {
-	jsMutex.lock();
-	currentJS = *jointState;
-	newJS = true;
-	jsMutex.unlock();
+	if(jsMutex.try_lock()) {
+		currentJS = *jointState;
+		newJS = true;
+		jsMutex.unlock();
+	}
 }
 
 void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
@@ -99,7 +100,7 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 
 	controllerInitialized = false;
 	collisionScene.clearQueryLinks();
-	collQueryMap.clear(READER_PID);
+	collQueryMap.clear();
 	
 	try {
 		Node yamlController = YAML::Load(goal->controller_yaml);
@@ -376,12 +377,13 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
     ros::spinOnce();
 
 	while (!server.isPreemptRequested() && ros::ok() && !terminateExecution) {
-		jsMutex.lock();
-		if (newJS) {
-			jointStateCallback(currentJS);
-			newJS = false;
+		if (jsMutex.try_lock()) {
+			if (newJS) {
+				jointStateCallback(currentJS);
+				newJS = false;
+			}
+			jsMutex.unlock();
 		}
-		jsMutex.unlock();
 	}
 
 	if (ros::ok()) {

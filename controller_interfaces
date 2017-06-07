@@ -10,15 +10,6 @@ pr2_move_and_flip_r.giskard
    frame  spatula_in_gripper
    double  spatula_radius
 ------------------------------------------------------
-pr2_cut_l.yaml
-   frame  cake_frame
-   double  cake_height
-   double  cake_length
-   double  cake_width
-   frame  knife_frame
-   double  knife_height
-   double  slice_width
-------------------------------------------------------
 torso_pos.giskard
    double  deltaTime
    double  goal_tilt
