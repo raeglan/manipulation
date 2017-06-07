@@ -602,8 +602,9 @@ bool GiskardActionServer::decodeDouble(const std::string& name, double value) {
 }
 
 bool GiskardActionServer::decodeVector(const std::string& name, string vector) {
-	stringstream ss(vector);
+	istringstream ss(vector);
 	double x, y, z;
+	x = y = z = 0;
 	ss >> x;
 	ss >> y;
 	ss >> z;
@@ -617,8 +618,9 @@ bool GiskardActionServer::decodeVector(const std::string& name, Eigen::Vector3d 
 }
 
 bool GiskardActionServer::decodeTransform(const std::string& name, string transform) {
-	stringstream ss(transform);
+	istringstream ss(transform);
 	double x, y, z, ax, ay, az, a;
+	x = y = z = ax = ay = az = a = 0;
 	ss >> x;
 	ss >> y;
 	ss >> z;
@@ -626,6 +628,7 @@ bool GiskardActionServer::decodeTransform(const std::string& name, string transf
 	ss >> ay;
 	ss >> az;
 	ss >> a;
+	string remaining = ss.str();
 	Eigen::Vector3d position = Eigen::Vector3d(x,y,z);
 	Eigen::Vector3d axis = Eigen::Vector3d(ax,ay,az);
 	double angle = a;
