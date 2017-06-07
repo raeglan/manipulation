@@ -3,9 +3,9 @@ scope = {
 	unitY = vec3(0,1,0);
 	unitZ = vec3(0,0,1);
 
-	j_torso_lift = inputJoint("torso_lift_joint");
 	j_head_pan = inputJoint("head_pan_joint");
 	j_head_tilt = inputJoint("head_tilt_joint");
+	j_torso_lift = inputJoint("torso_lift_joint");
 
 	# Rotation so the goal can be supplied as a frame
 	foi = inputFrame("focal_point");
@@ -32,7 +32,6 @@ scope = {
 }
 
 controllableConstraints = {
-	controllableConstraint(0,0, 1000, "torso_lift_joint");
 	controllableConstraint(-0.6, 0.6, 0.01, "head_pan_joint");
 	controllableConstraint(-0.6, 0.6, 0.01, "head_tilt_joint")
 }

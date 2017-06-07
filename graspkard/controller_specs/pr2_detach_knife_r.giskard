@@ -58,7 +58,11 @@ scope = {
 	weightPositionGoal = 1;
 	weightRotationGoal = 4;
 
-	feedback = max(0.1 - abs(rack_dist), 0)
+	feedback = max(0.1 - abs(rack_dist), 0);
+
+	VIS__feedback = feedback;
+	VIS__rack_frame = rack_frame;
+	VIS__knife_frame = knife
 }
 
 controllableConstraints = {
