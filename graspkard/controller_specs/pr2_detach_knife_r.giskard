@@ -15,10 +15,6 @@ scope = {
 	j_wrist_roll    = inputJoint("r_wrist_roll_joint");
 	j_gripper       = inputJoint("r_gripper_joint");
 
-	knife_frame = inputFrame("knife_frame_wrist");
-	knife_pos_wrist = knife_frame.pos;
-	knife_rot_wrist = knife_frame.rot;
-
 	rack_frame = inputFrame("rack_frame");
 	rack_pos = rack_frame.pos;
 	rack_rot = rack_frame.rot;
@@ -34,11 +30,11 @@ scope = {
 
 	elbow = torso_lift * shoulder_pan * shoulder_lift * upper_arm_roll * elbow_flex ;
 	wrist = elbow * forearm_roll * wrist_flex * wrist_roll;
-	knife = wrist * frame(knife_rot_wrist, knife_pos_wrist);
+	knife = wrist * inputFrame("knife_frame_wrist");
 
 	# 
 	rack_normal = rack_rot * unitY;
-	rack_dist = (knife.pos - rack_pos) * rack_normal;
+	rack_dist = (knife.pos - rack_pos) * -rack_normal;
 
 	blade_rack_ang = knife.rot * unitY;
 
