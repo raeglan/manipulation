@@ -15,8 +15,6 @@ scope = {
 	j_wrist_roll_l    = inputJoint("l_wrist_roll_joint");
 	j_gripper_l       = inputJoint("l_gripper_joint");
 
-
-
 	# goal input
 	cake_frame = inputFrame("cake_frame");
 	cake_pos = cake_frame.pos;
@@ -122,7 +120,7 @@ softConstraints = {
 hardConstraints = {
 	hardConstraint(0.0115 - j_torso_lift, 0.325 - j_torso_lift, j_torso_lift);
 	
-	# # Right arm constraints
+	# # Left arm constraints
 	hardConstraint(-0.5646 - j_shoulder_pan_l,  2.1353 - j_shoulder_pan_l,   j_shoulder_pan_l);
 	hardConstraint(-0.3536 - j_shoulder_lift_l, 1.2963 - j_shoulder_lift_l,  j_shoulder_lift_l);
 	hardConstraint(-3.75   - j_upper_arm_roll_l,  0.65 - j_upper_arm_roll_l, j_upper_arm_roll_l);

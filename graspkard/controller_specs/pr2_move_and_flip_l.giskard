@@ -5,6 +5,7 @@ scope = {
 
 	j_torso_lift    = inputJoint("torso_lift_joint");
 
+
 	j_shoulder_pan  = inputJoint("l_shoulder_pan_joint");
 	j_shoulder_lift = inputJoint("l_shoulder_lift_joint");
 	j_upper_arm_roll= inputJoint("l_upper_arm_roll_joint");
@@ -13,6 +14,9 @@ scope = {
 	j_wrist_flex    = inputJoint("l_wrist_flex_joint");
 	j_wrist_roll    = inputJoint("l_wrist_roll_joint");
 	j_gripper       = inputJoint("l_gripper_joint");
+
+	j_head_pan = inputJoint("head_pan_joint");
+	j_head_tilt = inputJoint("head_tilt_joint");
 
 	# Goal frame and radius
 	goal = inputFrame("goal_frame");
@@ -23,6 +27,11 @@ scope = {
 	goal_radius = inputScalar("goal_radius");
 
 	torso_lift       = frame(rotation(unitX, 0), vec3(-0.05, 0, 0.739675 + j_torso_lift));
+	head_pan   = frame(rotation(unitZ, j_head_pan), vec3(-0.01707, 0, 0.38145));
+	head_tilt  = frame(rotation(unitY, j_head_tilt), vec3(-0.068, 0, 0));
+	opt_frame  = torso_lift * head_pan * head_tilt * frame(rotation(unitX, 0), vec3(-0.147067, -0.0175, 0.291953));
+
+
 	shoulder_pan  = frame(rotation(unitZ, j_shoulder_pan),   vec3(0, 0.188, 0));
 	shoulder_lift = frame(rotation(unitY, j_shoulder_lift),  vec3(0.1, 0, 0));
 	upper_arm_roll= frame(rotation(unitX, j_upper_arm_roll), vec3(0, 0, 0));
@@ -55,6 +64,20 @@ scope = {
 	goal_con = r_dist / goal_radius;
 	upright_err = (min(1, goal_con * goal_con) - upright_ctrl);
 
+	# Keep the gripper out of sight
+	opt_pos = opt_frame.pos;
+	wrist_pos = wrist.pos;
+	c_vDir = opt_frame.rot * unitX;
+	w2opt = opt_pos - wrist_pos;
+	los_dist = norm(cross(w2opt, c_vDir)); 
+	w_opt_depth = -c_vDir * w2opt;
+	obstruction_coord = los_dist * if(w_opt_depth - 0.1, w_opt_depth, 20);
+	low_obs_ctrl = 0.22 - obstruction_coord;
+
+	# Keep the elbow afloat
+	elbow_pos = elbow.pos;
+	elbow_low = 0.8 - elbow_pos.z;
+
 	# Weights
 	negVelLimitTorso = -0.02;
 	posVelLimitTorso =  0.02;
@@ -68,8 +91,12 @@ scope = {
 	weightPositionGoal = 2;
 	weightRotationGoal = 4;
 
+	feedback = spatZ.z;
 
-	feedback = spatZ.z
+	VIS__obstruction_coord = obstruction_coord;
+	VIS__obs_ctrl = low_obs_ctrl;
+	VIS__lookDir__opt_pos = c_vDir;
+	VIS__w2opt__wrist_pos = w2opt
 }
 
 controllableConstraints = {
@@ -88,6 +115,8 @@ softConstraints = {
 	softConstraint(upright_err, upright_err, weightRotationGoal, upright_ctrl, "Upright Alignment");
 	softConstraint(z_pos_low, z_pos_high, weightPositionGoal, z_pos_ctrl, "Z-Position control");
 	softConstraint(r_dist_err, r_dist_err, weightPositionGoal, r_dist, "Radial position");
+	softConstraint(low_obs_ctrl, 100, 0.2, obstruction_coord, "Visual obstruction");
+	softConstraint(elbow_low, 100, weightPositionGoal, elbow_pos.z, "Elbow");
 	softConstraint(-0.01, -0.01, 1, j_gripper, "Keep grasped")
 }	
 

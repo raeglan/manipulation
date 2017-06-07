@@ -84,7 +84,9 @@ scope = {
 	weightPositionGoal = 1;
 	weightRotationGoal = 4;
 
-	feedback = pre_err + 0.5 * handle_depth - gh_xd
+	feedback = pre_err + 0.5 * handle_depth - gh_xd;
+
+	VIS__grasp_dir__handle_pos = h_z
 }
 
 controllableConstraints = {

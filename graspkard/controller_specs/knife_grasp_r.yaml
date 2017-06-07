@@ -23,6 +23,7 @@ scope:
   - unit_x: {vector3: [1, 0, 0]}
   - unit_y: {vector3: [0, 1, 0]}
   - unit_z: {vector3: [0, 0, 1]}
+  - ZERO: {vector3: [0,0,0]}
 
 
   # definition of joint input variables
@@ -62,7 +63,7 @@ scope:
   - wrist_roll:
       frame: [{axis-angle: [unit_x, wrist_roll_joint]}, {vector3: [0, 0, 0]}]
   - inner_gripper_offset:
-      frame: [{axis-angle: [unit_x, 0]}, {vector3: [double-sub: [0.200, double-div: [knife_handle_height, 2]], 0, 0]}]
+      frame: [{axis-angle: [unit_x, 0]}, {vector3: [double-sub: [0.17, double-div: [knife_handle_height, 2]], 0, 0]}]
 
 
   - target_pos: {origin-of: target_frame}
@@ -166,6 +167,7 @@ scope:
   - VIS__target_z__target_pos: {rotate-vector: [target_rot, unit_z]} 
   - VIS__grasp_decision: goal_dist_xy_final
   - VIS__grasp_ctrl: gripper_ctrl
+  - VIS__goal_diff__trans: {vector-add: [goal_diff, ZERO]}
 
 controllable-constraints:
   # torso joint

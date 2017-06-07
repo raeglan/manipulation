@@ -33,6 +33,7 @@ scope = {
 	elbow = torso_lift * shoulder_pan * shoulder_lift * upper_arm_roll * elbow_flex ;
 	wrist = elbow * forearm_roll * wrist_flex * wrist_roll;
 	gripper = wrist * frame(rotation(0,0,0,1), vec3(0.13,0,0));
+	gripper_pos = gripper.pos;
 
 	grasp_err = handle_width - j_gripper + 0.01;
 
@@ -46,7 +47,7 @@ scope = {
 	h_y = handle_rot * unitY;
 	h_z = handle_rot * unitZ;
 
-	g2h = gripper.pos - handle_pos;
+	g2h = gripper_pos - handle_pos;
 	gh_xd = g2h * h_x;
 	gh_yd = g2h * h_y;
 	gh_zd = g2h * h_z;
@@ -82,9 +83,20 @@ scope = {
 	weightTorso = weightArm * 10;
 
 	weightPositionGoal = 1;
-	weightRotationGoal = 4;
+	weightRotationGoal = 2.6;
 
-	feedback = pre_err + 0.5 * handle_depth - gh_xd
+	feedback = pre_err + 0.5 * handle_depth - gh_xd;
+
+	# Visualization
+	VIS__x_plane_dist = gh_xd;
+	VIS__y_plane_dist = gh_yd;
+	VIS__z_plane_dist = gh_zd;
+
+	VIS__hxg__gripper_pos = h_x * -gh_xd;
+	VIS__hyg__gripper_pos = h_y * -gh_yd;
+	VIS__hzg__gripper_pos = h_z * -gh_zd;
+
+	VIS__grasp_dir__handle_pos = h_x
 }
 
 controllableConstraints = {
@@ -113,8 +125,8 @@ softConstraints = {
 hardConstraints = {
 	hardConstraint(0.0115 - j_torso_lift, 0.325 - j_torso_lift, j_torso_lift);
 	
-	# # Right arm constraints
-	hardConstraint(-2.1353 - j_shoulder_pan,  0.5646 - j_shoulder_pan,   j_shoulder_pan);
+	# # Left arm constraints
+	hardConstraint(-0.5646 - j_shoulder_pan,  2.1353 - j_shoulder_pan,   j_shoulder_pan);
 	hardConstraint(-0.3536 - j_shoulder_lift, 1.2963 - j_shoulder_lift,  j_shoulder_lift);
 	hardConstraint(-3.75   - j_upper_arm_roll,  0.65 - j_upper_arm_roll, j_upper_arm_roll);
 	hardConstraint(-2.1213 - j_elbow_flex,     -0.15 - j_elbow_flex,     j_elbow_flex);

@@ -32,7 +32,7 @@ scope = {
 }
 
 controllableConstraints = {
-	controllableConstraint(   0,   0, 1000, "torso_lift_joint");
+	controllableConstraint(0,0, 1000, "torso_lift_joint");
 	controllableConstraint(-0.6, 0.6, 0.01, "head_pan_joint");
 	controllableConstraint(-0.6, 0.6, 0.01, "head_tilt_joint")
 }

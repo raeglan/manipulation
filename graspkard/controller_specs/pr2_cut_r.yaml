@@ -137,6 +137,8 @@ scope:
 
   - feedback: {abs: height_ctr}
 
+  - VIS__cut__trans: {scale-vector: [height_ctr, cake_z_baselink]}
+
 controllable-constraints:
   # torso joint
   - controllable-constraint: [neg_vel_limit_torso_joint, pos_vel_limit_torso_joint, weight_torso_joint, torso_lift_joint]
