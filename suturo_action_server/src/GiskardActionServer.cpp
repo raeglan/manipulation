@@ -54,11 +54,13 @@ GiskardActionServer::GiskardActionServer(string _name)
 
 	posControllers["head_tilt_joint"] = {
 		nh.advertise<std_msgs::Float64>("/head_tilt_position_controller/command", 1),
-		-1
+		-1,
+		0.0
 	};
 	posControllers["head_pan_joint"] = {
 		nh.advertise<std_msgs::Float64>("/head_pan_position_controller/command", 1),
-		-1
+		-1,
+		0.0
 	};
 
 	server.start();
@@ -89,8 +91,10 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	velControllers.clear();
 	jointSet.clear();
 	queries.clear();
-	for (auto it = posControllers.begin(); it != posControllers.end(); it++)
+	for (auto it = posControllers.begin(); it != posControllers.end(); it++) {
 		it->second.idx = -1;
+		it->second.dT = 0;
+	}
 
 
 	controllerInitialized = false;
@@ -177,6 +181,11 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	vector<suturo_manipulation_msgs::TypedParam> backlog;
 
 
+	auto inputMap = scope.get_inputs();
+	for (auto it = jointInputs.begin(); it != jointInputs.end(); it++) {
+		inputMap.erase(*it);
+	}
+
 	for (size_t i = 0; i < goal->params.size(); i++) {
 		TypedParam p = goal->params[i];
 
@@ -187,6 +196,8 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 			lGripperEffort = ::atof(p.value.c_str());
 			continue;
 		}
+
+		inputMap.erase(p.name);
 
 		if (p.isConst)
 			backlog.push_back(p);
@@ -272,10 +283,10 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		}
 	}
 
-	auto inputMap = scope.get_inputs();
 	unordered_map<string, pair<bool, bool>> collisionMap;
-	for(auto it = inputMap.begin(); it != inputMap.end(); it++){
-		std::string name = it->first;
+	auto inputIt = inputMap.begin();
+	while(inputIt != inputMap.end()){
+		std::string name = inputIt->first;
 		
 		if(name.find("COLL:") == 0 && name.size() > 7 && name[6] == ':'){
 			string linkName = name.substr(7);
@@ -294,7 +305,10 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 					ROS_ERROR("Malformed collision input '%s': Expected 'L' or 'W' as identification.", name.c_str());				
 				break;
 			}
+			inputIt = inputMap.erase(inputIt);
+			continue;
 		}
+		inputIt++;
 	}
 
 	for (auto it = collisionMap.begin(); it != collisionMap.end(); it++) {
@@ -313,6 +327,18 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 			server.setAborted(res);
 			return;
 		}
+	}
+
+	if (inputMap.size() > 0) {
+		stringstream ss;
+		for (auto it = inputMap.begin(); it != inputMap.end(); it++) {
+			ss << endl << "   " << it->first;
+		}
+		ROS_ERROR("Not all inputs were assigned. Inputs missing assignment: %s", ss.str().c_str());
+		MoveRobotResult res;
+		res.reason_for_termination = MoveRobotResult::DEFECT_CONTROLLER;
+		server.setAborted(res);
+		return;
 	}
 
 	generateVisualsFromScope(scope);
@@ -436,9 +462,13 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 
 		for (auto it = posControllers.begin(); it != posControllers.end(); it++) {
 			if (it->second.idx > -1) {
-				std_msgs::Float64 command;
-				command.data = state[it->second.idx] + commands[it->second.idx] * dT;
-				it->second.pub.publish(command);		
+				it->second.dT += dT;
+				if (it->second.dT > 0.2) {
+					std_msgs::Float64 command;
+					command.data = state[it->second.idx] + commands[it->second.idx] * it->second.dT;
+					it->second.pub.publish(command);
+					it->second.dT = 0;
+				}		
 			}
 		}
 
@@ -583,10 +613,10 @@ bool GiskardActionServer::decodeVector(const std::string& name, Eigen::Vector3d 
 
 bool GiskardActionServer::decodeTransform(const std::string& name, string transform) {
 	const char* c_t = transform.c_str();
-	return controller.get_scope().set_input(name, 
-		Eigen::Vector3d(::atof(c_t), ::atof(c_t), ::atof(c_t)), ::atof(c_t),
-		Eigen::Vector3d(::atof(c_t), ::atof(c_t), ::atof(c_t)), 
-		state);
+	Eigen::Vector3d position = Eigen::Vector3d(::atof(c_t), ::atof(c_t), ::atof(c_t));
+	Eigen::Vector3d axis = Eigen::Vector3d(::atof(c_t), ::atof(c_t), ::atof(c_t));
+	double angle = ::atof(c_t);
+	return controller.get_scope().set_input(name, axis, angle, position, state);
 }
 
 bool GiskardActionServer::decodeTransform(const std::string& name, tf::Transform transform) {

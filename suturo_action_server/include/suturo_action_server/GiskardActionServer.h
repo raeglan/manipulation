@@ -59,7 +59,8 @@ protected:
 	
 	struct posController {
 		ros::Publisher pub;
-		int idx;	
+		int idx;
+		double dT;
 	};
 	unordered_map<string, posController> posControllers;
 
