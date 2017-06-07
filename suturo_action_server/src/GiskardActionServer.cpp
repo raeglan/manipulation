@@ -535,6 +535,7 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 
 		visManager.endDrawCycle(ma.markers);
 		visPub.publish(ma);
+		ros::spinOnce();
 
 		/// ---------------------------------------------------
 
@@ -601,9 +602,13 @@ bool GiskardActionServer::decodeDouble(const std::string& name, double value) {
 }
 
 bool GiskardActionServer::decodeVector(const std::string& name, string vector) {
-	const char* c_v = vector.c_str();
+	stringstream ss(vector);
+	double x, y, z;
+	ss >> x;
+	ss >> y;
+	ss >> z;
 	return controller.get_scope().set_input(name, 
-		Eigen::Vector3d(::atof(c_v), ::atof(c_v), ::atof(c_v)),
+		Eigen::Vector3d(x,y,z),
 		state);
 }
 
@@ -612,10 +617,18 @@ bool GiskardActionServer::decodeVector(const std::string& name, Eigen::Vector3d 
 }
 
 bool GiskardActionServer::decodeTransform(const std::string& name, string transform) {
-	const char* c_t = transform.c_str();
-	Eigen::Vector3d position = Eigen::Vector3d(::atof(c_t), ::atof(c_t), ::atof(c_t));
-	Eigen::Vector3d axis = Eigen::Vector3d(::atof(c_t), ::atof(c_t), ::atof(c_t));
-	double angle = ::atof(c_t);
+	stringstream ss(transform);
+	double x, y, z, ax, ay, az, a;
+	ss >> x;
+	ss >> y;
+	ss >> z;
+	ss >> ax;
+	ss >> ay;
+	ss >> az;
+	ss >> a;
+	Eigen::Vector3d position = Eigen::Vector3d(x,y,z);
+	Eigen::Vector3d axis = Eigen::Vector3d(ax,ay,az);
+	double angle = a;
 	return controller.get_scope().set_input(name, axis, angle, position, state);
 }
 
