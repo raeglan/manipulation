@@ -6,7 +6,7 @@
 - name: cylinder_in_gripper
   type: transform
   const: false
-  value: spatula r_wrist_roll_link
+  value: spatula l_wrist_roll_link
 
 - name: cylinder_width
   type: double

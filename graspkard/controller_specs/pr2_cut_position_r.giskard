@@ -64,7 +64,7 @@ scope = {
 	dist_xy = v_cake_knife * (cake_rot * unitZ);
 	dist_xz = v_cake_knife * (cake_rot * unitY);
 
-	offset_x = 0.5 * cake_length - slice_width;
+	offset_x = -0.5 * cake_length + slice_width;
 	offset_z = cake_height + knife_height + 0.01;
 	offset_y = knifexy_sign * (knife_handle_length + 0.5 * cake_width + 0.05);
 

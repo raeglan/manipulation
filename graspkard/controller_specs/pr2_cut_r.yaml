@@ -26,7 +26,6 @@ scope:
 
 
   # definition of joint input variables
-  - torso_lift_joint: {input-joint: torso_lift_joint}
   - shoulder_pan_joint: {input-joint: r_shoulder_pan_joint}
   - shoulder_lift_joint: {input-joint: r_shoulder_lift_joint}
   - upper_arm_roll_joint: {input-joint: r_upper_arm_roll_joint}
@@ -35,6 +34,7 @@ scope:
   - wrist_flex_joint: {input-joint: r_wrist_flex_joint}
   - wrist_roll_joint: {input-joint: r_wrist_roll_joint}
   - gripper_joint: {input-joint: r_gripper_joint}
+  - torso_lift_joint: {input-joint: torso_lift_joint}
 
   # definition goal input variables
   - cake_frame: {input-frame: cake_frame}
@@ -130,18 +130,17 @@ scope:
 
   - cake_xyplane_dist: {vector-dot: [vector-sub: [trans, cake_pos], rotate-vector: [cake_rot, unit_z]]}
   - height_offset: {double-add: [double-mul: [cake_height, -0.5], knife_height]}
-  - height_ctr: {double-sub: [height_offset, cake_xyplane_dist]}
+  - height_ctr: {double-if: [{double-sub: [height_offset, cake_xyplane_dist]}, 0, -0.1]}
   # - depth_offset: {double-add: [double-mul: [cake_width, 0.5], knife_height]}
   # - depth_ctr_min: {double-sub: [cake_xzplane_dist, depth_offset]}
   # - depth_ctr_max: {double-sub: [double-add: [depth_offset, 0.05],  cake_xzplane_dist]}
 
   - feedback: {abs: height_ctr}
-
   - VIS__cut__trans: {scale-vector: [height_ctr, cake_z_baselink]}
 
 controllable-constraints:
   # torso joint
-  - controllable-constraint: [neg_vel_limit_torso_joint, pos_vel_limit_torso_joint, weight_torso_joint, torso_lift_joint]
+  #- controllable-constraint: [neg_vel_limit_torso_joint, pos_vel_limit_torso_joint, weight_torso_joint, torso_lift_joint]
   # left arm joints
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, r_shoulder_pan_joint]
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, r_shoulder_lift_joint]

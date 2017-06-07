@@ -17,3 +17,8 @@
   type: double
   const: true
   value: 100
+
+- name: l_gripper_effort
+  type: double
+  const: true
+  value: 100

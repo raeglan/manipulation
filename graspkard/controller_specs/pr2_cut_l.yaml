@@ -37,15 +37,19 @@ scope:
   - gripper_joint: {input-joint: l_gripper_joint}
 
   # definition goal input variables
+  - cake_frame: {input-frame: cake_frame}
+
   - cake_length: {input-scalar: cake_length}
   - cake_width: {input-scalar: cake_width}
   - cake_height: {input-scalar: cake_height}
 
+  - cake_pos: {origin-of: cake_frame}
+  - cake_rot: {orientation-of: cake_frame}
+
+  - knife_frame: {input-frame: knife_in_gripper}
+  
   - knife_height: {input-scalar: knife_height}
   - slice_width: {input-scalar: slice_width}
-  - knife_frame: {input-frame: knife_frame}
-  
-  - cake_frame: {input-frame: cake_frame}
 
 
   # definition of joint transforms

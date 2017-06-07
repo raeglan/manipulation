@@ -24,7 +24,6 @@ scope:
   - unit_y: {vector3: [0, 1, 0]}
   - unit_z: {vector3: [0, 0, 1]}
 
-
   # definition of joint input variables
   - torso_lift_joint: {input-joint: torso_lift_joint}
   - shoulder_pan_joint: {input-joint: l_shoulder_pan_joint}
@@ -75,12 +74,16 @@ scope:
       - upper_arm_roll
       - elbow_flex
 
-  - cylinder_ee:
+  - wrist:
       frame-mul:
       - elbow
       - forearm_roll
       - wrist_flex
       - wrist_roll
+
+  - cylinder_ee:
+      frame-mul:
+      - wrist
       - cylinder_frame
 
   # control params
@@ -89,7 +92,7 @@ scope:
   - pos_thresh: 0.05
   - rot_thresh: 0.1
   - weight_arm_joints: 0.001
-  - weight_torso_joint: 0.001
+  - weight_torso_joint: 0.1
   - weight_align_goal: 0.5
   - weight_elbow_control: 0.4
   - weight_grasp_goal: 2.0
@@ -117,7 +120,9 @@ scope:
   #- diff_x: {x-coord: goal_diff}
   #- diff_y: {y-coord: goal_diff}
   #- diff_z: {z-coord: goal_diff}
-  - rate_elbow: {z-coord: {vector-sub: [trans, {origin-of: elbow}]}}
+  - elbow_z: {z-coord: {origin-of: elbow}}
+  - elbow_wrist_dist: {double-sub: [{z-coord: {origin-of: wrist}}, elbow_z]}
+  - elbow_low_err: {double-sub: [0.2, elbow_wrist_dist]}
 
   - height_z: {double-sub: [height, double-div: [height, double-add: [1, double-mul: [20,goal_dist_xy]]]]}
   - diff_z: {double-add: [{z-coord: goal_diff}, double-add: [offset_z, height_z] ]} #offset_z
@@ -132,7 +137,12 @@ scope:
   - feedback: {double-add: [ori_ctrl, {abs: diff_x}, {abs: diff_y}, {abs: diff_z}]}
 
   - weight_pos_goal: 1 
-  - weight_rot_control: 1
+  - weight_rot_control: 3
+
+  - VIS__feedback: feedback
+  - VIS__elbow_wrist_dist: elbow_wrist_dist
+  - VIS__elbow_ctrl: elbow_low_err
+  - VIS__cmd_z__trans: {scale-vector: [diff_z, unit_z]}
 
 controllable-constraints:
   # torso joint
@@ -155,7 +165,7 @@ soft-constraints:
   - soft-constraint: [diff_y, diff_y, weight_pos_goal, {y-coord: trans}, EE y-vel slack]
   - soft-constraint: [diff_z, diff_z, weight_pos_goal, {z-coord: trans}, EE z-vel slack]
 
-  - soft-constraint: [rate_elbow, {double-add: [rate_elbow, 0.2]}, weight_pos_goal, {z-coord: {origin-of: elbow}}, elbow vel slack]
+  - soft-constraint: [-1000, elbow_low_err, 1, elbow_wrist_dist, elbow vel slack]
 
   # Rotation constraint
   - soft-constraint: [ori_ctrl, ori_ctrl, weight_rot_control, goal_dot, right EE rot slack]

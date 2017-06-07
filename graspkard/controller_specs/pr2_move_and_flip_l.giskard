@@ -55,9 +55,10 @@ scope = {
 	r_dist = 0.015 - norm(idk);
 	r_dist_err = max(-r_dist, -0.1); # Limit speed to avoid harsh accelerations
 	
+	z_offset = min(r_dist, 0.1);
 	z_pos_ctrl = spat_pos.z;
-	z_pos_low = cos(asin(spatZ.z)) * spat_radius + goal_pos.z + 0.04 - z_pos_ctrl;
-	z_pos_high = 3 * spat_radius + goal_pos.z + 0.04 - z_pos_ctrl;
+	z_pos_low = cos(asin(spatZ.z)) * spat_radius + goal_pos.z + 0.04 - z_pos_ctrl + z_offset;
+	z_pos_high = 3 * spat_radius + goal_pos.z + 0.04 - z_pos_ctrl + z_offset;
 	
 	# Freeze rotation
 	upright_ctrl = spatZ.z;
@@ -77,6 +78,10 @@ scope = {
 	# Keep the elbow afloat
 	elbow_pos = elbow.pos;
 	elbow_low = 0.8 - elbow_pos.z;
+
+	# Keep the gripper above the goal area
+	wrist_z_dist = goal_pos.z - wrist_pos.z - spat_radius;
+	wrist_high_ctrl = -wrist_z_dist / spat_radius;
 
 	# Weights
 	negVelLimitTorso = -0.02;
@@ -117,6 +122,7 @@ softConstraints = {
 	softConstraint(r_dist_err, r_dist_err, weightPositionGoal, r_dist, "Radial position");
 	softConstraint(low_obs_ctrl, 100, 0.2, obstruction_coord, "Visual obstruction");
 	softConstraint(elbow_low, 100, weightPositionGoal, elbow_pos.z, "Elbow");
+	#softConstraint(-1000, wrist_high_ctrl, weightPositionGoal, wrist_z_dist, "Wrist z position");
 	softConstraint(-0.01, -0.01, 1, j_gripper, "Keep grasped")
 }	
 
