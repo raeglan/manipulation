@@ -33,7 +33,7 @@ scope = {
 
 	# 
 	rack_normal = rack_rot * unitY;
-	rack_dist = (knife.pos - rack_pos) * -rack_normal;
+	rack_dist = (knife.pos - rack_pos) * rack_normal;
 
 	blade_rack_ang = knife.rot * unitY;
 
