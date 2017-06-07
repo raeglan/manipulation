@@ -1,14 +1,14 @@
-- name: spatula
+- name: spatula_in_gripper
   type: transform
   const: false
   value: spatula r_wrist_roll_link
 
-- name: goal
+- name: goal_frame
   type: transform
   const: false
   value: plate base_link
 
-- name: spatula_width
+- name: spatula_radius
   type: double
   const: true
   value: 0.06

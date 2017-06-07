@@ -1,7 +1,7 @@
 - name: target_frame 
   type: transform
   const: false
-  value: knife1 base_link
+  value: knife base_link
 
 - name: handle_height
   type: double
@@ -11,7 +11,7 @@
 - name: handle_length
   type: double
   const: true
-  value: 0.05
+  value: 0.085
 
 - name: r_gripper_effort
   type: double

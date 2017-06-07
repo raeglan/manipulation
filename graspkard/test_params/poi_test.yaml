@@ -2,18 +2,3 @@
   type: transform
   const: false
   value: plate base_link
-
-- name: debug
-  type: visualize
-  const: false
-  value: c_vDir opt_pos
-
-- name: debug
-  type: visualize
-  const: false
-  value: g_vDir opt_pos
-
-- name: debug
-  type: visualize
-  const: false
-  value: feedback

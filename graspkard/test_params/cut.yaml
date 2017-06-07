@@ -1,4 +1,4 @@
-- name: cake 
+- name: cake_frame
   type: transform
   const: false
   value: cake base_link
@@ -18,7 +18,7 @@
   const: true
   value: 0.09
 
-- name: knife 
+- name: knife_in_gripper 
   type: transform
   const: false
   value: knife r_wrist_roll_link
