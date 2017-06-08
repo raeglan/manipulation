@@ -8,7 +8,7 @@ scope:
 
   - pos_diff: {double-sub: [gripper_goal, gripper_joint]}
   - ctrl_sign: {double-div: [pos_diff, {max: [{abs: pos_diff}, 0.001]}]}
-  - gripper_ctrl: {double-mul: [ctrl_sign, 0.02]}
+  - gripper_ctrl: {double-mul: [pos_diff, 20]}
 
   - feedback: {abs: pos_diff}
 
