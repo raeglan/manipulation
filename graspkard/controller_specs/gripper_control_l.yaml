@@ -7,7 +7,9 @@ scope:
   - pos_vel_limit_gripper: 1.0
 
   - pos_diff: {double-sub: [gripper_goal, gripper_joint]}
-  - vel_scale: 10.0
+  - vel_scale: 100.0
+  - ctrl_sign: {double-div: [pos_diff, double-max: [abs: pos_diff, 0.001]]}
+  - ctrl_speed: {double-mul: [ctrl_sign, 0.02]}
   - gripper_ctrl: {double-mul: [pos_diff, vel_scale]}
 
   - feedback: {abs: pos_diff}
