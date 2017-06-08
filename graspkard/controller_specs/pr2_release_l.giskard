@@ -37,7 +37,7 @@ scope = {
 	# Open the gripper
 	grasp_err = opening - j_gripper;
 
-	pre_scale = if(grasp_err - 0.002, 0, 1);
+	pre_scale = if(abs(grasp_err) - 0.002, 0, 1);
 
 	# Freeze rotation
 	wrist_x = wrist.rot * unitX;
