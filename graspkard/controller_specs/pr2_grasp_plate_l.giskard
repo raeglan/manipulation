@@ -34,9 +34,13 @@ scope = {
 
 	elbow = torso_lift * shoulder_pan * shoulder_lift * upper_arm_roll * elbow_flex ;
 	wrist = elbow * forearm_roll * wrist_flex * wrist_roll;
-	gripper = wrist * frame(rotation(0,0,0,1), vec3(0.13,0,0));
+	gripper = wrist * frame(rotation(0,0,0,1), vec3(0.17,0,0));
+	gripper_pos = gripper.pos;
+	gripper_rot = gripper.rot;
+	g_z = gripper_rot * unitX;
+	g_x_pre = gripper * unitX;
 
-	finger_length = 0.06;
+	finger_length = 0.08;
 
 	# Useful values
 	gio = invert(obj) * gripper;
@@ -49,8 +53,10 @@ scope = {
 	gio_x = gio_rot * unitX;
 	gio_z = gio_rot * unitZ;
 
+	#VIS__gio__obj_pos = obj_rot * gio_pos;
+
 	# Grasping
-	grasp_goal = 0.01;
+	grasp_goal = 0.02;
 	grasp_err = grasp_goal - j_gripper;
 
 	ang_scale = 10;
@@ -61,11 +67,15 @@ scope = {
 	center_align_ctrl = gio_z * gio_dir2d;
 	center_align_err = -center_align_ctrl * ang_scale;
 
+	#VIS____obj_pos = obj_rot * gio_pos2d;
+
 	# Gripper Tilt
 	goalTilt = cos(edge_ang);
 
 	tilt_ctrl = gio_x.z;
 	tilt_err = (goalTilt - tilt_ctrl) * ang_scale;
+
+	VIS__tilt_err__g_x_pre = unitZ * (tilt_err / ang_scale);
 
 	# Gripper Roll
 	roll_ctrl = gio_z.z;
@@ -74,28 +84,44 @@ scope = {
 	# Gripper position in edge coords
 	gie_r = norm(gio_pos2d) - edge_r;
 	gie_z = gio_pos.z - edge_z;
+	VIS__rim__obj_pos = obj_rot * (gio_dir2d * edge_r + unitZ * edge_z);
 
+	# Edge angle and dir
 	e_sin = sin(edge_ang);
 	e_cos = cos(edge_ang);
+	e_dir = e_sin * gio_dir2d + unitZ * -e_cos;
+	e_normal = e_cos * gio_dir2d + unitZ * e_sin;
 
-	# Distance of gripper to edge plane
-	g_ep_dist = abs(gie_r * e_cos + gie_z * -e_sin);
-	g_ep_dist_err = -g_ep_dist;
+	#VIS____obj_pos = obj_rot * e_dir;
 
-	pre_err = abs(center_align_ctrl) + abs(tilt_err) + grasp_err + g_ep_dist / 0.02;
-	
-	g_ed_dist = gie_r * e_sin + gie_z * e_cos;
+	# Distance of gripper to edge plane and edge
+	g_ep_signed_dist = gie_r * e_cos + gie_z * e_sin;
+	g_ep_dist = abs(g_ep_signed_dist);
+	g_ed_dist = gie_r * e_sin + gie_z * -e_cos;
+	VIS__plane_dist__gripper_pos = obj_rot * -(e_normal * g_ep_signed_dist);
+	#VIS__edge_dist__gripper_pos  = obj_rot * (e_dir * -g_ed_dist);
+
 	
 	ed_goal = min(edge_d - finger_length, 0);
 	ed_goal_err = ed_goal - g_ed_dist;
 	ed_pre  = -finger_length - 0.04; 
 	ed_pre_err = ed_pre - g_ed_dist;
 
+	pre_err = (abs(center_align_ctrl) + abs(tilt_err)) / ang_scale + abs(grasp_err) * 5 + g_ep_dist * 8;
+	#VIS__pre_err__gripper_pos = unitZ * pre_err;
+
+	g_ep_dist_err = -g_ep_dist * (ed_goal / max(ed_goal, ed_goal_err));
 	# Goal position on the edge's plane
 	# Based on rotational and positional alignment
-	decision = pre_err - 0.12;
+	decision = pre_err - 0.08;
 	g_ed_dist_low = if(decision, ed_pre_err, ed_goal_err); 
-	g_ed_dist_hig = if(decision, 10, ed_goal_err);
+	g_ed_dist_hig = if(decision, ed_pre + 0.4 - g_ed_dist, ed_goal_err);
+	#VIS__lowC__gripper_pos  = obj_rot * (e_dir * g_ed_dist_low);
+	#VIS__highC__gripper_pos = obj_rot * (e_dir * g_ed_dist_hig);
+
+	# Elbow things
+	elbow_z = elbow.pos.z;
+	elbow_ctrl = 0.95 - elbow_z;
 
 	# Limits, weights and the like
 	negVelLimitTorso = -0.02;
@@ -127,7 +153,8 @@ controllableConstraints = {
 
 softConstraints = {
 	softConstraint(grasp_err, grasp_err, 10, j_gripper, "Gripper opening");
-	
+	softConstraint(elbow_ctrl, 1, weightPositionGoal, elbow_z, "Elbow safety");
+
 	softConstraint(g_ep_dist_err, g_ep_dist_err, weightPositionGoal, g_ep_dist, "Edge plane position");
 	softConstraint(g_ed_dist_low, g_ed_dist_hig, weightPositionGoal, g_ed_dist, "Edge rim position");
 
@@ -144,7 +171,7 @@ hardConstraints = {
 	# # Right arm constraints
 	hardConstraint(-0.5646 - j_shoulder_pan,  2.1353 - j_shoulder_pan,   j_shoulder_pan);
 	hardConstraint(-0.3536 - j_shoulder_lift, 1.2963 - j_shoulder_lift,  j_shoulder_lift);
-	hardConstraint(-3.75   - j_upper_arm_roll,  0.65 - j_upper_arm_roll, j_upper_arm_roll);
+	hardConstraint(-0.65   - j_upper_arm_roll,  3.75 - j_upper_arm_roll, j_upper_arm_roll);
 	hardConstraint(-2.1213 - j_elbow_flex,     -0.15 - j_elbow_flex,     j_elbow_flex);
 	hardConstraint(-2.0    - j_wrist_flex,      -0.1 - j_wrist_flex,     j_wrist_flex)
 }

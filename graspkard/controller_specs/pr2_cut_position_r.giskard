@@ -4,7 +4,6 @@ scope = {
 	unitZ = vec3(0,0,1);
 
 	# Joint input
-	j_torso_lift    = inputJoint("torso_lift_joint");
 
 	j_shoulder_pan_r  = inputJoint("r_shoulder_pan_joint");
 	j_shoulder_lift_r = inputJoint("r_shoulder_lift_joint");
@@ -15,6 +14,7 @@ scope = {
 	j_wrist_roll_r    = inputJoint("r_wrist_roll_joint");
 	j_gripper_r       = inputJoint("r_gripper_joint");
 
+	j_torso_lift    = inputJoint("torso_lift_joint");
 	# goal input
 	cake = inputFrame("cake_frame");
 	cake_pos = cake.pos;
@@ -96,7 +96,7 @@ scope = {
 }
 
 controllableConstraints = {
-	controllableConstraint(negVelLimitTorso, posVelLimitTorso, weightTorso, "torso_lift_joint");
+	#controllableConstraint(negVelLimitTorso, posVelLimitTorso, weightTorso, "torso_lift_joint");
 	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_shoulder_pan_joint");
 	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_shoulder_lift_joint");
 	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_upper_arm_roll_joint");
