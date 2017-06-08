@@ -76,7 +76,7 @@ scope = {
 
 	# Keep the elbow afloat
 	elbow_pos = elbow.pos;
-	elbow_low = 0.8 - elbow_pos.z;
+	elbow_low = 0.9 - elbow_pos.z;
 
 	# Keep the gripper above the goal area
 	wrist_z_dist = goal_pos.z - wrist_pos.z - spat_radius;
