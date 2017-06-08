@@ -1,9 +1,10 @@
-poi:
-  id: 0
+deliver:
+  id: 1
   pose:
     frame_id: odom_combined
-    orientation: !!python/tuple [0.0, 0.0, 0.0, 1.0]
-    translation: !!python/tuple [0.5541286468505859, -0.07632666826248169, 0.9749270677566528]
+    orientation: !!python/tuple [-1.7902944904335527e-08, -1.264542159873372e-08,
+      0.10265465825796127, 0.9947170615196228]
+    translation: !!python/tuple [0.6443538069725037, 0.6751264333724976, 1.1067781448364258]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
@@ -11,7 +12,80 @@ poi:
       - 0
       - !!python/object/new:genpy.rostime.Time
         state: [0, 0]
-      - poi
+      - deliver
+    - suturo_obstacle_scene
+    - 1
+    - 2
+    - 0
+    - !!python/object/new:geometry_msgs.msg._Pose.Pose
+      state:
+      - !!python/object/new:geometry_msgs.msg._Point.Point
+        state: [0.0, 0.0, 0.0]
+      - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
+        state: [0.0, 0.0, 0.0, 1.0]
+    - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
+      state: [0.05999999865889549, 0.05999999865889549, 0.05999999865889549]
+    - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
+      state: [0.7333333492279053, 1.0, 0.0, 0.4000000059604645]
+    - !!python/object/new:genpy.rostime.Duration
+      state: [0, 0]
+    - false
+    - []
+    - []
+    - ''
+    - ''
+    - true
+next2cake:
+  id: 2
+  pose:
+    frame_id: odom_combined
+    orientation: !!python/tuple [0.0, 0.0, 0.0, 1.0]
+    translation: !!python/tuple [0.6063024401664734, 0.10054619610309601, 0.853990912437439]
+  vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
+    state:
+    - !!python/object/new:std_msgs.msg._Header.Header
+      state:
+      - 0
+      - !!python/object/new:genpy.rostime.Time
+        state: [0, 0]
+      - next2cake
+    - suturo_obstacle_scene
+    - 2
+    - 2
+    - 0
+    - !!python/object/new:geometry_msgs.msg._Pose.Pose
+      state:
+      - !!python/object/new:geometry_msgs.msg._Point.Point
+        state: [0.0, 0.0, 0.0]
+      - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
+        state: [0.0, 0.0, 0.0, 1.0]
+    - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
+      state: [0.05999999865889549, 0.05999999865889549, 0.05999999865889549]
+    - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
+      state: [0.7333333492279053, 1.0, 0.0, 0.4000000059604645]
+    - !!python/object/new:genpy.rostime.Duration
+      state: [0, 0]
+    - false
+    - []
+    - []
+    - ''
+    - ''
+    - true
+spatulaDropZone:
+  id: 0
+  pose:
+    frame_id: odom_combined
+    orientation: !!python/tuple [-1.6766813715207718e-08, -9.317573379519217e-09,
+      0.09401115030050278, 0.9955711364746094]
+    translation: !!python/tuple [0.707389235496521, 0.47777408361434937, 0.8762664794921875]
+  vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
+    state:
+    - !!python/object/new:std_msgs.msg._Header.Header
+      state:
+      - 0
+      - !!python/object/new:genpy.rostime.Time
+        state: [0, 0]
+      - spatulaDropZone
     - suturo_obstacle_scene
     - 0
     - 2

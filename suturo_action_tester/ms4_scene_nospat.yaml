@@ -1,10 +1,10 @@
 cake:
-  id: 0
+  id: 8
   pose:
     frame_id: odom_combined
     orientation: !!python/tuple [-0.00818771030753851, 0.007878986187279224, -0.8999543786048889,
       0.43583592772483826]
-    translation: !!python/tuple [0.1134020984172821, -1.9285080432891846, 0.9002638459205627]
+    translation: !!python/tuple [0.6065568923950195, -0.0030198097229003906, 1.0202932357788086]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
@@ -14,7 +14,7 @@ cake:
         state: [0, 0]
       - cake
     - suturo_obstacle_scene
-    - 0
+    - 8
     - 1
     - 0
     - !!python/object/new:geometry_msgs.msg._Pose.Pose
@@ -36,7 +36,7 @@ cake:
     - package://suturo_action_tester/meshes/plate.dae
     - true
 knife:
-  id: 2
+  id: 10
   pose:
     frame_id: odom_combined
     orientation: !!python/tuple [0.6648359894752502, 0.2201358824968338, -0.6581990718841553,
@@ -51,7 +51,7 @@ knife:
         state: [0, 0]
       - knife
     - suturo_obstacle_scene
-    - 2
+    - 10
     - 10
     - 0
     - !!python/object/new:geometry_msgs.msg._Pose.Pose
@@ -73,12 +73,12 @@ knife:
     - package://suturo_action_tester/meshes/knife_lab.dae
     - true
 plate:
-  id: 1
+  id: 9
   pose:
     frame_id: odom_combined
     orientation: !!python/tuple [0.0025723776780068874, -0.00599681818857789, -0.004379698075354099,
       0.9999691247940063]
-    translation: !!python/tuple [0.4180173873901367, -1.759162425994873, 0.9389409422874451]
+    translation: !!python/tuple [0.6247204542160034, 0.3521474599838257, 0.9136476516723633]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
@@ -88,7 +88,7 @@ plate:
         state: [0, 0]
       - plate
     - suturo_obstacle_scene
-    - 1
+    - 9
     - 10
     - 0
     - !!python/object/new:geometry_msgs.msg._Pose.Pose
@@ -109,13 +109,13 @@ plate:
     - ''
     - package://suturo_action_tester/meshes/plate.dae
     - true
-spat_pos:
-  id: 3
+spatula_goal:
+  id: 11
   pose:
     frame_id: odom_combined
     orientation: !!python/tuple [0.00818771030753851, -0.007878986187279224, 0.8999543786048889,
       -0.43583592772483826]
-    translation: !!python/tuple [-0.015287406742572784, -2.0960938930511475, 0.8464104533195496]
+    translation: !!python/tuple [0.40546974539756775, 0.26363661885261536, 0.9327360987663269]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
@@ -123,9 +123,9 @@ spat_pos:
       - 0
       - !!python/object/new:genpy.rostime.Time
         state: [0, 0]
-      - spat_pos
+      - spatula_goal
     - suturo_obstacle_scene
-    - 3
+    - 11
     - 3
     - 0
     - !!python/object/new:geometry_msgs.msg._Pose.Pose

@@ -76,9 +76,9 @@ knife:
   id: 3
   pose:
     frame_id: odom_combined
-    orientation: !!python/tuple [0.67597496509552, -0.22271080315113068, -0.672031044960022,
-      -0.20452868938446045]
-    translation: !!python/tuple [-2.2248945236206055, -0.6974021792411804, 1.261588454246521]
+    orientation: !!python/tuple [0.5161061882972717, -0.4966951906681061, -0.4934074580669403,
+      -0.49343451857566833]
+    translation: !!python/tuple [0.7601879835128784, 0.23616501688957214, 1.2864738702774048]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
@@ -115,7 +115,7 @@ plate:
     frame_id: odom_combined
     orientation: !!python/tuple [0.0025723776780068874, -0.00599681818857789, -0.004379698075354099,
       0.9999691247940063]
-    translation: !!python/tuple [0.48044323921203613, 0.012159682810306549, 1.026578426361084]
+    translation: !!python/tuple [0.521307110786438, -0.029052160680294037, 1.183180570602417]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header

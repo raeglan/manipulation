@@ -108,7 +108,7 @@ scope = {
 	ed_pre_err = ed_pre - g_ed_dist;
 
 	pre_err = (abs(center_align_ctrl) + abs(tilt_err)) / ang_scale + abs(grasp_err) * 5 + g_ep_dist * 8;
-	#VIS__pre_err__gripper_pos = unitZ * pre_err;
+	VIS__pre_err__gripper_pos = unitZ * pre_err;
 
 	g_ep_dist_err = -g_ep_dist * (ed_goal / max(ed_goal, ed_goal_err));
 	# Goal position on the edge's plane
@@ -116,8 +116,8 @@ scope = {
 	decision = pre_err - 0.08;
 	g_ed_dist_low = if(decision, ed_pre_err, ed_goal_err); 
 	g_ed_dist_hig = if(decision, ed_pre + 0.4 - g_ed_dist, ed_goal_err);
-	#VIS__lowC__gripper_pos  = obj_rot * (e_dir * g_ed_dist_low);
-	#VIS__highC__gripper_pos = obj_rot * (e_dir * g_ed_dist_hig);
+	VIS__lowC__gripper_pos  = obj_rot * (e_dir * g_ed_dist_low);
+	VIS__highC__gripper_pos = obj_rot * (e_dir * g_ed_dist_hig);
 
 	# Elbow things
 	elbow_z = elbow.pos.z;
