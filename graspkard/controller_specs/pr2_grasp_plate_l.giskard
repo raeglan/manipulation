@@ -136,7 +136,7 @@ scope = {
 	weightPositionGoal = 1;
 	weightRotationGoal = 4;
 
-	feedback = pre_err + ed_goal - g_ed_dist
+	feedback = abs(pre_err + g_ed_dist - ed_goal)
 }
 
 controllableConstraints = {
