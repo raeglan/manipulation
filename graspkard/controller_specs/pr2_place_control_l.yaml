@@ -191,7 +191,7 @@ hard-constraints:
       - {double-sub: [1.2963, shoulder_lift_joint]}
       -  shoulder_lift_joint
   - hard-constraint:
-      - {double-sub: [0.65, upper_arm_roll_joint]}
+      - {double-sub: [-0.65, upper_arm_roll_joint]}
       - {double-sub: [3.75, upper_arm_roll_joint]}
       - upper_arm_roll_joint
   - hard-constraint:
