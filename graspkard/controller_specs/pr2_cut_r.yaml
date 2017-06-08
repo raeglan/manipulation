@@ -129,7 +129,7 @@ scope:
   - cake_xzplane_dist: {abs: {vector-dot: [vector-sub: [trans, cake_pos], rotate-vector: [cake_rot, unit_y]]}}
 
   - cake_xyplane_dist: {vector-dot: [vector-sub: [trans, cake_pos], rotate-vector: [cake_rot, unit_z]]}
-  - height_offset: {double-add: [double-mul: [cake_height, -0.5], knife_height]}
+  - height_offset: {double-add: [double-mul: [cake_height, -0.5], knife_height, 0.015]}
   - height_ctr: {double-if: [{double-sub: [height_offset, cake_xyplane_dist]}, 0, -0.1]}
   # - depth_offset: {double-add: [double-mul: [cake_width, 0.5], knife_height]}
   # - depth_ctr_min: {double-sub: [cake_xzplane_dist, depth_offset]}
