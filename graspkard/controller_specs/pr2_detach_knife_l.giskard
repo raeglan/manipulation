@@ -3,7 +3,6 @@ scope = {
 	unitY = vec3(0,1,0);
 	unitZ = vec3(0,0,1);
 
-	j_torso_lift    = inputJoint("torso_lift_joint");
 
 	j_shoulder_pan  = inputJoint("l_shoulder_pan_joint");
 	j_shoulder_lift = inputJoint("l_shoulder_lift_joint");
@@ -13,6 +12,7 @@ scope = {
 	j_wrist_flex    = inputJoint("l_wrist_flex_joint");
 	j_wrist_roll    = inputJoint("l_wrist_roll_joint");
 	j_gripper       = inputJoint("l_gripper_joint");
+	j_torso_lift    = inputJoint("torso_lift_joint");
 
 	rack_frame = inputFrame("rack_frame");
 	rack_pos = rack_frame.pos;
@@ -61,7 +61,7 @@ scope = {
 }
 
 controllableConstraints = {
-	controllableConstraint(negVelLimitTorso, posVelLimitTorso, weightTorso, "torso_lift_joint");
+	#controllableConstraint(negVelLimitTorso, posVelLimitTorso, weightTorso, "torso_lift_joint");
 	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_shoulder_pan_joint");
 	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_shoulder_lift_joint");
 	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_upper_arm_roll_joint");
