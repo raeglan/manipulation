@@ -5,7 +5,7 @@
 - git:
     local-name: giskard
     uri: https://github.com/suturo16/giskard.git
-    version: feature/mergeSuturo
+    version: mergeSuturo
 
 - git:
     local-name: iai_naive_kinematics_sim
