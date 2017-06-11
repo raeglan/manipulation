@@ -1,4 +1,9 @@
 - git:
+    local-name: ros_geometry
+    uri: https://github.com/ros/geometry.git
+    version: indigo-devel
+
+- git:
     local-name: suturo_msgs
     uri: https://github.com/suturo16/suturo_msgs.git
 
