@@ -16,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   suturo_manipulation_msgs
   tf_conversions
-  eigen_conversions
+  #eigen_conversions
   r_libs
   control_msgs
   pluginlib

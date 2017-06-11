@@ -5,12 +5,7 @@
 - git:
     local-name: giskard
     uri: https://github.com/suturo16/giskard.git
-    version: feature/expressionExtension
-
-- git:
-    local-name: giskard_msgs
-    uri: https://github.com/airballking/giskard_msgs.git
-    version: master
+    version: feature/mergeSuturo
 
 - git:
     local-name: iai_naive_kinematics_sim
