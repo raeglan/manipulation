@@ -112,7 +112,7 @@ class InteractionManager(object):
 		intMarker = InteractiveMarker()
 		intMarker.name = name
 		intMarker.header.frame_id = pose['frame_id']
-		intMarker.header.stamp = rospy.Time.now()
+		intMarker.header.stamp = rospy.Time(0)
 		intMarker.pose = makeMsgPose(pose)
 		intMarker.scale = 1.0
 		control = InteractiveMarkerControl()
