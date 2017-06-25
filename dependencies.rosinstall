@@ -1,16 +1,16 @@
 - git:
+    local-name: ros_geometry
+    uri: https://github.com/ros/geometry.git
+    version: indigo-devel
+
+- git:
     local-name: suturo_msgs
     uri: https://github.com/suturo16/suturo_msgs.git
 
 - git:
     local-name: giskard
     uri: https://github.com/suturo16/giskard.git
-    version: feature/expressionExtension
-
-- git:
-    local-name: giskard_msgs
-    uri: https://github.com/airballking/giskard_msgs.git
-    version: master
+    version: mergeSuturo
 
 - git:
     local-name: iai_naive_kinematics_sim
