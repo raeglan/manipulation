@@ -1,7 +1,7 @@
 - name: plate_frame
   type: transform
   const: false
-  value: plate1 base_link
+  value: poi base_link
 
 - name: edge_radius
   type: double
