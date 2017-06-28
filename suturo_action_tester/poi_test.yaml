@@ -39,8 +39,9 @@ next2cake:
   id: 2
   pose:
     frame_id: odom_combined
-    orientation: !!python/tuple [0.0, 0.0, 0.0, 1.0]
-    translation: !!python/tuple [0.5927655100822449, 0.1199343353509903, 0.84727942943573]
+    orientation: !!python/tuple [-6.682639330790607e-09, 2.9387132727265453e-09, 0.318657249212265,
+      0.9478700160980225]
+    translation: !!python/tuple [0.6190496683120728, 0.261759877204895, 0.8562594652175903]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
@@ -112,9 +113,9 @@ spatulaDropZone:
   id: 0
   pose:
     frame_id: odom_combined
-    orientation: !!python/tuple [-1.6766813715207718e-08, -9.317573379519217e-09,
-      0.09401115030050278, 0.9955711364746094]
-    translation: !!python/tuple [0.707389235496521, 0.47777408361434937, 0.8762664794921875]
+    orientation: !!python/tuple [-1.0643233849805256e-08, -1.0478152567827692e-08,
+      0.012940585613250732, 0.9999162554740906]
+    translation: !!python/tuple [0.6063541173934937, 0.5599026679992676, 0.8762664794921875]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
