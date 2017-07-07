@@ -38,6 +38,9 @@ GiskardActionServer::GiskardActionServer(string _name)
 {
 	rGripperPub = nh.advertise<control_msgs::GripperCommand>("r_pr2_gripper_command", 1);
 	lGripperPub = nh.advertise<control_msgs::GripperCommand>("l_pr2_gripper_command", 1);
+	
+	posErrorPub = nh.advertise<suturo_manipulation_msgs::Float64Map>("pos_errors", 1);
+	velErrorPub = nh.advertise<suturo_manipulation_msgs::Float64Map>("vel_errors", 1);
 
 	visPub = nh.advertise<visualization_msgs::MarkerArray>("visualization", 1);
 	visScalarPub = nh.advertise<suturo_manipulation_msgs::Float64Map>("debug_scalar", 1);
@@ -90,6 +93,8 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	visFrames.clear();
 
 	velControllers.clear();
+	controlledIndices.clear();
+	lastControllablePos = Eigen::VectorXd::Zero(0);
 	jointSet.clear();
 	queries.clear();
 	for (auto it = posControllers.begin(); it != posControllers.end(); it++) {
@@ -151,6 +156,13 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	vector<string> jointInputs = scope.get_joint_inputs();
 	unordered_set<string> controlledSet(controller.get_controllable_names().begin(), controller.get_controllable_names().end());
 	
+	const std::vector<std::string>& controllableNames = controller.get_controllable_names();
+	for (size_t i = 0; i < controllableNames.size(); i++) {
+		controlledIndices[controllableNames[i]] = i;
+	}
+
+	lastCommand = Eigen::VectorXd::Zero(controlledIndices.size());
+
 	bool bControlledJointsEnded = false;
 
 	for (size_t i = 0; i < jointInputs.size(); i++) {
@@ -423,12 +435,41 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 	dT = (now - lastUpdate).toSec();
 	lastUpdate = now;
 
+	Eigen::VectorXd vels = Eigen::VectorXd::Zero(controlledIndices.size());
+
 	for (size_t i = 0; i < jointStateMsg.name.size(); i++) {
 		auto it = jointSet.find(jointStateMsg.name[i]);
 		if (it != jointSet.end()) {
 			controller.get_scope().set_input(jointStateMsg.name[i], jointStateMsg.position[i], state);
+			if (controlledIndices.find(jointStateMsg.name[i]) != controlledIndices.end()) {
+				vels[controlledIndices[jointStateMsg.name[i]]] = jointStateMsg.velocity[i];
+			}
 		}
 	}
+
+	//Eigen::VectorXd posErrors = Eigen::VectorXd::Zero(controlledIndices.size());
+	//Eigen::VectorXd velErrors = Eigen::VectorXd::Zero(controlledIndices.size());
+	double dTjs = (jointStateMsg.header.stamp - lastUpdate).toSec();
+
+	if (lastControllablePos.size() == controlledIndices.size()) {
+		suturo_manipulation_msgs::Float64Map posErrorMsg;
+		suturo_manipulation_msgs::Float64Map velErrorMsg;
+		for (auto it = controlledIndices.begin(); it != controlledIndices.end(); it++) {
+			posErrorMsg.names.push_back(it->first);
+			posErrorMsg.values.push_back(state[it->second] - (lastControllablePos[it->second] + lastCommand[it->second] * dTjs));
+			velErrorMsg.names.push_back(it->first);
+			velErrorMsg.values.push_back(vels[it->second] - lastCommand[it->second]);
+			lastControllablePos[it->second] = state[it->second];
+		}
+		posErrorPub.publish(posErrorMsg);
+		velErrorPub.publish(velErrorMsg);
+	} else {
+		lastControllablePos = Eigen::VectorXd::Zero(controlledIndices.size());
+		for (auto it = controlledIndices.begin(); it != controlledIndices.end(); it++) {
+			lastControllablePos[it->second] = state[it->second];
+		}
+	}
+
 
 	collisionScene.updateQuery();
 
@@ -455,12 +496,17 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 	}
 
 	if (controller.update(state, nWSR)) {
+
+
 		Eigen::VectorXd commands = controller.get_command();
+		lastCommand = commands;
+
 		for (unsigned int i=0; i < velControllers.size(); i++) {
 			std_msgs::Float64 command;
 			command.data = commands[i];
 			velControllers[i].publish(command);
 		}
+		lastUpdate = ros::Time::now();
 
 		for (auto it = posControllers.begin(); it != posControllers.end(); it++) {
 			if (it->second.idx > -1) {

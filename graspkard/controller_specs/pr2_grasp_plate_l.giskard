@@ -38,7 +38,7 @@ scope = {
 	gripper_pos = gripper.pos;
 	gripper_rot = gripper.rot;
 	g_z = gripper_rot * unitX;
-	g_x_pre = gripper * unitX;
+	g_x_pre = gripper * unitX * 0.5;
 
 	finger_length = 0.08;
 
@@ -73,9 +73,6 @@ scope = {
 	goalTilt = cos(edge_ang);
 
 	tilt_ctrl = gio_x.z;
-	tilt_err = (goalTilt - tilt_ctrl) * ang_scale;
-
-	VIS__tilt_err__g_x_pre = unitZ * (tilt_err / ang_scale);
 
 	# Gripper Roll
 	roll_ctrl = gio_z.z;
@@ -100,12 +97,16 @@ scope = {
 	g_ed_dist = gie_r * e_sin + gie_z * -e_cos;
 	VIS__plane_dist__gripper_pos = obj_rot * -(e_normal * g_ep_signed_dist);
 	#VIS__edge_dist__gripper_pos  = obj_rot * (e_dir * -g_ed_dist);
-
 	
 	ed_goal = min(edge_d - finger_length, 0);
 	ed_goal_err = ed_goal - g_ed_dist;
 	ed_pre  = -finger_length - 0.04; 
 	ed_pre_err = ed_pre - g_ed_dist;
+
+	ed_upper_pre_pos = ed_pre + 0.4;
+	tilt_err = (goalTilt - tilt_ctrl) * ang_scale * min(1, abs(ed_upper_pre_pos / ed_pre_err));
+	
+	VIS__tilt_err__g_x_pre = unitZ * (tilt_err / ang_scale);
 
 	pre_err = (abs(center_align_ctrl) + abs(tilt_err)) / ang_scale + abs(grasp_err) * 5 + g_ep_dist * 8;
 	VIS__pre_err__gripper_pos = unitZ * pre_err;
@@ -115,7 +116,7 @@ scope = {
 	# Based on rotational and positional alignment
 	decision = pre_err - 0.08;
 	g_ed_dist_low = if(decision, ed_pre_err, ed_goal_err); 
-	g_ed_dist_hig = if(decision, ed_pre + 0.4 - g_ed_dist, ed_goal_err);
+	g_ed_dist_hig = if(decision, ed_upper_pre_pos - g_ed_dist, ed_goal_err);
 	VIS__lowC__gripper_pos  = obj_rot * (e_dir * g_ed_dist_low);
 	VIS__highC__gripper_pos = obj_rot * (e_dir * g_ed_dist_hig);
 

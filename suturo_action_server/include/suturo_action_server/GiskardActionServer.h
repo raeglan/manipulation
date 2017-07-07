@@ -64,10 +64,15 @@ protected:
 	};
 	unordered_map<string, posController> posControllers;
 
+	unordered_map<string, size_t> controlledIndices;
 
 	unordered_set<string> jointSet;
 
 	vector<boost::shared_ptr<AQuery>> queries;
+
+	Eigen::VectorXd lastCommand;
+	Eigen::VectorXd lastControllablePos;
+	ros::Time lastUpdate;
 
 private:
 	mutex jsMutex;
@@ -77,7 +82,6 @@ private:
 	bool newJS;
 	sensor_msgs::JointState currentJS;
 
-	ros::Time lastUpdate;
 	double dT, rGripper_dT, lGripper_dT;
 	tf::TransformListener tfListener;
 	double lastFeedback;
@@ -93,6 +97,7 @@ private:
 	unordered_map<string, TVecPair> visVectors;
 	unordered_map<string, KDL::Expression<KDL::Frame>::Ptr> visFrames;
 
+	ros::Publisher posErrorPub, velErrorPub;
 	ros::Publisher visPub, visScalarPub;
 	VisualizationManager visManager;
 

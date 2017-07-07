@@ -32,7 +32,8 @@ scope = {
 	knife = wrist * inputFrame("knife_in_wrist");
 
 	# 
-	cake_dist = abs((knife.pos - cake_pos) * (cake_rot * unitX));
+	cake_signed_dist = (knife.pos - cake_pos) * (cake_rot * unitX);
+	cake_dist = abs(cake_signed_dist);
 
 	knife_rot = knife.rot;
 
@@ -58,7 +59,9 @@ scope = {
 	weightPositionGoal = 1;
 	weightRotationGoal = 4;
 
-	feedback = 1
+	feedback = 0.1 - cake_dist;
+
+	VIS__cake_dist__cake = cake_signed_dist * (cake_rot * unitX)
 }
 
 controllableConstraints = {
