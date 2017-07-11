@@ -54,7 +54,30 @@ void CollisionScene::clearQueryLinks() {
 	links.clear();
 }
 
-void CollisionScene::traverseTree(SQueryPoints& qPoint, Vector3d linkPos){
+
+Vector3d CollisionScene::calcIntersection(const Vector3d &v, const bBox &box) {
+	Vector3d scaledX = v / abs(v.x());
+	Vector3d xintersect = scaledX * box.x;
+	if (xintersect.y() <= box.y && xintersect.z() <= box.z && xintersect.y() >= -box.y && xintersect.z() >= -box.z) {
+		return xintersect;
+	}
+	
+	Vector3d scaledY = v / abs(v.y());
+	Vector3d yintersect = scaledY * box.y;
+	if (yintersect.x() <= box.x && yintersect.z() <= box.z && yintersect.x() >= -box.x && yintersect.z() >= -box.z) {
+		return yintersect;
+	}
+
+	Vector3d scaledZ = v / abs(v.z());
+	Vector3d zintersect = scaledZ * box.z;
+	if (zintersect.y() <= box.y && zintersect.x() <= box.x && zintersect.y() >= -box.y && zintersect.x() >= -box.x) {
+		return zintersect;
+	}
+	return Vector3d();
+}
+
+
+void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, const bBox &linkBox){
 	//tf::TransformBroadcaster br;
 	//tf::Transform transform;
 
@@ -71,22 +94,25 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, Vector3d linkPos){
 		return;
 	}
 
+	Vector3d linkPos = tLink.translation();
+
 	for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
         end=octree->end_leafs(); it!= end; ++it)
  	{
  		if(it->getOccupancy() > 0.5){
  			//manipulate node, e.g.:
    			octomath::Vector3 cellPos = it.getCoordinate();
+			Eigen::Vector3d cellPosEigen(cellPos.x(), cellPos.y(), cellPos.z());
 
-   			Eigen::Vector3d cellPosEigen(cellPos.x(), cellPos.y(), cellPos.z());
+   			Vector3d linkToCell = linkPos - cellPosEigen;
 
-   			Vector3d cellToLink = linkPos - cellPosEigen;
+   			Vector3d pointOnCell = cellPosEigen - (linkToCell * (0.025/linkToCell.norm()));
 
-   			double newdist = (cellToLink).norm();
 
-   			Vector3d pointOnCell = cellPosEigen + (cellToLink * (0.025/newdist));
 
-   			double occupancy = it->getOccupancy();
+   			Vector3d vecInLink = tLink.inverse().rotation() * linkToCell;
+   			Vector3d pointOnLink = calcIntersection(vecInLink, linkBox);
+   			pointOnLink = linkPos + (tLink.rotation() * pointOnLink);
 
 
    			//if(it->getOccupancy() > 0.2){
@@ -99,18 +125,19 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, Vector3d linkPos){
 
 				//br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom_combined", "currentPoint"));
    			//}
-
+   			double newdist = (pointOnCell - pointOnLink).norm();
    		
    			if(newdist < dist || dist < 0){
    			
    				qPoint.inScene = pointOnCell;
+   				qPoint.onLink = pointOnLink;
    				dist = newdist;
    			}
  		}
 	 }
 	 // octoMapMutex.unlock();
 	 std::cout << "distance: " << dist << std::endl;
-	 qPoint.onLink = Eigen::Vector3d(0, 0, 0);
+	 
 }
 
 
@@ -142,12 +169,16 @@ void CollisionScene::updateQuery() {
 
 				// Iterate over Octomap
 
-				octomap::OcTreeNode *node = octree->getRoot();
+				//octomap::OcTreeNode *node = octree->getRoot();
 
 				SQueryPoints qPoint;
-				Vector3d linkPos = tLink.translation();
 
-				traverseTree(qPoint, linkPos);
+				bBox box;
+				box.x = 0.1;
+				box.y = 0.1;
+				box.z = 0.1;
+
+				traverseTree(qPoint, tLink, box);
 
 				qPoint.inScene = tPoint * qPoint.inScene;
 

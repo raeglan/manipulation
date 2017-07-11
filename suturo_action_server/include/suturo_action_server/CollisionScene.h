@@ -65,6 +65,12 @@ public:
 		Eigen::Vector3d inScene;
 	};
 
+	struct bBox{
+		float x;
+		float y;
+		float z;
+	};
+
 	typedef MutexMap<string, CollisionScene::SQueryPoints> QueryMap;
 
 	CollisionScene(QueryMap &_map);
@@ -81,7 +87,9 @@ private:
 		Eigen::Vector3d negBound;
 	};
 
-	void traverseTree(SQueryPoints& qPoint, Eigen::Vector3d linkPos);
+	void traverseTree(SQueryPoints& qPoint, const Eigen::Affine3d tLink, const bBox &linkBox);
+
+	Eigen::Vector3d calcIntersection(const Eigen::Vector3d &v, const struct bBox &box);
 
 	ros::NodeHandle nh;
 	ros::CallbackQueue cbQueue;
