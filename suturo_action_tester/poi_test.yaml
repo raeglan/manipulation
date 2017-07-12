@@ -1,7 +1,7 @@
 deliver:
-  id: 1
+  id: 5
   pose:
-    frame_id: odom_combined
+    frame_id: base_link
     orientation: !!python/tuple [-1.7902944904335527e-08, -1.264542159873372e-08,
       0.10265465825796127, 0.9947170615196228]
     translation: !!python/tuple [0.6443538069725037, 0.6751264333724976, 1.1067781448364258]
@@ -14,7 +14,7 @@ deliver:
         state: [0, 0]
       - deliver
     - suturo_obstacle_scene
-    - 1
+    - 5
     - 2
     - 0
     - !!python/object/new:geometry_msgs.msg._Pose.Pose
@@ -36,12 +36,12 @@ deliver:
     - ''
     - true
 next2cake:
-  id: 2
+  id: 6
   pose:
-    frame_id: odom_combined
-    orientation: !!python/tuple [-6.682639330790607e-09, 2.9387132727265453e-09, 0.318657249212265,
-      0.9478700160980225]
-    translation: !!python/tuple [0.6190496683120728, 0.261759877204895, 0.8562594652175903]
+    frame_id: base_link
+    orientation: !!python/tuple [-2.1408890660268298e-08, -2.7577424788205462e-09,
+      0.7063019871711731, 0.7079106569290161]
+    translation: !!python/tuple [0.6149001717567444, -0.14612600207328796, 1.1267389059066772]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
@@ -51,7 +51,7 @@ next2cake:
         state: [0, 0]
       - next2cake
     - suturo_obstacle_scene
-    - 2
+    - 6
     - 2
     - 0
     - !!python/object/new:geometry_msgs.msg._Pose.Pose
@@ -73,9 +73,9 @@ next2cake:
     - ''
     - true
 poi:
-  id: 3
+  id: 7
   pose:
-    frame_id: odom_combined
+    frame_id: base_link
     orientation: !!python/tuple [0.0023314771242439747, 0.008971701376140118, 0.009533428587019444,
       0.9999116063117981]
     translation: !!python/tuple [0.8502813577651978, -0.09859929978847504, 0.9843157529830933]
@@ -88,7 +88,7 @@ poi:
         state: [0, 0]
       - poi
     - suturo_obstacle_scene
-    - 3
+    - 7
     - 3
     - 0
     - !!python/object/new:geometry_msgs.msg._Pose.Pose
@@ -110,12 +110,12 @@ poi:
     - ''
     - true
 spatulaDropZone:
-  id: 0
+  id: 4
   pose:
-    frame_id: odom_combined
+    frame_id: base_link
     orientation: !!python/tuple [-1.0643233849805256e-08, -1.0478152567827692e-08,
       0.012940585613250732, 0.9999162554740906]
-    translation: !!python/tuple [0.6063541173934937, 0.5599026679992676, 0.8762664794921875]
+    translation: !!python/tuple [0.5930782556533813, 0.12079045176506042, 1.1053091287612915]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
@@ -125,7 +125,7 @@ spatulaDropZone:
         state: [0, 0]
       - spatulaDropZone
     - suturo_obstacle_scene
-    - 0
+    - 4
     - 2
     - 0
     - !!python/object/new:geometry_msgs.msg._Pose.Pose

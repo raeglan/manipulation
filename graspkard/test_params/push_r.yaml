@@ -1,12 +1,12 @@
-- name: cake 
+- name: cake_frame
   type: transform
   const: false
-  value: cake base_link
+  value: next2cake base_link
 
-- name: knife 
+- name: knife_in_wrist
   type: transform
   const: false
-  value: knife r_wrist_roll_link
+  value: knife1 r_wrist_roll_link
 
 - name: r_gripper_effort
   type: double

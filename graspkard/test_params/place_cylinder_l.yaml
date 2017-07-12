@@ -1,24 +1,24 @@
-- name: goal_name
+- name: target_frame
   type: transform
   const: false
-  value: goal_area base_link
+  value: turtle base_link
 
-- name: object_name
+- name: cylinder_in_gripper
   type: transform
   const: false
-  value: cylinder r_wrist_roll_link
+  value: plate1 l_wrist_roll_link
 
 - name: cylinder_width
   type: double
   const: true
-  value: 0.05
+  value: 0.1
 
 - name: cylinder_height
   type: double
   const: true
-  value: 0.14
+  value: 0.02
 
-- name: r_gripper_effort
+- name: l_gripper_effort
   type: double
   const: true
-  value: 50.0
+  value: 100.0

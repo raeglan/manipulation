@@ -6,9 +6,9 @@
 - name: cake
   type: transform
   const: false
-  value: box1 base_link
+  value: next2cake base_link
 
 - name: plate
   type: transform
   const: false
-  value: spatula base_link
+  value: spatulaDropZone base_link

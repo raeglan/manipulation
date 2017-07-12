@@ -1,12 +1,12 @@
 - name: cake_frame
   type: transform
   const: false
-  value: cake base_link
+  value: next2cake base_link
 
 - name: cake_length
   type: double
   const: true
-  value: 0.146
+  value: 0.02
 
 - name: cake_width
   type: double
@@ -21,7 +21,7 @@
 - name: knife_ee_frame
   type: transform
   const: false
-  value: knife r_wrist_roll_link
+  value: knife1 r_wrist_roll_link
 
 - name: knife_height
   type: double
