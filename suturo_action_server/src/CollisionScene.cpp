@@ -94,7 +94,7 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, co
 		return;
 	}
 
-	Vector3d linkPos = tLink.translation();
+	Vector3d linkPos = tLink.translation() - tLink.rotation() * Vector3d(linkBox.x, 0, 0);
 
 	for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
         end=octree->end_leafs(); it!= end; ++it)
@@ -104,15 +104,17 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, co
    			octomath::Vector3 cellPos = it.getCoordinate();
 			Eigen::Vector3d cellPosEigen(cellPos.x(), cellPos.y(), cellPos.z());
 
-   			Vector3d linkToCell = linkPos - cellPosEigen;
+   			Vector3d linkToCell = cellPosEigen - linkPos;
 
    			Vector3d pointOnCell = cellPosEigen - (linkToCell * (0.025/linkToCell.norm()));
 
 
 
    			Vector3d vecInLink = tLink.inverse().rotation() * linkToCell;
-   			Vector3d pointOnLink = calcIntersection(vecInLink, linkBox);
-   			pointOnLink = linkPos + (tLink.rotation() * pointOnLink);
+   			Vector3d pointOnLink_link = calcIntersection(vecInLink, linkBox);
+   			
+			Vector3d pointOnLink_baselink = tLink.rotation() * pointOnLink_link;
+   			pointOnLink_baselink = linkPos + pointOnLink_baselink;
 
 
    			//if(it->getOccupancy() > 0.2){
@@ -125,12 +127,12 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, co
 
 				//br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom_combined", "currentPoint"));
    			//}
-   			double newdist = (pointOnCell - pointOnLink).norm();
+   			double newdist = (cellPosEigen - pointOnLink_baselink).norm();
    		
    			if(newdist < dist || dist < 0){
    			
-   				qPoint.inScene = pointOnCell;
-   				qPoint.onLink = pointOnLink;
+   				qPoint.inScene = cellPosEigen;
+   				qPoint.onLink = pointOnLink_link;
    				dist = newdist;
    			}
  		}
@@ -174,9 +176,9 @@ void CollisionScene::updateQuery() {
 				SQueryPoints qPoint;
 
 				bBox box;
-				box.x = 0.1;
-				box.y = 0.1;
-				box.z = 0.1;
+				box.x = 0.2;
+				box.y = 0.07;
+				box.z = 0.07;
 
 				traverseTree(qPoint, tLink, box);
 
