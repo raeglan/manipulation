@@ -32,3 +32,5 @@ alias rplacespat=rosrun\ suturo_action_server\ client_test\ controller_specs/pr2
 alias lplacespat=rosrun\ suturo_action_server\ client_test\ controller_specs/pr2_place_control_l.yaml\ config/pr2_upper_body_right_arm.yaml\ test_params/place_spatula_l.yaml\ feedback
 alias rgraspspat=rosrun\ suturo_action_server\ client_test\ controller_specs/pr2_grasp_fingerHandle_r.giskard\ config/pr2_upper_body_right_arm.yaml\ test_params/grasp_spatula.yaml\ feedback
 alias lgraspspat=rosrun\ suturo_action_server\ client_test\ controller_specs/pr2_grasp_fingerHandle_l.giskard\ config/pr2_upper_body_right_arm.yaml\ test_params/grasp_spatula.yaml\ feedback
+
+alias rsimple_collision=rosrun\ suturo_action_server\ client_test\ controller_specs/pr2_r_arm_collision_avoidance.giskard\ config/pr2_upper_body_right_arm.yaml\ test_params/r_arm_collision_test.yaml\ feedback

@@ -94,7 +94,7 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, co
 		return;
 	}
 
-	Vector3d linkPos = tLink.translation() - tLink.rotation() * Vector3d(linkBox.x, 0, 0);
+	Vector3d linkPos = tLink.translation(); //- tLink.rotation() * Vector3d(linkBox.x, 0, 0);
 
 	for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
         end=octree->end_leafs(); it!= end; ++it)
@@ -186,6 +186,7 @@ void CollisionScene::updateQuery() {
 
 				map.set(linkName, qPoint);
 				
+				cout << "linkname " << linkName << endl;
 
 			} catch(tf::TransformException ex) {
 				cerr << ex.what() << endl;
