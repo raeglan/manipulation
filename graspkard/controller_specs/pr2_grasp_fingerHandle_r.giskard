@@ -3,7 +3,6 @@ scope = {
 	unitY = vec3(0,1,0);
 	unitZ = vec3(0,0,1);
 
-	j_torso_lift    = inputJoint("torso_lift_joint");
 
 	j_shoulder_pan  = inputJoint("r_shoulder_pan_joint");
 	j_shoulder_lift = inputJoint("r_shoulder_lift_joint");
@@ -13,6 +12,7 @@ scope = {
 	j_wrist_flex    = inputJoint("r_wrist_flex_joint");
 	j_wrist_roll    = inputJoint("r_wrist_roll_joint");
 	j_gripper       = inputJoint("r_gripper_joint");
+	j_torso_lift    = inputJoint("torso_lift_joint");
 
 	handle = inputFrame("handle_frame");
 	handle_pos = handle.pos;
@@ -34,6 +34,11 @@ scope = {
 	wrist = elbow * forearm_roll * wrist_flex * wrist_roll;
 	gripper = wrist * frame(rotation(0,0,0,1), vec3(0.13,0,0));
 
+	# Keep the elbow afloat
+	elbow_pos = elbow.pos;
+	elbow_low = 1 - elbow_pos.z;
+
+
 	grasp_err = handle_width - j_gripper + 0.01;
 
 	finger_length = 0.06;
@@ -46,7 +51,7 @@ scope = {
 	h_y = handle_rot * unitY;
 	h_z = handle_rot * unitZ;
 
-	g2h = gripper.pos - handle_pos;
+	g2h = gripper_pos - handle_pos;
 	gh_xd = g2h * h_x;
 	gh_yd = g2h * h_y;
 	gh_zd = g2h * h_z;
@@ -56,20 +61,22 @@ scope = {
 
 	tilt_ctrl = h_x * g_x;
 	tilt_err = (1 - tilt_ctrl) * ang_scale;
-	yaw_roll_ctrl = h_z * g_z;
+	yaw_roll_ctrl = abs(h_z * g_z);
 	yaw_roll_err = (1 - yaw_roll_ctrl) * ang_scale;
 
-	rot_align = tilt_err + yaw_roll_err;
-	pre_err = 5 * (abs(gh_yd) + abs(gh_zd)) + rot_align;
+	rot_err = tilt_err + yaw_roll_err;
+	pos_err = abs(gh_yd) + abs(gh_zd);
+	pre_err = 2 * pos_err + rot_err;
+	pos_ctrl = max(-0.1, -pos_err);
 
-	decision = pre_err - 0.1 + abs(grasp_err);
-	x_low_err = if(decision, -100, 0.5 * handle_depth - finger_length - gh_xd);
-	x_hig_err = if(decision, -0.05, 0.5 * handle_depth) - finger_length - gh_xd;
+	paramA = min(1, pre_err / max(abs(gh_xd), 0.06) - 0.1);
+	paramB = 1 - paramA;
 
-	pre_x = if(x_low_err, 1, 0.1);
+	pre_pos = -0.5 * handle_depth - 0.05;
+	goal_pos = 0.5 * handle_depth;
 
-	gh_yd_err = -gh_yd;
-	gh_zd_err = -gh_zd;
+	x_low_err = min((paramB * goal_pos - paramA) - finger_length - gh_xd, 0.04);
+	x_hig_err = min((paramB * goal_pos + paramA * pre_pos) - finger_length - gh_xd, 0.04);
 
 	# Limits, weights and the like
 	negVelLimitTorso = -0.02;
@@ -82,15 +89,26 @@ scope = {
 	weightTorso = weightArm * 10;
 
 	weightPositionGoal = 1;
-	weightRotationGoal = 4;
+	weightRotationGoal = 2.6;
 
 	feedback = pre_err + 0.5 * handle_depth - gh_xd;
 
-	VIS__grasp_dir__handle_pos = h_z
+	# Visualization
+	VIS__x_plane_dist = gh_xd;
+	VIS__y_plane_dist = gh_yd;
+	VIS__z_plane_dist = gh_zd;
+
+	VIS__hxg__gripper_pos = h_x * -gh_xd;
+	VIS__hyg__gripper_pos = h_y * -gh_yd;
+	VIS__hzg__gripper_pos = h_z * -gh_zd;
+
+	VIS__err__gripper_pos = unitZ * pre_err;
+
+	VIS__grasp_dir__handle_pos = h_x
 }
 
 controllableConstraints = {
-	controllableConstraint(negVelLimitTorso, posVelLimitTorso, weightTorso, "torso_lift_joint");
+	#controllableConstraint(negVelLimitTorso, posVelLimitTorso, weightTorso, "torso_lift_joint");
 	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_shoulder_pan_joint");
 	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_shoulder_lift_joint");
 	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "r_upper_arm_roll_joint");
@@ -105,9 +123,9 @@ softConstraints = {
 	softConstraint(grasp_err, grasp_err, 10, j_gripper, "Gripper opening");
 
 	softConstraint(x_low_err, x_hig_err, weightPositionGoal, gh_xd, "Depth align");
-	softConstraint(gh_yd_err, gh_yd_err, weightPositionGoal, gh_yd, "Horizontal align");
-	softConstraint(gh_zd_err, gh_zd_err, weightPositionGoal, gh_zd, "Vertical align");
+	softConstraint(-1, pos_ctrl, weightPositionGoal, pos_err, "X-Axis align");
 
+	#softConstraint(elbow_low, 100, weightPositionGoal, elbow_pos.z, "Elbow");
 	softConstraint(tilt_err, tilt_err, weightRotationGoal, tilt_ctrl, "Tilt align");
 	softConstraint(yaw_roll_err, yaw_roll_err, weightRotationGoal, yaw_roll_ctrl, "Yaw Roll align")
 }	
