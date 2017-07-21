@@ -19,6 +19,8 @@ scope = {
 	pos_goal_r = goal_frame.pos;
 	rot_goal_r = goal_frame.rot;
 
+	r_gripper_palm_link = inputFrame("r_gripper_palm_link");
+
 	# Collision points on r_forearm_roll_link
 	r_forearm_link_ol = inputVec3("COLL:L:r_forearm_link");
 	r_forearm_link_is = inputVec3("COLL:W:r_forearm_link");
@@ -42,6 +44,7 @@ scope = {
 	# Frame chains
 	elbow_r = torso_lift * shoulder_pan_r * shoulder_lift_r * upper_arm_roll_r * elbow_flex_r ;
 	wrist_r = elbow_r * forearm_roll_r * wrist_flex_r * wrist_roll_r;
+	wrist_r2 = elbow_r * forearm_roll_r * wrist_flex_r;
 	forearm_roll_r2 = elbow_r * forearm_roll_r;
 	ee_r    = wrist_r * gripper_offset_r ;
 
@@ -73,6 +76,9 @@ scope = {
 
 	weightPositionGoal = 1;
 	weightCollisionControl = 1000;
+
+	#invrot = invert(goal_frame.rot);
+	invrot = invert(r_gripper_palm_link.rot);
 
 	forearm_ol_vis = forearm_roll_r2.pos + (forearm_roll_r2.rot * r_forearm_link_ol);
 

@@ -96,6 +96,17 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, co
 
 	Vector3d linkPos = tLink.translation(); //- tLink.rotation() * Vector3d(linkBox.x, 0, 0);
 
+	Vector3d linkToCell;
+	Vector3d pointOnCell;
+	Vector3d vecInLink;
+	Vector3d pointOnLink_link;
+	Vector3d pointOnLink_baselink;
+
+	Vector3d linkToCell_best;
+	Vector3d vecInLink_best;
+	Vector3d pointOnLink_link_best;
+	Vector3d pointOnLink_baselink_best;
+
 	for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
         end=octree->end_leafs(); it!= end; ++it)
  	{
@@ -104,16 +115,16 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, co
    			octomath::Vector3 cellPos = it.getCoordinate();
 			Eigen::Vector3d cellPosEigen(cellPos.x(), cellPos.y(), cellPos.z());
 
-   			Vector3d linkToCell = cellPosEigen - linkPos;
+   			linkToCell = cellPosEigen - linkPos;
 
-   			Vector3d pointOnCell = cellPosEigen - (linkToCell * (0.025/linkToCell.norm()));
+   			pointOnCell = cellPosEigen - (linkToCell * (0.025/linkToCell.norm()));
 
 
 
-   			Vector3d vecInLink = tLink.inverse().rotation() * linkToCell;
-   			Vector3d pointOnLink_link = calcIntersection(vecInLink, linkBox);
+   			vecInLink = tLink.inverse().rotation() * linkToCell;
+   			pointOnLink_link = calcIntersection(vecInLink, linkBox);
    			
-			Vector3d pointOnLink_baselink = tLink.rotation() * pointOnLink_link;
+			pointOnLink_baselink = tLink.rotation() * pointOnLink_link;
    			pointOnLink_baselink = linkPos + pointOnLink_baselink;
 
 
@@ -134,9 +145,18 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, co
    				qPoint.inScene = cellPosEigen;
    				qPoint.onLink = pointOnLink_link;
    				dist = newdist;
+
+   				linkToCell_best = linkToCell;
+				vecInLink_best = vecInLink;
+				pointOnLink_link_best = pointOnLink_link;
+				pointOnLink_baselink_best = pointOnLink_baselink;
    			}
  		}
 	 }
+	 cout << "linkToCell " << linkToCell_best.x() << " " << linkToCell_best.y() << " " << linkToCell_best.z() << endl;
+	 cout << "vecInLink " << vecInLink_best.x() << " " << vecInLink_best.y() << " " << vecInLink_best.z() << endl;
+	 cout << "pointOnLink_link " << pointOnLink_link_best.x() << " " << pointOnLink_link_best.y() << " " << pointOnLink_link_best.z() << endl;
+	 cout << "pointOnLink_baselink " << pointOnLink_baselink_best.x() << " " << pointOnLink_baselink_best.y() << " " << pointOnLink_baselink_best.z() << endl;
 	 // octoMapMutex.unlock();
 	 std::cout << "distance: " << dist << std::endl;
 	 
