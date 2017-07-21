@@ -1,0 +1,21 @@
+import "math.gpp";
+
+def list<softC> axisAlignment(vec3 axisA, vec3 axisB, scalar weight) {
+	dot = axisA * axisB;
+	err = 1 - dot;
+	return [softC(err, err, weight, dot, "Axis alignment")];
+};
+
+def list<softC> rotationAlignment(rotation rotA, rotation rotB, scalar weight) {
+	return = [axisAlignment(a * unitX, b * unitX, weight), axisAlignment(a * unitZ, b * unitZ, weight)];
+};
+
+def list<softC> positionAlignment(vec3 posA, vec3 posB, scalar weight) {
+	dist = norm(posA, posB);
+	err = -dist;
+	out = [softC(err, err, weight, dist, "Position alignment")];
+};
+
+def list<softC> frameAlignment(frame frameA, frame frameB, scalar weight) {
+	return rotationAlignment(frameA.rot, frameB.rot, weight) + positionAlignment(frameA.pos, frameB.pos, weight);
+};

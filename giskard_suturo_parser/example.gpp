@@ -1,0 +1,39 @@
+import highlevel_constraints
+import pr2
+
+robot = pr2();
+controller = QP(robot.controllableConstraints,
+	 [moveObjectTo("thing", "goal", robot.right_gripper), uprightConstraint("someObject")]
+	 , robot.hardConstraints);
+
+---------------------------------------------------
+
+def map object(string objectName, frame attachmentFrame) {
+	frame = attachmentFrame * inputFrame(objectName);
+	dimensions = inputVec3(objectName+"_dimensions");
+	return {frame: frame, dimensions: dimensions, position: frame.pos, rotation: frame.rot}
+}
+
+def map object(string objectName) {
+	frame = inputFrame(objectName);
+	dimensions = inputVec3(objectName+"_dimensions");
+	return {frame: frame, dimensions: dimensions, position: frame.pos, rotation: frame.rot}
+}
+
+def softConstraint moveObjectTo(string objName, string goalName, frame attachmentFrame) {
+	thing = object(objName, attachmentFrame);
+	goal = inputFrame(goalName);
+
+	return positionAlignment(thing.position, goal);
+}
+
+----------------------------------------------------
+
+object("thing","goal",robot.right_gripper)::objectName = "thing"
+object("thing","goal",robot.right_gripper)::objectName = "thing"
+object("thing","goal",robot.right_gripper)::frame = robot.right_gripper * inputFrame("thing");
+object("thing","goal",robot.right_gripper)::dimensions = inputVec3("thing_dimensions");
+object("thing","goal",robot.right_gripper)::return[frame] = object("thing","goal",robot.right_gripper)::frame
+object("thing","goal",robot.right_gripper)::return[position] = object("thing","goal",robot.right_gripper)::frame.pos
+object("thing","goal",robot.right_gripper)::return[rotation] = object("thing","goal",robot.right_gripper)::frame.rot
+object("thing","goal",robot.right_gripper)::return[dimensions] = object("thing","goal",robot.right_gripper)::dimensions
