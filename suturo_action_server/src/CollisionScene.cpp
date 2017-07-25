@@ -5,6 +5,8 @@
 
 #include <tf_conversions/tf_eigen.h>
 #include <octomap_msgs/conversions.h>
+#include <urdf/model.h>
+#include <link.h>
 
 #include <tf/transform_broadcaster.h>
 
@@ -18,6 +20,8 @@ CollisionScene::CollisionScene(QueryMap &_map)
 	//nh.setCallbackQueue(&cbQueue);
 	//updateTimer = nh.createTimer(ros::Duration(0.025), &CollisionScene::updateQuery, this);
 	sub = nh.subscribe("/octomap_binary", 10, &CollisionScene::update, this);
+	links.insert("r_forearm_link");
+	setRobotDescription("/opt/ros/indigo/share/robot_state_publisher/test/pr2.urdf");
 	//ros::spin();
 }
 
@@ -42,8 +46,60 @@ void CollisionScene::update(const octomap_msgs::Octomap &omap) {
 
 }
 
+void CollisionScene::updateBboxes(){
+	bboxMap.clear();
+	for (const string& linkName: links) {
+		boost::shared_ptr< const urdf::Link > link = robot.getLink(linkName);
+		boost::shared_ptr< urdf::Visual > visual = link->visual;
+		boost::shared_ptr< urdf::Geometry > geometry = visual->geometry;
+
+		switch (geometry->type){
+			case urdf::Geometry::SPHERE:
+				{
+					double radius = (boost::static_pointer_cast<urdf::Sphere>(geometry))->radius;
+					bBox bbox(radius, radius, radius);
+					bboxMap[linkName] = bbox;
+				}
+				break;
+
+			case urdf::Geometry::BOX:
+				{
+					boost::shared_ptr< urdf::Box > box = boost::static_pointer_cast<urdf::Box>(geometry);
+					bBox bbox(box->dim.x, box->dim.y, box->dim.z);
+					bboxMap[linkName] = bbox;
+				}
+				break;
+
+			case urdf::Geometry::CYLINDER:
+				{
+					boost::shared_ptr< urdf::Cylinder > cylinder = boost::static_pointer_cast<urdf::Cylinder>(geometry);
+					bBox bbox(cylinder->length, cylinder->radius, cylinder->radius);
+					bboxMap[linkName] = bbox;
+				}
+				break;
+
+			case urdf::Geometry::MESH:
+				{
+					double x  = (boost::static_pointer_cast<urdf::Mesh>(geometry))->scale.x;
+					bBox bbox(0.12, 0.7, 0.7);
+					bboxMap[linkName] = bbox;
+				}
+				break;
+
+			default:
+				break;
+
+		}
+
+	}
+
+}
+
 void CollisionScene::setRobotDescription(const string& urdfStr) {
 	// TODO: GENERATE URDF
+	if (!robot.initFile(urdfStr)){
+       ROS_ERROR("Failed to parse urdf file");
+    }
 }
 
 void CollisionScene::addQueryLink(const string& link) {
@@ -195,12 +251,17 @@ void CollisionScene::updateQuery() {
 
 				SQueryPoints qPoint;
 
-				bBox box;
-				box.x = 0.2;
-				box.y = 0.07;
-				box.z = 0.07;
+				auto it = bboxMap.find(linkName);
 
-				traverseTree(qPoint, tLink, box);
+				if(it == bboxMap.end()){
+					updateBboxes();
+					it = bboxMap.find(linkName);
+					if(it == bboxMap.end()){
+						return;
+					}
+				}
+
+				traverseTree(qPoint, tLink, it->second);
 
 				qPoint.inScene = tPoint * qPoint.inScene;
 

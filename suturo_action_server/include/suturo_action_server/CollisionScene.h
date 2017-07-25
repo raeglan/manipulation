@@ -66,6 +66,8 @@ public:
 	};
 
 	struct bBox{
+		bBox(float x, float y, float z):x(x), y(y), z(z){};
+		bBox(): x(0), y(0), z(0){};
 		float x;
 		float y;
 		float z;
@@ -80,6 +82,7 @@ public:
 	void addQueryLink(const string& link);
 	void clearQueryLinks();
 	void updateQuery();
+	void updateBboxes();
 
 private:
 	struct SRobotLink {
@@ -98,6 +101,7 @@ private:
 	ros::Subscriber sub;
 	urdf::Model robot;
 	unordered_map<string, SRobotLink> linkMap;
+	unordered_map<string, bBox> bboxMap;
 	QueryMap& map;
 	set<string> links;
 	tf::TransformListener tfListener;
