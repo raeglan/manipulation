@@ -52,7 +52,7 @@ GiskardActionServer::GiskardActionServer(string _name)
 	visManager.addNamespace(vFrame, "Frames");
 
 	string urdf;
-	ros::param::get("robot_description", urdf);
+	ros::param::get("/robot_description", urdf);
 	collisionScene.setRobotDescription(urdf);
 
 	posControllers["head_tilt_joint"] = {
