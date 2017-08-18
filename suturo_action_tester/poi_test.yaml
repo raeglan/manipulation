@@ -4,7 +4,7 @@ deliver:
     frame_id: odom_combined
     orientation: !!python/tuple [-1.7902944904335527e-08, -1.264542159873372e-08,
       0.10265465825796127, 0.9947170615196228]
-    translation: !!python/tuple [0.6443538069725037, 0.6751264333724976, 1.1067781448364258]
+    translation: !!python/tuple [0.27347299456596375, 0.7153642177581787, 0.48746201395988464]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
@@ -41,7 +41,7 @@ next2cake:
     frame_id: odom_combined
     orientation: !!python/tuple [-6.682639330790607e-09, 2.9387132727265453e-09, 0.318657249212265,
       0.9478700160980225]
-    translation: !!python/tuple [0.6190496683120728, 0.261759877204895, 0.8562594652175903]
+    translation: !!python/tuple [0.6514800786972046, 0.04853997379541397, 0.7043688297271729]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
@@ -78,7 +78,7 @@ poi:
     frame_id: odom_combined
     orientation: !!python/tuple [0.0023314771242439747, 0.008971701376140118, 0.009533428587019444,
       0.9999116063117981]
-    translation: !!python/tuple [0.8502813577651978, -0.09859929978847504, 0.9843157529830933]
+    translation: !!python/tuple [0.8735183477401733, -1.319867730140686, 0.9784114360809326]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header
@@ -109,13 +109,50 @@ poi:
     - ''
     - ''
     - true
+spatula2:
+  id: 4
+  pose:
+    frame_id: base_link
+    orientation: !!python/tuple [0.12989889085292816, 0.2993130683898926, -0.3650054931640625,
+      0.8719572424888611]
+    translation: !!python/tuple [0.6527940034866333, 0.3100164830684662, 0.9271636009216309]
+  vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
+    state:
+    - !!python/object/new:std_msgs.msg._Header.Header
+      state:
+      - 0
+      - !!python/object/new:genpy.rostime.Time
+        state: [0, 0]
+      - spatula2
+    - suturo_obstacle_scene
+    - 4
+    - 1
+    - 0
+    - !!python/object/new:geometry_msgs.msg._Pose.Pose
+      state:
+      - !!python/object/new:geometry_msgs.msg._Point.Point
+        state: [0.0, 0.0, 0.0]
+      - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
+        state: [0.0, 0.0, 0.0, 1.0]
+    - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
+      state: [0.05999999865889549, 0.03999999910593033, 0.03999999910593033]
+    - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
+      state: [0.9960784316062927, 0.03921568766236305, 0.03921568766236305, 0.699999988079071]
+    - !!python/object/new:genpy.rostime.Duration
+      state: [0, 0]
+    - false
+    - []
+    - []
+    - ''
+    - ''
+    - true
 spatulaDropZone:
   id: 0
   pose:
     frame_id: odom_combined
     orientation: !!python/tuple [-1.0643233849805256e-08, -1.0478152567827692e-08,
       0.012940585613250732, 0.9999162554740906]
-    translation: !!python/tuple [0.6063541173934937, 0.5599026679992676, 0.8762664794921875]
+    translation: !!python/tuple [0.5761666893959045, 0.29030558466911316, 0.8762664794921875]
   vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
     state:
     - !!python/object/new:std_msgs.msg._Header.Header

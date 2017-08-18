@@ -33,13 +33,14 @@ scope = {
 	elbow = torso_lift * shoulder_pan * shoulder_lift * upper_arm_roll * elbow_flex ;
 	wrist = elbow * forearm_roll * wrist_flex * wrist_roll;
 	gripper = wrist * frame(rotation(0,0,0,1), vec3(0.13,0,0));
+	gripper_pos = gripper.pos;
 
 	# Keep the elbow afloat
 	elbow_pos = elbow.pos;
 	elbow_low = 1 - elbow_pos.z;
 
 
-	grasp_err = handle_width - j_gripper + 0.01;
+	grasp_err = handle_width - j_gripper + 0.05;
 
 	finger_length = 0.06;
 	g_rot = gripper.rot;

@@ -40,7 +40,7 @@ scope = {
 	elbow_low = 1 - elbow_pos.z;
 
 
-	grasp_err = handle_width - j_gripper + 0.01;
+	grasp_err = 0.1;
 
 	finger_length = 0.06;
 	g_rot = gripper.rot;
