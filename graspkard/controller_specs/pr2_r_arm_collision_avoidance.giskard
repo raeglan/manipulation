@@ -48,8 +48,9 @@ scope = {
 	forearm_roll_r2 = elbow_r * forearm_roll_r;
 	ee_r    = wrist_r * gripper_offset_r ;
 
-	marginForearm = 0.05;
-	marginGripper = 0.05;
+	marginForearm = 0.30;
+	marginGripper = 0.30;
+	movement_speed_scale = 0.1;
 
 	ee_r_pos = originOf(ee_r);
 	elbow_r_pos = originOf(elbow_r);
@@ -75,7 +76,8 @@ scope = {
 	weightArm   = 0.001;
 
 	weightPositionGoal = 1;
-	weightCollisionControl = 1000;
+	weightCollisionControl_forearm = 100 * max(r_forearm_dist_err * r_forearm_dist_err, 0);
+	weightCollisionControl_gripper = 100 * max(r_gripper_dist_err * r_forearm_dist_err, 0);
 
 	#invrot = invert(goal_frame.rot);
 	invrot = invert(r_gripper_palm_link.rot);
@@ -102,11 +104,11 @@ controllableConstraints = {
 
 softConstraints = {
 	# Self collision
-	softConstraint(r_forearm_dist_err, 1000, weightCollisionControl, r_forearm_dist, "Collision avoidance Forearm R");
-	softConstraint(r_gripper_dist_err, 1000, weightCollisionControl, r_gripper_dist, "Collision avoidance Gripper R");
+	softConstraint(movement_speed_scale * r_forearm_dist_err, movement_speed_scale * r_forearm_dist_err, weightCollisionControl_forearm, r_forearm_dist, "Collision avoidance Forearm R");
+	softConstraint(movement_speed_scale * r_gripper_dist_err, movement_speed_scale * r_gripper_dist_err, weightCollisionControl_gripper, r_gripper_dist, "Collision avoidance Gripper R");
 
 	# Goals
-	softConstraint(-r_goal_dist, -r_goal_dist, weightPositionGoal, r_goal_dist, "r-Goal position")
+	softConstraint(movement_speed_scale * -r_goal_dist, movement_speed_scale * -r_goal_dist, weightPositionGoal, r_goal_dist, "r-Goal position")
 
 	# softConstraint(r_dot_x_err, r_dot_x_err, weightPositionGoal, r_dot_x, "r-Goal pitch align");
 	# softConstraint(r_dot_z_err, r_dot_z_err, weightPositionGoal, r_dot_z, "r-Goal all align")

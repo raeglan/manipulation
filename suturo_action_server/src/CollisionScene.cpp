@@ -227,8 +227,8 @@ void CollisionScene::updateQuery() {
 		return;
 
 	tf::StampedTransform temp;
-	tfListener.waitForTransform(refFrame, "base_link", ros::Time(0), ros::Duration(0.5));
-	tfListener.lookupTransform(refFrame, "base_link", ros::Time(0), temp);
+	tfListener.waitForTransform("base_link", refFrame, ros::Time(0), ros::Duration(0.5));
+	tfListener.lookupTransform("base_link", refFrame, ros::Time(0), temp);
 
 	Affine3d tPoint = Affine3d::Identity();
 	tf::transformTFToEigen (temp, tPoint);
@@ -262,7 +262,7 @@ void CollisionScene::updateQuery() {
 
 				traverseTree(qPoint, tLink, it->second);
 
-				qPoint.inScene = tPoint * qPoint.inScene;
+				qPoint.inScene = tPoint * qPoint.inScene;//
 
 				map.set(linkName, qPoint);
 				
