@@ -20,8 +20,7 @@ CollisionScene::CollisionScene(QueryMap &_map)
 	//nh.setCallbackQueue(&cbQueue);
 	//updateTimer = nh.createTimer(ros::Duration(0.025), &CollisionScene::updateQuery, this);
 	sub = nh.subscribe("/octomap_binary", 10, &CollisionScene::update, this);
-	links.insert("r_forearm_link");
-	setRobotDescription("/opt/ros/indigo/share/robot_state_publisher/test/pr2.urdf");
+	//setRobotDescription("/opt/ros/indigo/share/robot_state_publisher/test/pr2.urdf");
 	//ros::spin();
 }
 
@@ -81,7 +80,7 @@ void CollisionScene::updateBboxes(){
 			case urdf::Geometry::MESH:
 				{
 					double x  = (boost::static_pointer_cast<urdf::Mesh>(geometry))->scale.x;
-					bBox bbox(0.12, 0.7, 0.7);
+					bBox bbox(0.12, 0.07, 0.07);
 					bboxMap[linkName] = bbox;
 				}
 				break;
@@ -97,7 +96,7 @@ void CollisionScene::updateBboxes(){
 
 void CollisionScene::setRobotDescription(const string& urdfStr) {
 	// TODO: GENERATE URDF
-	if (!robot.initFile(urdfStr)){
+	if (!robot.initString(urdfStr)){
        ROS_ERROR("Failed to parse urdf file");
     }
 }
