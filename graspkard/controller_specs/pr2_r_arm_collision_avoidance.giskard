@@ -76,8 +76,8 @@ scope = {
 	weightArm   = 0.001;
 
 	weightPositionGoal = 1;
-	weightCollisionControl_forearm = 100 * max(r_forearm_dist_err * r_forearm_dist_err, 0);
-	weightCollisionControl_gripper = 100 * max(r_gripper_dist_err * r_forearm_dist_err, 0);
+	weightCollisionControl_forearm = 100 * max(r_forearm_dist_err * abs(r_forearm_dist_err), 0);
+	weightCollisionControl_gripper = 100 * max(r_gripper_dist_err * abs(r_forearm_dist_err), 0);
 
 	#invrot = invert(goal_frame.rot);
 	invrot = invert(r_gripper_palm_link.rot);

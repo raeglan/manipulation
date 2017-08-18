@@ -149,7 +149,7 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, co
 		return;
 	}
 
-	Vector3d linkPos = tLink.translation(); //- tLink.rotation() * Vector3d(linkBox.x, 0, 0);
+	Vector3d linkPos = tLink.translation() - tLink.rotation() * Vector3d(linkBox.x, 0, 0);; //
 
 	Vector3d linkToCell;
 	Vector3d pointOnCell;
