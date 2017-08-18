@@ -7,13 +7,13 @@ def list<softC> axisAlignment(vec3 axisA, vec3 axisB, scalar weight) {
 };
 
 def list<softC> rotationAlignment(rotation rotA, rotation rotB, scalar weight) {
-	return = [axisAlignment(a * unitX, b * unitX, weight), axisAlignment(a * unitZ, b * unitZ, weight)];
+	return axisAlignment(a * unitX, b * unitX, weight) + axisAlignment(a * unitZ, b * unitZ, weight);
 };
 
 def list<softC> positionAlignment(vec3 posA, vec3 posB, scalar weight) {
 	dist = norm(posA, posB);
 	err = -dist;
-	out = [softC(err, err, weight, dist, "Position alignment")];
+	return [softC(err, err, weight, dist, "Position alignment")];
 };
 
 def list<softC> frameAlignment(frame frameA, frame frameB, scalar weight) {
