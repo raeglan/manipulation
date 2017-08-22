@@ -266,7 +266,7 @@ AdvancedScopePtr GiskardPPParser::parseScope() {
             if (filePath.find("://") != std::string::npos) {
 				try {
                     resource_retriever::MemoryResource resource = resourceRetriever.get(filePath);
-					otherFile = std::string((const char*)resource.data.get());
+					otherFile = std::string((const char*)resource.data.get(), resource.size);
 				} catch (resource_retriever::Exception& e) {
 					throwError("Error while retrieving resource for import: " + std::string(e.what()));
 				} 
@@ -588,6 +588,8 @@ SpecPtr GiskardPPParser::parseLiteral() {
 			
 			if (elems.size() > 0 && !matches(elems[0], e))
 				throwError("Mismatched inner type!\n    Inner type is: " + typeString(elems[0]) + "\n    Inserted type is: " + typeString(e));
+
+			std::cout << elems.size() << ". element is of type " << typeString(e) << std::endl;
 
 			elems.push_back(e);
 		} while(skipChar(','));
@@ -923,15 +925,17 @@ char GiskardPPParser::skip() {
 }
 
 void GiskardPPParser::throwError(std::string msg) {
+	std::string temp = "";
 	while (!traceStack.empty()) {
 		Context c = traceStack.top();
-		msg += "\nIn ";
-		msg += c.name + " from line ";
-		msg += std::to_string(c.line);
-		msg += ":\n" + std::string(c.begin, it);
+		temp += "In ";
+		temp += c.name + " from line ";
+		temp += std::to_string(c.line);
+		temp += ":\n" + std::string(c.begin, it);
+		temp += "\n";
 		traceStack.pop();
 	}
-	throw ParseException(msg);
+	throw ParseException(temp + msg);
 }
 
 const std::string GiskardPPParser::sScalar = "scalar";

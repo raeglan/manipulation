@@ -1865,6 +1865,7 @@ ControllableConstraintSpecPtr instance(DoubleSpecPtr a, DoubleSpecPtr b, DoubleS
   out->upper_ = b;
   out->weight_ = c;
   out->input_ = d;
+  return out;
 }
 
 
@@ -1876,6 +1877,7 @@ SoftConstraintSpecPtr instance(DoubleSpecPtr a, DoubleSpecPtr b, DoubleSpecPtr c
   out->weight_ = c;
   out->expression_ = d;
   out->name_ = e;
+  return out;
 }
 
 template<>
@@ -2138,6 +2140,7 @@ ControllableConstraintSpecPtr instance(DoubleSpecPtr& a, DoubleSpecPtr& b, Doubl
   out->upper_ = b;
   out->weight_ = c;
   out->input_ = d;
+  return out;
 }
 
 
@@ -2149,6 +2152,7 @@ SoftConstraintSpecPtr instance(DoubleSpecPtr& a, DoubleSpecPtr& b, DoubleSpecPtr
   out->weight_ = c;
   out->expression_ = d;
   out->name_ = e;
+  return out;
 }
 
 template<>

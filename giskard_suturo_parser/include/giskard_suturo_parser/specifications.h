@@ -83,7 +83,11 @@ class ConstListSpec : public ListSpec {
 public:
 	ConstListSpec(const std::vector<SpecPtr>& val);
 
-        const SpecPtr innerType() const { SpecPtr first = value[0]; return createTypeObject(first); }
+  const SpecPtr innerType() const { 
+    if (value.size() == 0) throw std::domain_error("Can not determine inner type of empty list"); 
+    SpecPtr first = value[0]; 
+    return createTypeObject(first); 
+  }
 	bool equals(const Spec& other) const;
 	void set_value(const std::vector<SpecPtr>& val);
 	std::vector<SpecPtr> get_value() const;

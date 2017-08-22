@@ -7,7 +7,7 @@ def list<softC> axisAlignment(vec3 axisA, vec3 axisB, scalar weight) {
 };
 
 def list<softC> rotationAlignment(rotation rotA, rotation rotB, scalar weight) {
-	return axisAlignment(a * unitX, b * unitX, weight) + axisAlignment(a * unitZ, b * unitZ, weight);
+	return axisAlignment(rotA * unitX, rotB * unitX, weight) + axisAlignment(rotA * unitZ, rotB * unitZ, weight);
 };
 
 def list<softC> positionAlignment(vec3 posA, vec3 posB, scalar weight) {

@@ -87,8 +87,12 @@ std::string ConcatStringSpec::get_value() const {
 
 ConstListSpec::ConstListSpec(const std::vector<SpecPtr>& val)
 : value(val) {
-  for (size_t i = 1; i < val.size(); i++)
-    if (!typesAreEqual(val[0], val[1]))
+  if (val.size() > 0) {
+    bool lol = val[0]->equals(*this);
+    SpecPtr temp = createTypeObject(val[0]);
+  }
+    for (size_t i = 1; i < val.size(); i++)
+    if (!typesAreEqual(val[0], val[i]))
       throw std::domain_error("Lists need to be type homogenous! List types: " + toTypeList(val));
 }
 
