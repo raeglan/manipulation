@@ -1,14 +1,14 @@
 - name: handle_frame
   type: transform
   const: false
-  value: spat_handle base_link
+  value: HandleOfCakeSpatula1 base_link
 
 - name: handle_depth
   type: double
   const: true
-  value: 0.04
+  value: 0.045
 
 - name: handle_width
   type: double
   const: true
-  value: 0.08
+  value: 0.035
