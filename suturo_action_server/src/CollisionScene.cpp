@@ -131,8 +131,25 @@ Vector3d CollisionScene::calcIntersection(const Vector3d &v, const bBox &box) {
 	return Vector3d();
 }
 
+octomap::OcTreeNode* CollisionScene::findClosestChild(const octomap::OcTreeNode* node, Vector3d nodeCoordinates, SQueryPoints& qPoint){
+	octomap::OcTreeNode* closestChild = NULL;
 
-void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, const bBox &linkBox){
+	for(int i = 0; i<8; i++){
+		if(node->childExists(i)){
+			const octomap::OcTreeNode* child = node->getChild(i);
+			if(child->getOccupancy() > 0){
+				Vector3d childCoordinates;
+
+
+
+			}
+		}
+	}
+	return closestChild;
+}
+
+
+void CollisionScene::traverseTree(SQueryPoints& qPoint, const octomap::OcTreeNode *node, Vector3d nodeCoordinates, const Affine3d tLink, const bBox &linkBox){
 	//tf::TransformBroadcaster br;
 	//tf::Transform transform;
 
@@ -141,13 +158,30 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, co
 
 	//br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom_combined", "asdLink"));
 
-	double dist = -1;
-
-	// octoMapMutex.lock();
-	if(octree == NULL){
-		// octoMapMutex.unlock();
+	
+	if(!node->hasChildren()){
 		return;
 	}
+	
+	
+
+	octomap::OcTreeNode* closestChild = findClosestChild(node, nodeCoordinates, qPoint);
+
+
+	if(closestChild == NULL)
+		return;
+
+	traverseTree(qPoint, closestChild, qPoint.inScene, tLink, linkBox);
+	return;
+	
+
+
+
+
+
+
+	double dist = -1;
+
 
 	Vector3d linkPos = tLink.translation() - tLink.rotation() * Vector3d(linkBox.x, 0, 0);; //
 
@@ -161,6 +195,17 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, co
 	Vector3d vecInLink_best;
 	Vector3d pointOnLink_link_best;
 	Vector3d pointOnLink_baselink_best;
+
+
+
+
+
+
+
+
+
+
+
 
 	for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
         end=octree->end_leafs(); it!= end; ++it)
@@ -246,7 +291,7 @@ void CollisionScene::updateQuery() {
 
 				// Iterate over Octomap
 
-				//octomap::OcTreeNode *node = octree->getRoot();
+				octomap::OcTreeNode* rootNode = octree->getRoot();
 
 				SQueryPoints qPoint;
 
@@ -260,7 +305,9 @@ void CollisionScene::updateQuery() {
 					}
 				}
 
-				traverseTree(qPoint, tLink, it->second);
+				Vector3d rootCoordinates;
+
+				traverseTree(qPoint, rootNode, rootCoordinates, tLink, it->second);
 
 				qPoint.inScene = tPoint * qPoint.inScene;//
 
