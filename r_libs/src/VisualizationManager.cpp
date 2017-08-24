@@ -128,9 +128,15 @@ visualization_msgs::Marker VisualizationManager::textMarker(int ns, Vector3d pos
 }
 
 void VisualizationManager::annotatedVector(vector<visualization_msgs::Marker> &array, int ns, Vector3d pos, Vector3d vector, string text, float r, float g, float b, float a, string frame_id) {
-  array.push_back(vectorMarker(ns, pos, vector,r,g,b,a));
-  array.push_back(textMarker(ns, pos + vector * 0.5, text,r,g,b,a, 0.15));
+  array.push_back(vectorMarker(ns, pos, vector,r,g,b,a, 0.01, 0.02, frame_id));
+  array.push_back(textMarker(ns, pos + vector * 0.5, text,r,g,b,a, 0.08, frame_id));
 }
+
+void VisualizationManager::annotatedPoint(vector<visualization_msgs::Marker> &array, int ns, Vector3d pos, string text, float r, float g, float b, float a, string frame_id) {
+  array.push_back(sphereMarker(ns, pos, 0.05,r,g,b,a, frame_id));
+  array.push_back(textMarker(ns, pos + Vector3d(0,0,0.1), text,r,g,b,a, 0.08, frame_id));
+}
+
 
 visualization_msgs::Marker VisualizationManager::shapeMarker(int ns, Affine3d pose, int shape, Vector3d size, float r, float g, float b, float a, string frame_id) {
   

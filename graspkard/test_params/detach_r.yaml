@@ -1,0 +1,9 @@
+- name: rack_frame
+  type: transform
+  const: True
+  value: 0.687 -0.292 1.230 0 0 1 0.09
+
+- name: knife_frame_wrist
+  type: transform
+  const: False
+  value: knife1 r_wrist_roll_link

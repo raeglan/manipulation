@@ -1,0 +1,46 @@
+scope = {
+	unitX = vec3(1,0,0);
+	unitY = vec3(0,1,0);
+	unitZ = vec3(0,0,1);
+
+	j_head_pan = inputJoint("head_pan_joint");
+	j_head_tilt = inputJoint("head_tilt_joint");
+	j_torso_lift = inputJoint("torso_lift_joint");
+
+	# Rotation so the goal can be supplied as a frame
+	foi = inputFrame("focal_point");
+	poi = foi.pos;
+
+	torso_lift = frame(rotation(unitX, 0), vec3(-0.05, 0, 0.739675 + j_torso_lift));
+	head_pan   = frame(rotation(unitZ, j_head_pan), vec3(-0.01707, 0, 0.38145));
+	head_tilt  = frame(rotation(unitY, j_head_tilt), vec3(-0.068, 0, 0));
+	opt_frame  = torso_lift * head_pan * head_tilt * frame(rotation(unitX, 0), vec3(-0.147067, -0.0175, 0.291953));
+
+	c_vDir = opt_frame.rot * unitX;
+	g_vDir = poi - opt_frame.pos; 
+
+	opt_pos = opt_frame.pos;
+
+
+	speed_scale = 4;
+	feedback = 1 - (c_vDir * g_vDir) / norm(g_vDir);
+	
+	VIS__poi = poi;
+	VIS__g_vDir__opt_pos = g_vDir;
+	VIS__c_vDir__opt_pos = c_vDir;
+	VIS__feedback = feedback
+}
+
+controllableConstraints = {
+	controllableConstraint(-0.6, 0.6, 0.01, "head_pan_joint");
+	controllableConstraint(-0.6, 0.6, 0.01, "head_tilt_joint")
+}
+
+softConstraints = {
+	softConstraint(-feedback * speed_scale, -feedback * speed_scale, 1, feedback, "look at")
+}
+
+hardConstraints = {
+	hardConstraint(-0.471238 - j_head_tilt, 1.39626 - j_head_tilt, j_head_tilt);
+	hardConstraint(-3.007 - j_head_pan, 3.007 - j_head_pan, j_head_pan)
+}

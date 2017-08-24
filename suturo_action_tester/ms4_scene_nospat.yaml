@@ -1,0 +1,148 @@
+cake:
+  id: 8
+  pose:
+    frame_id: odom_combined
+    orientation: !!python/tuple [-0.00818771030753851, 0.007878986187279224, -0.8999543786048889,
+      0.43583592772483826]
+    translation: !!python/tuple [0.6065568923950195, -0.0030198097229003906, 1.0202932357788086]
+  vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
+    state:
+    - !!python/object/new:std_msgs.msg._Header.Header
+      state:
+      - 0
+      - !!python/object/new:genpy.rostime.Time
+        state: [0, 0]
+      - cake
+    - suturo_obstacle_scene
+    - 8
+    - 1
+    - 0
+    - !!python/object/new:geometry_msgs.msg._Pose.Pose
+      state:
+      - !!python/object/new:geometry_msgs.msg._Point.Point
+        state: [0.0, 0.0, 0.0]
+      - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
+        state: [0.0, 0.0, 0.0, 1.0]
+    - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
+      state: [0.11999999731779099, 0.07000000029802322, 0.04500000178813934]
+    - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
+      state: [0.5333333611488342, 0.40784314274787903, 0.11372549086809158, 1.0]
+    - !!python/object/new:genpy.rostime.Duration
+      state: [0, 0]
+    - false
+    - []
+    - []
+    - ''
+    - package://suturo_action_tester/meshes/plate.dae
+    - true
+knife:
+  id: 10
+  pose:
+    frame_id: odom_combined
+    orientation: !!python/tuple [0.6648359894752502, 0.2201358824968338, -0.6581990718841553,
+      0.27623748779296875]
+    translation: !!python/tuple [0.8919687271118164, -0.22244860231876373, 1.254651427268982]
+  vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
+    state:
+    - !!python/object/new:std_msgs.msg._Header.Header
+      state:
+      - 0
+      - !!python/object/new:genpy.rostime.Time
+        state: [0, 0]
+      - knife
+    - suturo_obstacle_scene
+    - 10
+    - 10
+    - 0
+    - !!python/object/new:geometry_msgs.msg._Pose.Pose
+      state:
+      - !!python/object/new:geometry_msgs.msg._Point.Point
+        state: [0.0, 0.0, 0.0]
+      - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
+        state: [0.0, 0.0, 0.0, 1.0]
+    - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
+      state: [1.0, 1.0, 1.0]
+    - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
+      state: [1.0, 0.9686274528503418, 0.0, 1.0]
+    - !!python/object/new:genpy.rostime.Duration
+      state: [0, 0]
+    - false
+    - []
+    - []
+    - ''
+    - package://suturo_action_tester/meshes/knife_lab.dae
+    - true
+plate:
+  id: 9
+  pose:
+    frame_id: odom_combined
+    orientation: !!python/tuple [0.0025723776780068874, -0.00599681818857789, -0.004379698075354099,
+      0.9999691247940063]
+    translation: !!python/tuple [0.6247204542160034, 0.3521474599838257, 0.9136476516723633]
+  vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
+    state:
+    - !!python/object/new:std_msgs.msg._Header.Header
+      state:
+      - 0
+      - !!python/object/new:genpy.rostime.Time
+        state: [0, 0]
+      - plate
+    - suturo_obstacle_scene
+    - 9
+    - 10
+    - 0
+    - !!python/object/new:geometry_msgs.msg._Pose.Pose
+      state:
+      - !!python/object/new:geometry_msgs.msg._Point.Point
+        state: [0.0, 0.0, 0.0]
+      - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
+        state: [0.0, 0.0, 0.0, 1.0]
+    - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
+      state: [1.0, 1.0, 1.0]
+    - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
+      state: [1.0, 1.0, 1.0, 1.0]
+    - !!python/object/new:genpy.rostime.Duration
+      state: [0, 0]
+    - false
+    - []
+    - []
+    - ''
+    - package://suturo_action_tester/meshes/plate.dae
+    - true
+spatula_goal:
+  id: 11
+  pose:
+    frame_id: odom_combined
+    orientation: !!python/tuple [0.00818771030753851, -0.007878986187279224, 0.8999543786048889,
+      -0.43583592772483826]
+    translation: !!python/tuple [0.40546974539756775, 0.26363661885261536, 0.9327360987663269]
+  vis: !!python/object/new:visualization_msgs.msg._Marker.Marker
+    state:
+    - !!python/object/new:std_msgs.msg._Header.Header
+      state:
+      - 0
+      - !!python/object/new:genpy.rostime.Time
+        state: [0, 0]
+      - spatula_goal
+    - suturo_obstacle_scene
+    - 11
+    - 3
+    - 0
+    - !!python/object/new:geometry_msgs.msg._Pose.Pose
+      state:
+      - !!python/object/new:geometry_msgs.msg._Point.Point
+        state: [0.0, 0.0, 0.0]
+      - !!python/object/new:geometry_msgs.msg._Quaternion.Quaternion
+        state: [0.0, 0.0, 0.0, 1.0]
+    - !!python/object/new:geometry_msgs.msg._Vector3.Vector3
+      state: [0.05000000074505806, 0.05000000074505806, 0.019999999552965164]
+    - !!python/object/new:std_msgs.msg._ColorRGBA.ColorRGBA
+      state: [1.0, 0.003921568859368563, 0.7019608020782471, 1.0]
+    - !!python/object/new:genpy.rostime.Duration
+      state: [0, 0]
+    - false
+    - []
+    - []
+    - ''
+    - package://suturo_action_tester/meshes/knife_lab.dae
+    - true

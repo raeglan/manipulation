@@ -29,7 +29,7 @@ class SuturoSimPanel : public rviz::Panel {
 	Q_OBJECT
 public:
 	SuturoSimPanel(QWidget* parent = 0);
-	virtual ~SuturoSimPanel() {}
+        //~SuturoSimPanel() {}
 
 	virtual void load(const rviz::Config& config);
 	virtual void save(rviz::Config config) const;
@@ -60,22 +60,22 @@ protected:
 
 	rviz::PropertyTreeModel* objPTree;
 
-	rviz::Property rootProperty;
-	rviz::StringProperty scenePathProperty;
-	rviz::Property objRootProperty;
+	rviz::Property* rootProperty;
+	rviz::StringProperty* scenePathProperty;
+	rviz::Property* objRootProperty;
 
-	rviz::Property topicsProperty;
-	rviz::RosTopicProperty simTopicProperty;
-	rviz::RosTopicProperty saveTopicProperty;
-	rviz::RosTopicProperty loadTopicProperty;
+	rviz::Property* topicsProperty;
+	rviz::RosTopicProperty* simTopicProperty;
+	rviz::RosTopicProperty* saveTopicProperty;
+	rviz::RosTopicProperty* loadTopicProperty;
 
-	rviz::StringProperty objNameProperty;
+	rviz::StringProperty* objNameProperty;
 	rviz::TfFrameProperty* objFrameProperty;
-	rviz::ColorProperty objColorProperty;
-	rviz::FloatProperty objAlphaProperty;
-	rviz::EnumProperty objShapeProperty;
-	rviz::VectorProperty objScaleProperty;
-	rviz::StringProperty objMeshProperty;
+	rviz::ColorProperty* objColorProperty;
+	rviz::FloatProperty* objAlphaProperty;
+	rviz::EnumProperty* objShapeProperty;
+	rviz::VectorProperty* objScaleProperty;
+	rviz::StringProperty* objMeshProperty;
 
 	ros::Publisher simCmdPublisher;
 	ros::Publisher simSavePublisher;

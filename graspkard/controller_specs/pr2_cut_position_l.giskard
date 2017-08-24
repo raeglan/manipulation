@@ -1,0 +1,129 @@
+scope = {
+	unitX = vec3(1,0,0);
+	unitY = vec3(0,1,0);
+	unitZ = vec3(0,0,1);
+
+	# Joint input
+
+	j_shoulder_pan_l  = inputJoint("l_shoulder_pan_joint");
+	j_shoulder_lift_l = inputJoint("l_shoulder_lift_joint");
+	j_upper_arm_roll_l= inputJoint("l_upper_arm_roll_joint");
+	j_elbow_flex_l    = inputJoint("l_elbow_flex_joint");
+	j_forearm_roll_l  = inputJoint("l_forearm_roll_joint");
+	j_wrist_flex_l    = inputJoint("l_wrist_flex_joint");
+	j_wrist_roll_l    = inputJoint("l_wrist_roll_joint");
+	j_gripper_l       = inputJoint("l_gripper_joint");
+
+	j_torso_lift    = inputJoint("torso_lift_joint");
+	# goal input
+	cake_frame = inputFrame("cake_frame");
+	cake_pos = cake_frame.pos;
+	cake_rot = cake_frame.rot;
+
+	cake_length = inputScalar("cake_length");
+	cake_width = inputScalar("cake_width");
+	cake_height = inputScalar("cake_height");
+
+	knife_ee     = inputFrame("knife_ee_frame");
+	knife_ee_pos = knife_ee.pos;
+	knife_ee_rot = knife_ee.rot;
+
+	knife_height = inputScalar("knife_height");
+	knife_handle_length = inputScalar("handle_length");
+	slice_width = inputScalar("slice_width");
+
+	#knife_ee_pos = vec3(input(15), input(16), input(17));
+	#knife_ee_rot = rotation(vec3(input(18), input(19), input(20)), input(21));
+	#rot_goal_r = rotation(vec3(input(25), input(26), input(27)), input(28));
+
+	# Robot
+	torso_lift     = frame(rotation(unitX, 0),                vec3(-0.05, 0, 0.739675 + j_torso_lift));
+	
+	shoulder_pan_l   = frame(rotation(unitZ, j_shoulder_pan_l),   vec3(0, 0.188, 0));
+	shoulder_lift_l  = frame(rotation(unitY, j_shoulder_lift_l),  vec3(0.1, 0, 0));
+	upper_arm_roll_l = frame(rotation(unitX, j_upper_arm_roll_l), vec3(0, 0, 0));
+	elbow_flex_l     = frame(rotation(unitY, j_elbow_flex_l),     vec3(0.4, 0, 0));
+	forearm_roll_l   = frame(rotation(unitX, j_forearm_roll_l),   vec3(0, 0, 0));
+	wrist_flex_l     = frame(rotation(unitY, j_wrist_flex_l),     vec3(0.321, 0, 0));
+	wrist_roll_l     = frame(rotation(unitX, j_wrist_roll_l),     vec3(0, 0, 0));
+	gripper_offset_l = frame(rotation(unitX, 0),                vec3(0.18, 0, 0));
+
+	# Frame chains
+	elbow_l = torso_lift * shoulder_pan_l * shoulder_lift_l * upper_arm_roll_l * elbow_flex_l;
+	wrist_l = elbow_l * forearm_roll_l * wrist_flex_l * wrist_roll_l;
+	knife   = wrist_l * knife_ee;
+
+	#Rotation constraints
+	knife_rot = knife.rot;
+	knifexy = (cake_rot * unitX) * (knife_rot * unitY);
+	knifezz = (cake_rot * unitZ) * (knife_rot * unitZ);
+
+	knifezz_ctrl = 1 - knifezz;
+	knifexy_abs = abs(knifexy);
+	knifexy_ctrl = 1 - knifexy_abs;
+
+	knifexy_sign = knifexy / max(0.001, knifexy_abs);
+
+	#Position contraints
+	v_cake_knife = knife.pos - cake_pos;
+	dist_yz = v_cake_knife * (cake_rot * unitX);
+	dist_xy = v_cake_knife * (cake_rot * unitZ);
+	dist_xz = v_cake_knife * (cake_rot * unitY);
+
+	offset_x = 0.5 * cake_length - slice_width;
+	offset_z = cake_height + knife_height + 0.01;
+	offset_y = knifexy_sign * (knife_handle_length + 0.5 * cake_width + 0.05);
+
+	pos_fac = if(knifezz_ctrl + knifexy_ctrl - 0.1, 0, 1);
+	dist_z_ctrl = pos_fac * (offset_z - dist_xy);
+	dist_x_ctrl = pos_fac * (offset_x - dist_yz);
+	dist_y_ctrl = pos_fac * (offset_y - dist_xz);
+
+	# Feedback
+	feedback = abs(dist_z_ctrl) + abs(dist_x_ctrl) + abs(dist_y_ctrl) + knifezz_ctrl + knifexy_ctrl;
+
+	# Limits, weights and the like
+	negVelLimitTorso = -0.02;
+	posVelLimitTorso =  0.02;
+	negVelLimitArm   = -0.6;
+	posVelLimitArm   =  0.6;
+
+	weightTorso = 0.001;
+	weightArm   = 0.001;
+
+	weightPositionGoal = 1;
+	weightRotationGoal = 4;
+	weightCollisionControl = 1000
+}
+
+controllableConstraints = {
+	#controllableConstraint(negVelLimitTorso, posVelLimitTorso, weightTorso, "torso_lift_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_shoulder_pan_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_shoulder_lift_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_upper_arm_roll_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_elbow_flex_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_forearm_roll_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_wrist_flex_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_wrist_roll_joint");
+	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, "l_gripper_joint")
+}
+
+softConstraints = {
+	softConstraint(dist_x_ctrl, dist_x_ctrl, weightPositionGoal, dist_yz, "dist x slack");
+	softConstraint(dist_y_ctrl, dist_y_ctrl, weightPositionGoal, dist_xz, "dist y slack");
+	softConstraint(dist_z_ctrl, dist_z_ctrl, weightPositionGoal, dist_xy, "dist z slack");
+
+	softConstraint(knifezz_ctrl, knifezz_ctrl, weightRotationGoal, knifezz, "rot zz");
+	softConstraint(knifexy_ctrl, knifexy_ctrl, weightRotationGoal, knifexy_abs, "rot xy")
+}	
+
+hardConstraints = {
+	hardConstraint(0.0115 - j_torso_lift, 0.325 - j_torso_lift, j_torso_lift);
+	
+	# # Left arm constraints
+	hardConstraint(-0.5646 - j_shoulder_pan_l,  2.1353 - j_shoulder_pan_l,   j_shoulder_pan_l);
+	hardConstraint(-0.3536 - j_shoulder_lift_l, 1.2963 - j_shoulder_lift_l,  j_shoulder_lift_l);
+	hardConstraint(-3.75   - j_upper_arm_roll_l,  0.65 - j_upper_arm_roll_l, j_upper_arm_roll_l);
+	hardConstraint(-2.1213 - j_elbow_flex_l,     -0.15 - j_elbow_flex_l,     j_elbow_flex_l);
+	hardConstraint(-2.0    - j_wrist_flex_l,      -0.1 - j_wrist_flex_l,     j_wrist_flex_l)
+}

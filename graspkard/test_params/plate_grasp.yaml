@@ -1,0 +1,24 @@
+- name: plate_frame
+  type: transform
+  const: false
+  value: poi base_link
+
+- name: edge_radius
+  type: double
+  const: true
+  value: 0.11
+
+- name: edge_z
+  type: double
+  const: true
+  value: 0.0
+
+- name: edge_depth
+  type: double
+  const: true
+  value: 0.025
+
+- name: edge_angle
+  type: double
+  const: true
+  value: 1.92

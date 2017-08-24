@@ -1,74 +1,74 @@
-- name: torso_lift_joint
+- name: torso_lift_joint_goal
   type: double
   const: true
   value: 0.25
 
-- name: l_shoulder_pan_joint
+- name: l_shoulder_pan_joint_goal
   type: double
   const: true
   value: 1.23679
 
-- name: l_shoulder_lift_joint
+- name: l_shoulder_lift_joint_goal
   type: double
   const: true
   value: -0.247593
 
-- name: l_upper_arm_roll_joint
+- name: l_upper_arm_roll_joint_goal
   type: double
   const: true
   value: 0.614271
 
-- name: l_elbow_flex_joint
+- name: l_elbow_flex_joint_goal
   type: double
   const: true
   value: -1.38094
 
-- name: l_forearm_roll_joint
+- name: l_forearm_roll_joint_goal
   type: double
   const: true
   value: -4.94757
 
-- name: l_wrist_flex_joint
+- name: l_wrist_flex_joint_goal
   type: double
   const: true
   value: -1.56861
 
-- name: l_wrist_roll_joint
+- name: l_wrist_roll_joint_goal
   type: double
   const: true
   value: 0
 
-- name: r_shoulder_pan_joint
+- name: r_shoulder_pan_joint_goal
   type: double
   const: true
   value: -1.23679
 
-- name: r_shoulder_lift_joint
+- name: r_shoulder_lift_joint_goal
   type: double
   const: true
   value: -0.247593
 
-- name: r_upper_arm_roll_joint
+- name: r_upper_arm_roll_joint_goal
   type: double
   const: true
   value: -0.614271
 
-- name: r_elbow_flex_joint
+- name: r_elbow_flex_joint_goal
   type: double
   const: true
   value: -1.38094
 
-- name: r_forearm_roll_joint
+- name: r_forearm_roll_joint_goal
   type: double
   const: true
   value: 4.94757
 
-- name: r_wrist_flex_joint
+- name: r_wrist_flex_joint_goal
   type: double
   const: true
   value: -1.56861
 
-- name: r_wrist_roll_joint
+- name: r_wrist_roll_joint_goal
   type: double
   const: true
   value: 0

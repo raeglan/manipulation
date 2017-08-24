@@ -1,0 +1,24 @@
+- name: target_frame
+  type: transform
+  const: false
+  value: spatula_goal base_link
+
+- name: cylinder_in_gripper
+  type: transform
+  const: false
+  value: spatula r_wrist_roll_link
+
+- name: cylinder_width
+  type: double
+  const: false
+  value: 0.05
+
+- name: cylinder_height
+  type: double
+  const: true
+  value: 0.005
+
+- name: r_gripper_effort
+  type: double
+  const: true
+  value: 100.0

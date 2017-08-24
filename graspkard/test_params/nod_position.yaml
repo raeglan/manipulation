@@ -1,4 +1,4 @@
-- name: position
+- name: pan_goal
   type: double
   const: true
   value: 0.0

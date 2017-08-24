@@ -1,7 +1,7 @@
 - name: gripper_goal
   type: double
   const: true
-  value: 0.0
+  value: 0.07
 
 - name: r_gripper_effort
   type: double
