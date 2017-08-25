@@ -66,7 +66,7 @@ using boost::dynamic_pointer_cast;
   }
 
   template<typename A, typename B, typename C, typename D, typename E>
-  bool matches(SpecPtr& a, SpecPtr& b, SpecPtr& c, SpecPtr& d, SpecPtr& e, boost::shared_ptr<A>& aout, boost::shared_ptr<B>& bout, boost::shared_ptr<C>& cout, boost::shared_ptr<D>& dout, boost::shared_ptr<E> eout) {
+  bool matches(SpecPtr& a, SpecPtr& b, SpecPtr& c, SpecPtr& d, SpecPtr& e, boost::shared_ptr<A>& aout, boost::shared_ptr<B>& bout, boost::shared_ptr<C>& cout, boost::shared_ptr<D>& dout, boost::shared_ptr<E>& eout) {
     return matches(a, aout) && matches(b, bout) && matches(c, cout) && matches(d, dout) && matches(e, eout);
   }
 

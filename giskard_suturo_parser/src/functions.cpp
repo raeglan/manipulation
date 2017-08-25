@@ -9,12 +9,25 @@ void FunctionDefinition::addScope(std::string alias, boost::shared_ptr<AdvancedS
 void FunctionDefinition::addArgument(std::string name, SpecPtr spec) {
 	AdvancedScope::addSpec(name, spec);
 	constSpecMap[name] = false;
+	argumentSpecs.push_back(spec);
 	arguments.push_back(name);
+	prefix = getSuperScopes()[0]->getPrefix() + this->name + toTypeList(argumentSpecs) + "::";
 }
 
 void FunctionDefinition::addSpec(std::string name, SpecPtr spec) {
 	AdvancedScope::addSpec(name, spec);
-	constSpecMap[name] = isConstSpec(spec);
+	if (dynamic_pointer_cast<SFunctionCallCache>(spec)) {
+		SFunctionCallCachePtr fnCache = dynamic_pointer_cast<SFunctionCallCache>(spec);
+		constSpecMap[name] = true;
+		for (size_t i = 0; i < fnCache->arguments.size(); i++) {
+			if (!isConstSpec(fnCache->arguments[i])) {
+				constSpecMap[name] = false;
+				return;
+			}
+		}
+	} else {
+		constSpecMap[name] = isConstSpec(spec);
+	}
 }
 
 bool FunctionDefinition::isConstSpec(const SpecPtr& specPtr) const {
@@ -22,7 +35,12 @@ bool FunctionDefinition::isConstSpec(const SpecPtr& specPtr) const {
 	getReferenceSpecs(references, specPtr);
 	for (size_t i = 0; i < references.size(); i++) {
 		std::string refName = getReferenceName(references[i]);
-		auto it = constSpecMap.find(refName);
+		if (refName.find(prefix) == std::string::npos)
+			continue;
+
+		std::string localName = refName.substr(prefix.size());
+
+		auto it = constSpecMap.find(localName);
 		if (it != constSpecMap.end() && !it->second)
 			return false;
 	}
@@ -67,31 +85,73 @@ SpecPtr FunctionDefinition::createInstance(const std::vector<SpecPtr>& args, Adv
 		scope->addSpec(instName + "::" + arguments[i], args[i]);	
 	}
 
+	std::unordered_map<std::string, std::string> referenceRenaming;
+	auto superScope = getSuperScopes()[0];
     for (size_t i = args.size(); i < specInsertHistory.size(); i++) {
 		auto it = constSpecMap.find(specInsertHistory[i]);
-		if (it->second) {
-			std::string resolvedName = fnName + "::" + specInsertHistory[i];
-			if (!scope->getSpec(resolvedName));
-				scope->addSpec(resolvedName, getSpec(specInsertHistory[i]));
-		} else {
-			SpecPtr specCopy = deepCopySpec(getLocalSpec(specInsertHistory[i]));
-			std::vector<SpecPtr> references;
-    		getReferenceSpecs(references, specCopy);
-    		for (size_t i = 0; i < references.size(); i++) {
-		      std::string refName = getReferenceName(references[i]);
-		      
-		      auto it = constSpecMap.find(refName);
-		      if (it != constSpecMap.end()) {
-		      	if (it->second) {
-		      		std::string resolvedName = fnName + "::" + refName;
-		      		setReferenceName(references[i], resolvedName);
-		      	} else {
-		      		std::string resolvedName = instName + "::" + refName;
-		      		setReferenceName(references[i], resolvedName);
-		      	}
-		      }
-		    }
-		    scope->addSpec(instName + "::" + specInsertHistory[i], specCopy);
+		
+		SpecPtr specToAdd = getSpec(specInsertHistory[i]);
+		if (dynamic_pointer_cast<SFunctionCallCache>(specToAdd)) {
+			if (it->second) {
+				if (!superScope->getSpec(specInsertHistory[i])) {
+					SpecPtr result = dynamic_pointer_cast<SFunctionCallCache>(specToAdd)->createInstance(scope);
+					std::string resolvedName = getReferenceName(result);
+					referenceRenaming[prefix + specInsertHistory[i]] = resolvedName;
+				}
+			} else {
+				SFunctionCallCachePtr fnCall = dynamic_pointer_cast<SFunctionCallCache>(specToAdd);
+				std::vector<SpecPtr> resolvedArgs;
+				for (size_t m = 0; m < fnCall->arguments.size(); m++) {
+					SpecPtr specCopy = deepCopySpec(fnCall->arguments[m]);
+					std::vector<SpecPtr> references;
+					getReferenceSpecs(references, specCopy);
+					for (size_t n = 0; n < references.size(); n++) {
+						std::string refName = getReferenceName(references[n]);
+						if (refName.find(prefix) == std::string::npos)
+							continue;
+	
+						std::string localName = refName.substr(prefix.size());
+	
+						auto it = constSpecMap.find(localName);
+						if (it != constSpecMap.end()) {
+							if (!it->second) {
+								std::string resolvedName = scope->getPrefix() + instName + "::" + localName;
+								setReferenceName(references[n], resolvedName);
+							}
+						}
+					}
+					resolvedArgs.push_back(specCopy);
+				}
+				SpecPtr result = fnCall->functionDefinition->createInstance(resolvedArgs, scope);
+				std::string resolvedName = getReferenceName(result);
+				referenceRenaming[prefix + specInsertHistory[i]] = resolvedName;
+			}
+		} else {	
+			if (it->second) {
+				std::string resolvedName = fnName + "::" + specInsertHistory[i];
+				if (!superScope->getSpec(resolvedName))
+					superScope->addSpec(resolvedName, specToAdd);
+			} else {
+				SpecPtr specCopy = deepCopySpec(getLocalSpec(specInsertHistory[i]));
+				std::vector<SpecPtr> references;
+				getReferenceSpecs(references, specCopy);
+				for (size_t i = 0; i < references.size(); i++) {
+					std::string refName = getReferenceName(references[i]);
+					if (refName.find(prefix) == std::string::npos)
+						continue;
+
+					std::string localName = refName.substr(prefix.size());
+
+					auto it = constSpecMap.find(localName);
+					if (it != constSpecMap.end()) {
+						if (!it->second) {
+							std::string resolvedName = scope->getPrefix() + instName + "::" + localName;
+							setReferenceName(references[i], resolvedName);
+						}
+					}
+				}
+				scope->addSpec(instName + "::" + specInsertHistory[i], specCopy);
+			}
 		}
 	}
 
@@ -100,14 +160,15 @@ SpecPtr FunctionDefinition::createInstance(const std::vector<SpecPtr>& args, Adv
 	getReferenceSpecs(references, returnCopy);
 	for (size_t i = 0; i < references.size(); i++) {
       std::string refName = getReferenceName(references[i]);
-      
-      auto it = constSpecMap.find(refName);
+	  if (refName.find(prefix) == std::string::npos)
+		  continue;
+
+	  std::string localName = refName.substr(prefix.size());
+
+      auto it = constSpecMap.find(localName);
       if (it != constSpecMap.end()) {
-      	if (it->second) {
-      		std::string resolvedName = fnName + "::" + refName;
-      		setReferenceName(references[i], resolvedName);
-      	} else {
-      		std::string resolvedName = instName + "::" + refName;
+      	if (!it->second) {
+      		std::string resolvedName = scope->getPrefix() + instName + "::" + localName;
       		setReferenceName(references[i], resolvedName);
       	}
       }
@@ -115,6 +176,29 @@ SpecPtr FunctionDefinition::createInstance(const std::vector<SpecPtr>& args, Adv
     scope->addSpec(instName, returnCopy);
 
     return createReferenceSpec(instName, returnCopy, scope);
+}
+
+SpecPtr createFunctionCallCache(std::vector<SpecPtr> arguments, FnDefPtr fnDef) {
+	if (dynamic_pointer_cast<DoubleSpec>(fnDef->getReturnSpec())) {
+		return instance<DoubleFunctionCallCache>(arguments, fnDef);
+
+	} else if (dynamic_pointer_cast<VectorSpec>(fnDef->getReturnSpec())) {
+		return instance<VectorFunctionCallCache>(arguments, fnDef);
+
+	} else if (dynamic_pointer_cast<RotationSpec>(fnDef->getReturnSpec())) {
+		return instance<RotationFunctionCallCache>(arguments, fnDef);
+
+	} else if (dynamic_pointer_cast<FrameSpec>(fnDef->getReturnSpec())) {
+		return instance<FrameFunctionCallCache>(arguments, fnDef);
+
+	} else if (dynamic_pointer_cast<StringSpec>(fnDef->getReturnSpec())) {
+		return instance<StringFunctionCallCache>(arguments, fnDef);
+
+	} else if (dynamic_pointer_cast<ListSpec>(fnDef->getReturnSpec())) {
+		return instance<ListFunctionCallCache>(arguments, fnDef);
+	}
+
+	throw std::domain_error("Could not create function call cache for funtion with return type " + toTypeString(fnDef->getReturnSpec()));
 }
 
 }

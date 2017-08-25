@@ -129,9 +129,9 @@ QPControllerSpec GiskardPPParser::generateQP() {
 		} while(skipChar(','));
 
 		ListSpecPtr conts, softs, hards;
-		ControllableConstraintSpecPtr cc;
-		SoftConstraintSpecPtr sc;
-		HardConstraintSpecPtr hc;
+		ControllableConstraintSpecPtr cc = ControllableConstraintSpecPtr(new ControllableConstraintSpec());
+		SoftConstraintSpecPtr sc = SoftConstraintSpecPtr(new SoftConstraintSpec());
+		HardConstraintSpecPtr hc = HardConstraintSpecPtr(new HardConstraintSpec());
 		if (arguments.size() == 3 && matches(arguments[0], conts) && matches(arguments[1], softs) && matches(arguments[2], hards)
 			&& typesAreEqual(conts->innerType(), cc) && typesAreEqual(softs->innerType(), sc) && typesAreEqual(hards->innerType(), hc)) {
 			std::vector<SpecPtr> temp = conts->get_value();
@@ -159,7 +159,8 @@ QPControllerSpec GiskardPPParser::generateQP() {
 				out.hard_constraints_.push_back(*c);
 			}
 
-			scopeStack.top()->convert(out.scope_, "");
+			std::unordered_set<const AdvancedScope*> generated;
+			scopeStack.top()->convert(out.scope_, generated);
 			return out;
 		} else 
 			throwError("QPController can not be instanciated with types " + toTypeList(arguments));
@@ -285,7 +286,10 @@ AdvancedScopePtr GiskardPPParser::parseScope() {
 			SIt stashedEnd = end;
 			SIt stashedLitIt = litIt;
 			size_t stashedLineNumber = lineNumber;
-			scopeStack.push(AdvancedScopePtr(new AdvancedScope(import->path, folder, searchScope->getSuperScopes())));
+			if (import->alias.empty())
+				scopeStack.push(AdvancedScopePtr(new AdvancedScope(import->path, folder, scopeStack.top()->getPrefix(), searchScope->getSuperScopes())));
+			else
+				scopeStack.push(AdvancedScopePtr(new AdvancedScope(import->path, folder, scopeStack.top()->getPrefix() + import->alias + "::", searchScope->getSuperScopes())));
 			searchScope = scopeStack.top();
 
 			std::string stashedPrefix = accessPrefix;
@@ -553,7 +557,7 @@ SpecPtr GiskardPPParser::parseMemberAccess() {
 			searchScope = subScope;
 			std::string currentPrefix = accessPrefix;
 			accessPrefix += lastKeyword + "::";
-			CALL_RULE(parseLiteral(), SpecPtr member);
+			CALL_RULE(parseMemberAccess(), SpecPtr member);
 			searchScope = scopeStack.top();
 			accessPrefix = currentPrefix;
 			return member;
@@ -588,8 +592,6 @@ SpecPtr GiskardPPParser::parseLiteral() {
 			
 			if (elems.size() > 0 && !matches(elems[0], e))
 				throwError("Mismatched inner type!\n    Inner type is: " + typeString(elems[0]) + "\n    Inserted type is: " + typeString(e));
-
-			std::cout << elems.size() << ". element is of type " << typeString(e) << std::endl;
 
 			elems.push_back(e);
 		} while(skipChar(','));
@@ -645,15 +647,37 @@ SpecPtr GiskardPPParser::parseFunctionCall(const std::string& name) {
     if (!out)
         throwError("Function '" + name + toTypeList(arguments) + "' doesn't exist!");
 
+	if (dynamic_pointer_cast<SFunctionCallCache>(out)) {
+		if (!dynamic_pointer_cast<FunctionDefinition>(scopeStack.top())) {
+			out = dynamic_pointer_cast<SFunctionCallCache>(out)->createInstance(scopeStack.top());
+		} else {
+			std::string instName = name + '(';
+			specToString(instName, arguments[0]);
+			for (size_t i = 1; i < arguments.size(); i++) {
+				instName += ',';
+				specToString(instName, arguments[i]);
+			}
+			instName += ')';
+
+			scopeStack.top()->addSpec(instName, out);
+			out = createReferenceSpec(instName, out, searchScope);
+		}
+	}
+
     return out;
 }
 
 SpecPtr GiskardPPParser::parseReference(std::string name) {
 	// Resolve reference
 	if (scopeStack.top() == searchScope) {
-		SpecPtr spec = searchScope->getSpec(name);
-		if (spec)
-            return createReferenceSpec(name, spec, searchScope);
+		std::string glPrefix;
+		SpecPtr spec = searchScope->getSpec(name, glPrefix);
+		if (spec) {
+            if (dynamic_pointer_cast<StringSpec>(spec) || dynamic_pointer_cast<ListSpec>(spec))
+			return createReferenceSpec(name, spec, searchScope);
+		else 
+			return createReferenceSpec(glPrefix + name, spec, searchScope);
+		}
 
 		SpecPtr out = searchScope->getScope(name);
 		if (out) {
@@ -666,7 +690,7 @@ SpecPtr GiskardPPParser::parseReference(std::string name) {
 			if (dynamic_pointer_cast<StringSpec>(spec) || dynamic_pointer_cast<ListSpec>(spec))
             	return createReferenceSpec(name, spec, searchScope);
             else 
-            	return createReferenceSpec(accessPrefix + name, spec, searchScope);
+            	return createReferenceSpec(searchScope->getPrefix() + name, spec, searchScope);
 		}
 	}
 

@@ -84,12 +84,19 @@ SpecPtr AdvancedScope::getLocalSpec(const std::string& name) const {
 }
 
 SpecPtr AdvancedScope::getSpec(const std::string& name) const {
+	std::string temp;
+	return getSpec(name, temp);
+}
+
+SpecPtr AdvancedScope::getSpec(const std::string& name, std::string& globalPrefix) const {
 	SpecPtr local = getLocalSpec(name);
-	if (local)
+	if (local) {
+		globalPrefix = prefix;
 		return local;
+	}
 
 	for (size_t i = 0; i < superScopes.size(); i++) {
-		SpecPtr out = superScopes[i]->getSpec(name);
+		SpecPtr out = superScopes[i]->getSpec(name, globalPrefix);
 		if (out)
 			return out;
 	}
@@ -333,9 +340,9 @@ SpecPtr AdvancedScope::callFunction(const std::string& name, std::vector<SpecPtr
      		if (it->second[i]->checkTypeSignatureAgreement(arguments)) {
      			FunctionCall call;
      			if (!caller->hasFunctionCall(name, arguments, call)) {
-     				SpecPtr returnExpression = it->second[i]->createInstance(arguments, caller);
-     				caller->functionCalls[name].push_back({it->second[i], arguments, returnExpression});
-     				return returnExpression;
+     				SpecPtr callCache = createFunctionCallCache(arguments, it->second[i]);
+     				//caller->functionCalls[name].push_back({it->second[i], arguments, returnExpression});
+     				return callCache;
      			} else {
      				return call.returnReference;
      			}
@@ -360,18 +367,21 @@ SpecPtr AdvancedScope::callFunction(const std::string& name, std::vector<SpecPtr
 		return false;
 	}
 
-	void AdvancedScope::convert(ScopeSpec& scope, std::string prefix) const {
+	void AdvancedScope::convert(ScopeSpec& scope, std::unordered_set<const AdvancedScope*>& generated) const {
+		generated.insert(this);
 		for (size_t i = 0; i < scopeInsertHistory.size(); i++) {
-			if (scopeInsertHistory[i].alias.empty())
-				scopeInsertHistory[i].scope->convert(scope, prefix);
-			else
-				scopeInsertHistory[i].scope->convert(scope, prefix + scopeInsertHistory[i].alias + "::");
+			if (generated.find(scopeInsertHistory[i].scope.get()) == generated.end())
+				scopeInsertHistory[i].scope->convert(scope, generated);
 		}
 
 		for (size_t i = 0; i < specInsertHistory.size(); i++) {
-			SpecPtr ptr = deepCopySpec(specs.find(specInsertHistory[i])->second);
+			SpecPtr originalPtr = specs.find(specInsertHistory[i])->second;
+			if (dynamic_pointer_cast<StringSpec>(originalPtr) || dynamic_pointer_cast<ListSpec>(originalPtr))
+				continue;
+
+			SpecPtr ptr = deepCopySpec(originalPtr);
 			scope.push_back({ prefix + specInsertHistory[i], ptr});
-			if (dynamic_pointer_cast<DoubleSpec>(ptr) || dynamic_pointer_cast<VectorSpec>(ptr) 
+			/* if (dynamic_pointer_cast<DoubleSpec>(ptr) || dynamic_pointer_cast<VectorSpec>(ptr) 
 				|| dynamic_pointer_cast<RotationSpec>(ptr) || dynamic_pointer_cast<FrameSpec>(ptr)) {
 				std::vector<SpecPtr> references;
 				getReferenceSpecs(references, ptr);
@@ -379,18 +389,21 @@ SpecPtr AdvancedScope::callFunction(const std::string& name, std::vector<SpecPtr
 					if (dynamic_pointer_cast<DoubleReferenceSpec>(references[n])) {
 						DoubleReferenceSpecPtr ref = dynamic_pointer_cast<DoubleReferenceSpec>(references[n]);
 						ref->set_reference_name(prefix + ref->get_reference_name());
+
 					} else if (dynamic_pointer_cast<VectorReferenceSpec>(references[n])) {
 						VectorReferenceSpecPtr ref = dynamic_pointer_cast<VectorReferenceSpec>(references[n]);
 						ref->set_reference_name(prefix + ref->get_reference_name());
+					
 					} else if (dynamic_pointer_cast<RotationReferenceSpec>(references[n])) {
 						RotationReferenceSpecPtr ref = dynamic_pointer_cast<RotationReferenceSpec>(references[n]);
 						ref->set_reference_name(prefix + ref->get_reference_name());
+					
 					} else if (dynamic_pointer_cast<FrameReferenceSpec>(references[n])) {
 						FrameReferenceSpecPtr ref = dynamic_pointer_cast<FrameReferenceSpec>(references[n]);
 						ref->set_reference_name(prefix + ref->get_reference_name());
 					}
 				}
-			} 
+			} */ 
 			// else if (dynamic_pointer_cast<StringSpec>(ptr)) {
 			// 	return StringReferenceSpecPtr(new StringReferenceSpec(name, searchScope));
 			// } else if (dynamic_pointer_cast<ListSpec>(ptr)) {

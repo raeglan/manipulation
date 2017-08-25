@@ -1,4 +1,4 @@
-import "math.gpp";
+import "package://giskard_suturo_parser/gpplib/math.gpp";
 
 def list<softC> axisAlignment(vec3 axisA, vec3 axisB, scalar weight) {
 	dot = axisA * axisB;
@@ -11,7 +11,7 @@ def list<softC> rotationAlignment(rotation rotA, rotation rotB, scalar weight) {
 };
 
 def list<softC> positionAlignment(vec3 posA, vec3 posB, scalar weight) {
-	dist = norm(posA, posB);
+	dist = norm(posA - posB);
 	err = -dist;
 	return [softC(err, err, weight, dist, "Position alignment")];
 };

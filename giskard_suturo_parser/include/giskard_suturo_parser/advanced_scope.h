@@ -4,6 +4,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 
 using namespace giskard_core;
 
@@ -37,10 +38,12 @@ class AdvancedScope : public Spec {
 public:
     AdvancedScope(std::string _filePath = "",
      std::string _searchPath = "",
+     std::string _prefix = "",
      std::vector<AdvancedScopePtr> _superScopes = std::vector<AdvancedScopePtr>())
     : filePath(_filePath)
     , searchPath(_searchPath)
-    , superScopes(_superScopes) {}
+    , superScopes(_superScopes)
+    , prefix(_prefix) {}
 
     virtual void addSpec(ScopeEntry entry);
     virtual void addSpec(std::string name, SpecPtr spec);
@@ -54,6 +57,7 @@ public:
 
     SpecPtr getLocalSpec(const std::string& name) const;
     SpecPtr getSpec(const std::string& name) const;
+    SpecPtr getSpec(const std::string& name, std::string& globalPrefix) const;
     AdvancedScopePtr getScope(const std::string& alias) const;
     AdvancedScopePtr getScopeByFile(const std::string& filePath) const;
     bool isSuperScope(const std::string& filePath) const;
@@ -62,10 +66,11 @@ public:
     bool equals(const Spec& other) const;
     void get_input_specs(std::vector<const InputSpec*>& inputs) const {};
 
-    void convert(ScopeSpec& scope, std::string prefix) const;
+    void convert(ScopeSpec& scope, std::unordered_set<const AdvancedScope*>& generated) const;
 
     inline std::vector<AdvancedScopePtr> getSuperScopes() const { return superScopes; };
 
+    const std::string& getPrefix() const { return prefix; }
     const std::string filePath;
     const std::string searchPath;
     const static std::string fAbs, 
@@ -78,6 +83,7 @@ public:
     fCHardC, fCSoftC, fCContC;
 
 protected:
+    std::string prefix;
     std::vector<std::string> specInsertHistory;
     std::vector<ScopeInsert> scopeInsertHistory;
 private:

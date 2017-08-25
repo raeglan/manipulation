@@ -117,7 +117,7 @@ set(TEST_SRCS
 
 catkin_add_gtest(${PROJECT_NAME}-test ${TEST_SRCS} WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test_data)
 if(TARGET ${PROJECT_NAME}-test)
-  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME} ${catkin_LIBRARIES})
 endif()
 
 ## Add folders to be run by python nosetests

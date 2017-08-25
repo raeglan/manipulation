@@ -63,42 +63,42 @@ import "package://giskard_suturo_parser/gpplib/math.gpp";
 	rightElbow = elbow_r;
 	rightGripper = ee_r;
 
-	torso_controllable = [controllableConstraint(negVelLimitTorso, posVelLimitTorso, weightTorso, j_torso_lift, "j_torso_lift")];
+	torso_controllable = [controllableC(negVelLimitTorso, posVelLimitTorso, weightTorso, "torso_lift_joint")];
 	
 	leftArm_controllable = [
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_shoulder_pan_l, "j_shoulder_pan_l"),
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_shoulder_lift_l, "j_shoulder_lift_l"),
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_upper_arm_roll_l, "j_upper_arm_roll_l"),
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_elbow_flex_l, "j_elbow_flex_l"),
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_forearm_roll_l, "j_forearm_roll_l"),
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_wrist_flex_l, "j_wrist_flex_l"),
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_wrist_roll_l, "j_wrist_roll_l")]
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "l_shoulder_pan_joint"),
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "l_shoulder_lift_joint"),
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "l_upper_arm_roll_joint"),
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "l_elbow_flex_joint"),
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "l_forearm_roll_joint"),
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "l_wrist_flex_joint"),
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "l_wrist_roll_joint")];
 	upperBody_LA_controllable = torso_controllable + leftArm_controllable;	
 
 	rightArm_controllable = [
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_shoulder_pan_r, "j_shoulder_pan_r"),
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_shoulder_lift_r, "j_shoulder_lift_r"),
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_upper_arm_roll_r, "j_upper_arm_roll_r"),
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_elbow_flex_r, "j_elbow_flex_r"),
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_forearm_roll_r, "j_forearm_roll_r"),
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_wrist_flex_r, "j_wrist_flex_r"),
-	controllableConstraint(negVelLimitArm, posVelLimitArm, weightArm, j_wrist_roll_r, "j_wrist_roll_r")];		
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "r_shoulder_pan_joint"),
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "r_shoulder_lift_joint"),
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "r_upper_arm_roll_joint"),
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "r_elbow_flex_joint"),
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "r_forearm_roll_joint"),
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "r_wrist_flex_joint"),
+	controllableC(negVelLimitArm, posVelLimitArm, weightArm, "r_wrist_roll_joint")];		
 	upperBody_RA_controllable = torso_controllable + rightArm_controllable;
 
 	fullBody_controllable = torso_controllable + leftArm_controllable + rightArm_controllable;
 
 	hardConstraints = [
-	hardConstraint(0.0115 - j_torso_lift, 0.325 - j_torso_lift, j_torso_lift),
+	hardC(0.0115 - j_torso_lift, 0.325 - j_torso_lift, j_torso_lift),
 	# Left arm constraints
-	hardConstraint(-0.5646 - j_shoulder_pan_l,  2.1353 - j_shoulder_pan_l,   j_shoulder_pan_l),
-	hardConstraint(-0.3536 - j_shoulder_lift_l, 1.2963 - j_shoulder_lift_l,  j_shoulder_lift_l),
-	hardConstraint(-0.65   - j_upper_arm_roll_l,  3.75 - j_upper_arm_roll_l, j_upper_arm_roll_l),
-	hardConstraint(-2.1213 - j_elbow_flex_l,     -0.15 - j_elbow_flex_l,     j_elbow_flex_l),
-	hardConstraint(-2.0    - j_wrist_flex_l,      -0.1 - j_wrist_flex_l,     j_wrist_flex_l),	
+	hardC(-0.5646 - j_shoulder_pan_l,  2.1353 - j_shoulder_pan_l,   j_shoulder_pan_l),
+	hardC(-0.3536 - j_shoulder_lift_l, 1.2963 - j_shoulder_lift_l,  j_shoulder_lift_l),
+	hardC(-0.65   - j_upper_arm_roll_l,  3.75 - j_upper_arm_roll_l, j_upper_arm_roll_l),
+	hardC(-2.1213 - j_elbow_flex_l,     -0.15 - j_elbow_flex_l,     j_elbow_flex_l),
+	hardC(-2.0    - j_wrist_flex_l,      -0.1 - j_wrist_flex_l,     j_wrist_flex_l),	
 	
 	# # Right arm constraints
-	hardConstraint(-2.1353 - j_shoulder_pan_r,  0.5646 - j_shoulder_pan_r,   j_shoulder_pan_r),
-	hardConstraint(-0.3536 - j_shoulder_lift_r, 1.2963 - j_shoulder_lift_r,  j_shoulder_lift_r),
-	hardConstraint(-3.75   - j_upper_arm_roll_r,  0.65 - j_upper_arm_roll_r, j_upper_arm_roll_r),
-	hardConstraint(-2.1213 - j_elbow_flex_r,     -0.15 - j_elbow_flex_r,     j_elbow_flex_r),
-	hardConstraint(-2.0    - j_wrist_flex_r,      -0.1 - j_wrist_flex_r,     j_wrist_flex_r)];
+	hardC(-2.1353 - j_shoulder_pan_r,  0.5646 - j_shoulder_pan_r,   j_shoulder_pan_r),
+	hardC(-0.3536 - j_shoulder_lift_r, 1.2963 - j_shoulder_lift_r,  j_shoulder_lift_r),
+	hardC(-3.75   - j_upper_arm_roll_r,  0.65 - j_upper_arm_roll_r, j_upper_arm_roll_r),
+	hardC(-2.1213 - j_elbow_flex_r,     -0.15 - j_elbow_flex_r,     j_elbow_flex_r),
+	hardC(-2.0    - j_wrist_flex_r,      -0.1 - j_wrist_flex_r,     j_wrist_flex_r)];

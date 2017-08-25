@@ -43,29 +43,135 @@ TEST_F(GiskardPPTest, matchTest) {
 	SpecPtr vector = instance<VectorConstructorSpec>();
 	SpecPtr rotation = instance<RotationQuaternionConstructorSpec>(0.0,0.0,0.0,1.0);
 	SpecPtr frame = instance<FrameConstructorSpec>(instance<VectorConstructorSpec>(), instance<RotationQuaternionConstructorSpec>(0.0,0.0,0.0,1.0));
+	SpecPtr str = instance<ConstStringSpec>("lol");
 	DoubleSpecPtr d;
 	VectorSpecPtr v;
 	RotationSpecPtr r;
 	FrameSpecPtr f;
+	StringSpecPtr s;
+
 	EXPECT_TRUE(matches(scalar, d));
 	EXPECT_FALSE(matches(scalar, v));
 	EXPECT_FALSE(matches(scalar, r));
 	EXPECT_FALSE(matches(scalar, f));
+	EXPECT_FALSE(matches(scalar, s));
 
 	EXPECT_FALSE(matches(vector, d));
 	EXPECT_TRUE(matches(vector, v));
 	EXPECT_FALSE(matches(vector, r));
 	EXPECT_FALSE(matches(vector, f));
+	EXPECT_FALSE(matches(vector, s));
 
 	EXPECT_FALSE(matches(rotation, d));
 	EXPECT_FALSE(matches(rotation, v));
 	EXPECT_TRUE(matches(rotation, r));
 	EXPECT_FALSE(matches(rotation, f));
+	EXPECT_FALSE(matches(rotation, s));
 
 	EXPECT_FALSE(matches(frame, d));
 	EXPECT_FALSE(matches(frame, v));
 	EXPECT_FALSE(matches(frame, r));
 	EXPECT_TRUE(matches(frame, f));
+	EXPECT_FALSE(matches(frame, s));
+
+	EXPECT_FALSE(matches(str, d));
+	EXPECT_FALSE(matches(str, v));
+	EXPECT_FALSE(matches(str, r));
+	EXPECT_FALSE(matches(str, f));
+	EXPECT_TRUE(matches(str, s));
+}
+
+TEST_F(GiskardPPTest, typeEqualityTest) {
+	DoubleSpecPtr scalar1 = instance<DoubleConstSpec>(1.0);
+	DoubleSpecPtr scalar2 = instance<DoubleConstSpec>(7.0);
+	VectorSpecPtr vector1 = instance<VectorConstructorSpec>();
+	VectorSpecPtr vector2 = instance<VectorConstructorSpec>();
+	RotationSpecPtr rotation1 = instance<RotationQuaternionConstructorSpec>(0.0,0.0,0.0,1.0);
+	RotationSpecPtr rotation2 = instance<RotationQuaternionConstructorSpec>(1.0,0.0,0.0,0.0);
+	FrameSpecPtr frame1 = instance<FrameConstructorSpec>(instance<VectorConstructorSpec>(), instance<RotationQuaternionConstructorSpec>(0.0,0.0,0.0,1.0));
+	FrameSpecPtr frame2 = instance<FrameConstructorSpec>(instance<VectorConstructorSpec>(), instance<RotationQuaternionConstructorSpec>(0.0,0.0,1.0,0.0));
+	StringSpecPtr str1 = instance<ConstStringSpec>("lol");
+	StringSpecPtr str2 = instance<ConstStringSpec>("bla");
+	HardConstraintSpecPtr hardC1 = instance<HardConstraintSpec>(scalar1, scalar1, scalar1);
+	HardConstraintSpecPtr hardC2 = instance<HardConstraintSpec>(scalar2, scalar2, scalar2);
+	ControllableConstraintSpecPtr controllableC1 = instance<ControllableConstraintSpec>(scalar1, scalar1, scalar1, str1);
+	ControllableConstraintSpecPtr controllableC2 = instance<ControllableConstraintSpec>(scalar2, scalar2, scalar2, str2);
+	SoftConstraintSpecPtr softC1 = instance<SoftConstraintSpec>(scalar1, scalar1, scalar1, scalar1, str1);
+	SoftConstraintSpecPtr softC2 = instance<SoftConstraintSpec>(scalar2, scalar2, scalar2, scalar2, str2);
+	std::vector<SpecPtr> ld1 {scalar1};
+	std::vector<SpecPtr> ld2 {scalar2};
+	std::vector<SpecPtr> ld3 {vector2};
+	SpecPtr list1 = instance<ConstListSpec>(ld1);
+	SpecPtr list2 = instance<ConstListSpec>(ld2);
+	SpecPtr list3 = instance<ConstListSpec>(ld3);
+	std::vector<SpecPtr> ld4 {list1};
+	std::vector<SpecPtr> ld5 {list2};
+	std::vector<SpecPtr> ld6 {list3};
+	SpecPtr list4 = instance<ConstListSpec>(ld4);
+	SpecPtr list5 = instance<ConstListSpec>(ld5);
+	SpecPtr list6 = instance<ConstListSpec>(ld6);
+
+	EXPECT_TRUE(typesAreEqual(scalar1, scalar2));
+	EXPECT_FALSE(typesAreEqual(scalar1, vector1));
+	EXPECT_FALSE(typesAreEqual(scalar1, rotation1));
+	EXPECT_FALSE(typesAreEqual(scalar1, frame1));
+	EXPECT_FALSE(typesAreEqual(scalar1, str1));
+	EXPECT_FALSE(typesAreEqual(scalar1, hardC1));
+	EXPECT_FALSE(typesAreEqual(scalar1, controllableC1));
+	EXPECT_FALSE(typesAreEqual(scalar1, softC1));
+	EXPECT_FALSE(typesAreEqual(scalar1, list1));
+
+	EXPECT_TRUE(typesAreEqual(vector1, vector2));
+	EXPECT_FALSE(typesAreEqual(vector1, rotation1));
+	EXPECT_FALSE(typesAreEqual(vector1, frame1));
+	EXPECT_FALSE(typesAreEqual(vector1, str1));
+	EXPECT_FALSE(typesAreEqual(vector1, hardC1));
+	EXPECT_FALSE(typesAreEqual(vector1, controllableC1));
+	EXPECT_FALSE(typesAreEqual(vector1, softC1));
+	EXPECT_FALSE(typesAreEqual(vector1, list1));
+
+	EXPECT_TRUE(typesAreEqual(rotation1, rotation2));
+	EXPECT_FALSE(typesAreEqual(rotation1, frame1));
+	EXPECT_FALSE(typesAreEqual(rotation1, str1));
+	EXPECT_FALSE(typesAreEqual(rotation1, hardC1));
+	EXPECT_FALSE(typesAreEqual(rotation1, controllableC1));
+	EXPECT_FALSE(typesAreEqual(rotation1, softC1));
+	EXPECT_FALSE(typesAreEqual(rotation1, list1));
+
+	EXPECT_TRUE(typesAreEqual(frame1, frame2));
+	EXPECT_FALSE(typesAreEqual(frame1, str1));
+	EXPECT_FALSE(typesAreEqual(frame1, hardC1));
+	EXPECT_FALSE(typesAreEqual(frame1, controllableC1));
+	EXPECT_FALSE(typesAreEqual(frame1, softC1));
+	EXPECT_FALSE(typesAreEqual(frame1, list1));
+
+	EXPECT_TRUE(typesAreEqual(str1, str2));
+	EXPECT_FALSE(typesAreEqual(str1, hardC1));
+	EXPECT_FALSE(typesAreEqual(str1, controllableC1));
+	EXPECT_FALSE(typesAreEqual(str1, softC1));
+	EXPECT_FALSE(typesAreEqual(str1, list1));
+
+	EXPECT_TRUE(typesAreEqual(hardC1, hardC2));
+	EXPECT_FALSE(typesAreEqual(hardC1, controllableC1));
+	EXPECT_FALSE(typesAreEqual(hardC1, softC1));
+	EXPECT_FALSE(typesAreEqual(hardC1, list1));
+
+	EXPECT_TRUE(typesAreEqual(controllableC1, controllableC2));
+	EXPECT_FALSE(typesAreEqual(controllableC1, softC1));
+	EXPECT_FALSE(typesAreEqual(controllableC1, list1));
+
+	EXPECT_TRUE(typesAreEqual(softC1, softC2));
+	EXPECT_FALSE(typesAreEqual(softC1, list1));
+
+	EXPECT_TRUE(typesAreEqual(list1, list2));
+	EXPECT_FALSE(typesAreEqual(list1, list3));
+
+	EXPECT_TRUE(typesAreEqual(list1, list2));
+	EXPECT_FALSE(typesAreEqual(list1, list3));
+	EXPECT_FALSE(typesAreEqual(list1, list4));
+
+	EXPECT_TRUE(typesAreEqual(list4, list5));
+	EXPECT_FALSE(typesAreEqual(list4, list6));
 }
 
 TEST_F(GiskardPPTest, parseType) {

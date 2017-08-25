@@ -116,7 +116,7 @@ std::vector<SpecPtr> ListReferenceSpec::get_value() const {
    ListSpecPtr listSpec;
    if (matches(spec, listSpec))
     return listSpec->get_value();
-   throw std::invalid_argument("There is no string value named '" + reference_name + "' in this scope: " + scope->filePath);
+   throw std::invalid_argument("There is no list value named '" + reference_name + "' in this scope: " + scope->filePath);
 }
 
 bool ConstListSpec::equals(const Spec& other) const {

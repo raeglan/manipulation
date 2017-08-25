@@ -3,4 +3,4 @@ import "package://giskard_suturo_parser/robots/pr2.gpp" as robot;
 
 goal = inputFrame("goal");
 
-QPController(robot.rightArm_controllable, [positionAlignment(robot.rightGripper.pos, goal.pos, 1)], robot.hardConstraints);
+QPController(robot.rightArm_controllable, frameAlignment(robot.rightGripper, goal, 1), robot.hardConstraints);

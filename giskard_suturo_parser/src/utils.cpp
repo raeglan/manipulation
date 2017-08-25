@@ -183,6 +183,7 @@ void getReferenceSpecs(std::vector<SpecPtr>& references, const SpecPtr& specPtr)
 
   } else if (dynamic_pointer_cast<DoubleNormOfSpec>(specPtr)) {
     DoubleNormOfSpecPtr castPtr = dynamic_pointer_cast<DoubleNormOfSpec>(specPtr);
+    getReferenceSpecs(references, castPtr->get_vector());
 
   } else if (dynamic_pointer_cast<DoubleMultiplicationSpec>(specPtr)) {
     DoubleMultiplicationSpecPtr castPtr = dynamic_pointer_cast<DoubleMultiplicationSpec>(specPtr);
@@ -409,7 +410,25 @@ void getReferenceSpecs(std::vector<SpecPtr>& references, const SpecPtr& specPtr)
   } else if (dynamic_pointer_cast<StringReferenceSpec>(specPtr)) {
     StringReferenceSpecPtr castPtr = dynamic_pointer_cast<StringReferenceSpec>(specPtr);
     references.push_back(castPtr);
-  } //else if (dynamic_pointer_cast<ConduitSpec>(specPtr)) {
+
+  } else if (dynamic_pointer_cast<ListReferenceSpec>(specPtr)) {
+    ListReferenceSpecPtr castPtr = dynamic_pointer_cast<ListReferenceSpec>(specPtr);
+    references.push_back(castPtr);
+  
+  } else if (dynamic_pointer_cast<ConcatListSpec>(specPtr)) {
+    ConcatListSpecPtr castPtr = dynamic_pointer_cast<ConcatListSpec>(specPtr);
+    getReferenceSpecs(references, castPtr->get_lhs());
+    getReferenceSpecs(references, castPtr->get_rhs());
+  
+  } else if (dynamic_pointer_cast<ConstListSpec>(specPtr)) {
+    ConstListSpecPtr castPtr = dynamic_pointer_cast<ConstListSpec>(specPtr);
+    auto content = castPtr->get_value();
+    for (size_t i = 0; i < content.size(); i++)
+      getReferenceSpecs(references, content[i]);
+  
+  }
+  
+  //else if (dynamic_pointer_cast<ConduitSpec>(specPtr)) {
     //references.push_back(dynamic_pointer_cast<ConduitSpec>(specPtr)->getSpec());
   //}
 }
@@ -512,6 +531,13 @@ DoubleSpecPtr deepCopySpec(const DoubleSpecPtr specPtr) {
   } else if (dynamic_pointer_cast<ATanSpec>(specPtr)) {
     return deepCopySpec(dynamic_pointer_cast<ATanSpec>(specPtr));
   
+  } else if (dynamic_pointer_cast<DoubleFunctionCallCache>(specPtr)) {
+    auto ptr = dynamic_pointer_cast<DoubleFunctionCallCache>(specPtr);
+    std::vector<SpecPtr> args;
+    for (size_t i = 0; i < ptr->arguments.size(); i++)
+      args.push_back(deepCopySpec(ptr->arguments[i]));
+
+    return instance<DoubleFunctionCallCache>(args, ptr->functionDefinition);
   }
 
   throw std::domain_error("Failed to copy double spec!");
@@ -555,6 +581,13 @@ VectorSpecPtr deepCopySpec(const VectorSpecPtr specPtr) {
   } else if (dynamic_pointer_cast<VectorCrossSpec>(specPtr)) {
     return deepCopySpec(dynamic_pointer_cast<VectorCrossSpec>(specPtr));
 
+  } else if (dynamic_pointer_cast<VectorFunctionCallCache>(specPtr)) {
+    auto ptr = dynamic_pointer_cast<VectorFunctionCallCache>(specPtr);
+    std::vector<SpecPtr> args;
+    for (size_t i = 0; i < ptr->arguments.size(); i++)
+      args.push_back(deepCopySpec(ptr->arguments[i]));
+
+    return instance<VectorFunctionCallCache>(args, ptr->functionDefinition);
   }
 
   throw std::domain_error("Failed to copy vector spec!");
@@ -585,6 +618,14 @@ RotationSpecPtr deepCopySpec(const RotationSpecPtr specPtr) {
   
   } else if (dynamic_pointer_cast<OrientationOfSpec>(specPtr)) {
     return deepCopySpec(dynamic_pointer_cast<OrientationOfSpec>(specPtr));
+  
+  } else if (dynamic_pointer_cast<RotationFunctionCallCache>(specPtr)) {
+    auto ptr = dynamic_pointer_cast<RotationFunctionCallCache>(specPtr);
+    std::vector<SpecPtr> args;
+    for (size_t i = 0; i < ptr->arguments.size(); i++)
+      args.push_back(deepCopySpec(ptr->arguments[i]));
+
+    return instance<RotationFunctionCallCache>(args, ptr->functionDefinition);
   }
 
   throw std::domain_error("Failed to copy rotation spec!");
@@ -609,6 +650,13 @@ FrameSpecPtr deepCopySpec(const FrameSpecPtr specPtr) {
 
   } else if (dynamic_pointer_cast<InverseFrameSpec>(specPtr)) {
     return deepCopySpec(dynamic_pointer_cast<InverseFrameSpec>(specPtr));
+  } else if (dynamic_pointer_cast<FrameFunctionCallCache>(specPtr)) {
+    auto ptr = dynamic_pointer_cast<FrameFunctionCallCache>(specPtr);
+    std::vector<SpecPtr> args;
+    for (size_t i = 0; i < ptr->arguments.size(); i++)
+      args.push_back(deepCopySpec(ptr->arguments[i]));
+
+    return instance<FrameFunctionCallCache>(args, ptr->functionDefinition);
   }
 
   throw std::domain_error("Failed to copy frame spec!");
@@ -624,6 +672,13 @@ StringSpecPtr deepCopySpec(const StringSpecPtr specPtr) {
 
   } else if (dynamic_pointer_cast<StringReferenceSpec>(specPtr)) {
     return deepCopySpec(dynamic_pointer_cast<StringReferenceSpec>(specPtr));
+  } else if (dynamic_pointer_cast<StringFunctionCallCache>(specPtr)) {
+    auto ptr = dynamic_pointer_cast<StringFunctionCallCache>(specPtr);
+    std::vector<SpecPtr> args;
+    for (size_t i = 0; i < ptr->arguments.size(); i++)
+      args.push_back(deepCopySpec(ptr->arguments[i]));
+
+    return instance<StringFunctionCallCache>(args, ptr->functionDefinition);
   }
 
   throw std::domain_error("Failed to copy string spec!"); 
@@ -639,6 +694,14 @@ ListSpecPtr deepCopySpec(const ListSpecPtr specPtr) {
 
   } else if (dynamic_pointer_cast<ListReferenceSpec>(specPtr)) {
     return deepCopySpec(dynamic_pointer_cast<ListReferenceSpec>(specPtr));
+  
+  } else if (dynamic_pointer_cast<ListFunctionCallCache>(specPtr)) {
+    auto ptr = dynamic_pointer_cast<ListFunctionCallCache>(specPtr);
+    std::vector<SpecPtr> args;
+    for (size_t i = 0; i < ptr->arguments.size(); i++)
+      args.push_back(deepCopySpec(ptr->arguments[i]));
+
+    return instance<ListFunctionCallCache>(args, ptr->functionDefinition);
   }
 
   throw std::domain_error("Failed to copy list spec!"); 
