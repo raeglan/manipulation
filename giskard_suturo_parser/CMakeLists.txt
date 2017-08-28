@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES giskard_suturo_parser
+  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS giskard_core roscpp
 #  DEPENDS system_lib
 )

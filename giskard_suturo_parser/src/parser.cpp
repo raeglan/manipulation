@@ -590,7 +590,7 @@ SpecPtr GiskardPPParser::parseLiteral() {
 			if (!e)
 				throwError("Empty expression in list definition.");
 			
-			if (elems.size() > 0 && !matches(elems[0], e))
+			if (elems.size() > 0 && !typesAreEqual(elems[0], e))
 				throwError("Mismatched inner type!\n    Inner type is: " + typeString(elems[0]) + "\n    Inserted type is: " + typeString(e));
 
 			elems.push_back(e);

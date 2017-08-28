@@ -271,7 +271,7 @@ SpecPtr AdvancedScope::callFunction(const std::string& name, std::vector<SpecPtr
 		DoubleSpecPtr lower, upper, weight, expr;
 		StringSpecPtr name;
 		if (arguments.size() == 5 && matches(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], lower, upper, weight, expr, name))
-			return instance<SoftConstraintSpec>(expr, lower, upper, weight, name);
+			return instance<SoftConstraintSpec>(lower, upper, weight, expr, name);
 	
 	} else if (name == fInScalar) {
 		StringSpecPtr inputName;

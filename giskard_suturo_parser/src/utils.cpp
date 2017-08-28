@@ -1116,24 +1116,29 @@ ListReferenceSpecPtr deepCopySpec(const ListReferenceSpecPtr specPtr) {
 }
 
 void specToString(std::string& out, const SpecPtr& specPtr) {
-  if (dynamic_pointer_cast<DoubleInputSpec>(specPtr)) {
-    DoubleInputSpecPtr castPtr = dynamic_pointer_cast<DoubleInputSpec>(specPtr);
+  if (specPtr)
+    specToString(out, *specPtr);
+}
+
+void specToString(std::string& out, const Spec& specPtr) {
+  if (dynamic_cast<const DoubleInputSpec*>(&specPtr)) {
+    const DoubleInputSpec* castPtr = dynamic_cast<const DoubleInputSpec*>(&specPtr);
     out += AdvancedScope::fInScalar + "(\"" + castPtr->get_name()->get_value() + "\")";
 
-  } else if (dynamic_pointer_cast<JointInputSpec>(specPtr)) {
-    JointInputSpecPtr castPtr = dynamic_pointer_cast<JointInputSpec>(specPtr);
+  } else if (dynamic_cast<const JointInputSpec*>(&specPtr)) {
+    const JointInputSpec* castPtr = dynamic_cast<const JointInputSpec*>(&specPtr);
     out += AdvancedScope::fInJoint + "(\"" + castPtr->get_name()->get_value() + "\")";
     
-  } else if (dynamic_pointer_cast<DoubleConstSpec>(specPtr)) {
-    DoubleConstSpecPtr castPtr = dynamic_pointer_cast<DoubleConstSpec>(specPtr);
+  } else if (dynamic_cast<const DoubleConstSpec*>(&specPtr)) {
+    const DoubleConstSpec* castPtr = dynamic_cast<const DoubleConstSpec*>(&specPtr);
     out += std::to_string(castPtr->get_value());
 
-  } else if (dynamic_pointer_cast<DoubleReferenceSpec>(specPtr)) {
-    DoubleReferenceSpecPtr castPtr = dynamic_pointer_cast<DoubleReferenceSpec>(specPtr);
+  } else if (dynamic_cast<const DoubleReferenceSpec*>(&specPtr)) {
+    const DoubleReferenceSpec* castPtr = dynamic_cast<const DoubleReferenceSpec*>(&specPtr);
     out += castPtr->get_reference_name();
 
-  } else if (dynamic_pointer_cast<DoubleAdditionSpec>(specPtr)) {
-    DoubleAdditionSpecPtr castPtr = dynamic_pointer_cast<DoubleAdditionSpec>(specPtr);
+  } else if (dynamic_cast<const DoubleAdditionSpec*>(&specPtr)) {
+    const DoubleAdditionSpec* castPtr = dynamic_cast<const DoubleAdditionSpec*>(&specPtr);
     const std::vector<DoubleSpecPtr>& temp = castPtr->get_inputs();
     specToString(out, temp[0]);
     for (size_t i = 1; i < temp.size(); i++) {
@@ -1141,8 +1146,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
       specToString(out, temp[i]);
     }
 
-  } else if (dynamic_pointer_cast<DoubleSubtractionSpec>(specPtr)) {
-    DoubleSubtractionSpecPtr castPtr = dynamic_pointer_cast<DoubleSubtractionSpec>(specPtr);
+  } else if (dynamic_cast<const DoubleSubtractionSpec*>(&specPtr)) {
+    const DoubleSubtractionSpec* castPtr = dynamic_cast<const DoubleSubtractionSpec*>(&specPtr);
     const std::vector<DoubleSpecPtr>& temp = castPtr->get_inputs();
     specToString(out, temp[0]);
     for (size_t i = 1; i < temp.size(); i++) {
@@ -1155,14 +1160,14 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
         out += ')';
     }
 
-  } else if (dynamic_pointer_cast<DoubleNormOfSpec>(specPtr)) {
-    DoubleNormOfSpecPtr castPtr = dynamic_pointer_cast<DoubleNormOfSpec>(specPtr);
+  } else if (dynamic_cast<const DoubleNormOfSpec*>(&specPtr)) {
+    const DoubleNormOfSpec* castPtr = dynamic_cast<const DoubleNormOfSpec*>(&specPtr);
     out += AdvancedScope::fNorm + '(';
     specToString(out, castPtr->get_vector());
     out += ')';
 
-  } else if (dynamic_pointer_cast<DoubleMultiplicationSpec>(specPtr)) {
-    DoubleMultiplicationSpecPtr castPtr = dynamic_pointer_cast<DoubleMultiplicationSpec>(specPtr);
+  } else if (dynamic_cast<const DoubleMultiplicationSpec*>(&specPtr)) {
+    const DoubleMultiplicationSpec* castPtr = dynamic_cast<const DoubleMultiplicationSpec*>(&specPtr);
     const std::vector<DoubleSpecPtr>& temp = castPtr->get_inputs();
     bool useBrackets = (dynamic_pointer_cast<DoubleAdditionSpec>(temp[0]) || dynamic_pointer_cast<DoubleSubtractionSpec>(temp[0]));
     if (useBrackets)
@@ -1185,8 +1190,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
 
     }
 
-  } else if (dynamic_pointer_cast<DoubleDivisionSpec>(specPtr)) {
-    DoubleDivisionSpecPtr castPtr = dynamic_pointer_cast<DoubleDivisionSpec>(specPtr);
+  } else if (dynamic_cast<const DoubleDivisionSpec*>(&specPtr)) {
+    const DoubleDivisionSpec* castPtr = dynamic_cast<const DoubleDivisionSpec*>(&specPtr);
     const std::vector<DoubleSpecPtr>& temp = castPtr->get_inputs();
     bool useBrackets = (dynamic_pointer_cast<DoubleAdditionSpec>(temp[0]) || dynamic_pointer_cast<DoubleSubtractionSpec>(temp[0]));
     if (useBrackets)
@@ -1210,8 +1215,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
     
     }
 
-  } else if (dynamic_pointer_cast<DoubleXCoordOfSpec>(specPtr)) {
-    DoubleXCoordOfSpecPtr castPtr = dynamic_pointer_cast<DoubleXCoordOfSpec>(specPtr);
+  } else if (dynamic_cast<const DoubleXCoordOfSpec*>(&specPtr)) {
+    const DoubleXCoordOfSpec* castPtr = dynamic_cast<const DoubleXCoordOfSpec*>(&specPtr);
     bool useBrackets = dynamic_pointer_cast<VectorAdditionSpec>(castPtr->get_vector())
                     || dynamic_pointer_cast<VectorSubtractionSpec>(castPtr->get_vector())
                     || dynamic_pointer_cast<VectorFrameMultiplicationSpec>(castPtr->get_vector())
@@ -1225,8 +1230,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
 
     out += ".x";
 
-  } else if (dynamic_pointer_cast<DoubleYCoordOfSpec>(specPtr)) {
-    DoubleYCoordOfSpecPtr castPtr = dynamic_pointer_cast<DoubleYCoordOfSpec>(specPtr);
+  } else if (dynamic_cast<const DoubleYCoordOfSpec*>(&specPtr)) {
+    const DoubleYCoordOfSpec* castPtr = dynamic_cast<const DoubleYCoordOfSpec*>(&specPtr);
     bool useBrackets = dynamic_pointer_cast<VectorAdditionSpec>(castPtr->get_vector())
                     || dynamic_pointer_cast<VectorSubtractionSpec>(castPtr->get_vector())
                     || dynamic_pointer_cast<VectorFrameMultiplicationSpec>(castPtr->get_vector())
@@ -1239,8 +1244,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
       out += ')';
     out += ".y";
 
-  } else if (dynamic_pointer_cast<DoubleZCoordOfSpec>(specPtr)) {
-    DoubleZCoordOfSpecPtr castPtr = dynamic_pointer_cast<DoubleZCoordOfSpec>(specPtr);
+  } else if (dynamic_cast<const DoubleZCoordOfSpec*>(&specPtr)) {
+    const DoubleZCoordOfSpec* castPtr = dynamic_cast<const DoubleZCoordOfSpec*>(&specPtr);
     bool useBrackets = dynamic_pointer_cast<VectorAdditionSpec>(castPtr->get_vector())
                     || dynamic_pointer_cast<VectorSubtractionSpec>(castPtr->get_vector())
                     || dynamic_pointer_cast<VectorFrameMultiplicationSpec>(castPtr->get_vector())
@@ -1253,8 +1258,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
       out += ')';
     out += ".z";
 
-  } else if (dynamic_pointer_cast<VectorDotSpec>(specPtr)) {
-    VectorDotSpecPtr castPtr = dynamic_pointer_cast<VectorDotSpec>(specPtr);
+  } else if (dynamic_cast<const VectorDotSpec*>(&specPtr)) {
+    const VectorDotSpec* castPtr = dynamic_cast<const VectorDotSpec*>(&specPtr);
     bool useBracketsLhs = !!dynamic_pointer_cast<VectorDoubleMultiplicationSpec>(castPtr->get_lhs());
     bool useBracketsRhs = !!dynamic_pointer_cast<VectorDoubleMultiplicationSpec>(castPtr->get_rhs());
     if (useBracketsLhs)
@@ -1271,30 +1276,30 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
     if (useBracketsRhs)
       out += ')';
 
-  } else if (dynamic_pointer_cast<MinSpec>(specPtr)) {
-    MinSpecPtr castPtr = dynamic_pointer_cast<MinSpec>(specPtr);
+  } else if (dynamic_cast<const MinSpec*>(&specPtr)) {
+    const MinSpec* castPtr = dynamic_cast<const MinSpec*>(&specPtr);
     out += AdvancedScope::fMin + '(';
     specToString(out, castPtr->get_lhs());
     out+=',';
     specToString(out, castPtr->get_rhs());
     out+=')';
 
-  } else if (dynamic_pointer_cast<MaxSpec>(specPtr)) {
-    MaxSpecPtr castPtr = dynamic_pointer_cast<MaxSpec>(specPtr);
+  } else if (dynamic_cast<const MaxSpec*>(&specPtr)) {
+    const MaxSpec* castPtr = dynamic_cast<const MaxSpec*>(&specPtr);
     out += AdvancedScope::fMax + '(';
     specToString(out, castPtr->get_lhs());
     out+=',';
     specToString(out, castPtr->get_rhs());
     out+=')';
 
-  } else if (dynamic_pointer_cast<AbsSpec>(specPtr)) {
-    AbsSpecPtr castPtr = dynamic_pointer_cast<AbsSpec>(specPtr);
+  } else if (dynamic_cast<const AbsSpec*>(&specPtr)) {
+    const AbsSpec* castPtr = dynamic_cast<const AbsSpec*>(&specPtr);
     out += AdvancedScope::fAbs + '(';
     specToString(out, castPtr->get_value());
     out+=')';
 
-  } else if (dynamic_pointer_cast<DoubleIfSpec>(specPtr)) {
-    DoubleIfSpecPtr castPtr = dynamic_pointer_cast<DoubleIfSpec>(specPtr);
+  } else if (dynamic_cast<const DoubleIfSpec*>(&specPtr)) {
+    const DoubleIfSpec* castPtr = dynamic_cast<const DoubleIfSpec*>(&specPtr);
     out += AdvancedScope::fIf + '(';
     specToString(out, castPtr->get_condition());
     out+=',';
@@ -1303,60 +1308,60 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
     specToString(out, castPtr->get_else());
     out+=')';
 
-  } else if (dynamic_pointer_cast<FmodSpec>(specPtr)) {
-    FmodSpecPtr castPtr = dynamic_pointer_cast<FmodSpec>(specPtr);
+  } else if (dynamic_cast<const FmodSpec*>(&specPtr)) {
+    const FmodSpec* castPtr = dynamic_cast<const FmodSpec*>(&specPtr);
     out += AdvancedScope::fFMod + '(';
     specToString(out, castPtr->get_nominator());
     out+=',';
     specToString(out, castPtr->get_denominator());
     out+=')';
 
-  } else if (dynamic_pointer_cast<SinSpec>(specPtr)) {
-    SinSpecPtr castPtr = dynamic_pointer_cast<SinSpec>(specPtr);
+  } else if (dynamic_cast<const SinSpec*>(&specPtr)) {
+    const SinSpec* castPtr = dynamic_cast<const SinSpec*>(&specPtr);
     out += AdvancedScope::fSin + '(';
     specToString(out, castPtr->get_value());
     out+=')';
 
-  } else if (dynamic_pointer_cast<CosSpec>(specPtr)) {
-    CosSpecPtr castPtr = dynamic_pointer_cast<CosSpec>(specPtr);
+  } else if (dynamic_cast<const CosSpec*>(&specPtr)) {
+    const CosSpec* castPtr = dynamic_cast<const CosSpec*>(&specPtr);
     out += AdvancedScope::fCos + '(';
     specToString(out, castPtr->get_value());
     out+=')';
 
-  } else if (dynamic_pointer_cast<TanSpec>(specPtr)) {
-    TanSpecPtr castPtr = dynamic_pointer_cast<TanSpec>(specPtr);
+  } else if (dynamic_cast<const TanSpec*>(&specPtr)) {
+    const TanSpec* castPtr = dynamic_cast<const TanSpec*>(&specPtr);
     out += AdvancedScope::fTan + '(';
     specToString(out, castPtr->get_value());
     out+=')';
 
-  } else if (dynamic_pointer_cast<ASinSpec>(specPtr)) {
-    ASinSpecPtr castPtr = dynamic_pointer_cast<ASinSpec>(specPtr);
+  } else if (dynamic_cast<const ASinSpec*>(&specPtr)) {
+    const ASinSpec* castPtr = dynamic_cast<const ASinSpec*>(&specPtr);
     out += AdvancedScope::fASin + '(';
     specToString(out, castPtr->get_value());
     out+=')';
 
-  } else if (dynamic_pointer_cast<ACosSpec>(specPtr)) {
-    ACosSpecPtr castPtr = dynamic_pointer_cast<ACosSpec>(specPtr);
+  } else if (dynamic_cast<const ACosSpec*>(&specPtr)) {
+    const ACosSpec* castPtr = dynamic_cast<const ACosSpec*>(&specPtr);
     out += AdvancedScope::fACos + '(';
     specToString(out, castPtr->get_value());
     out+=')';
 
-  } else if (dynamic_pointer_cast<ATanSpec>(specPtr)) {
-    ATanSpecPtr castPtr = dynamic_pointer_cast<ATanSpec>(specPtr);
+  } else if (dynamic_cast<const ATanSpec*>(&specPtr)) {
+    const ATanSpec* castPtr = dynamic_cast<const ATanSpec*>(&specPtr);
     out += AdvancedScope::fATan + '(';
     specToString(out, castPtr->get_value());
     out+=')';
 
-  } else if (dynamic_pointer_cast<VectorInputSpec>(specPtr)) {
-    VectorInputSpecPtr castPtr = dynamic_pointer_cast<VectorInputSpec>(specPtr);
+  } else if (dynamic_cast<const VectorInputSpec*>(&specPtr)) {
+    const VectorInputSpec* castPtr = dynamic_cast<const VectorInputSpec*>(&specPtr);
     out += AdvancedScope::fInVec3 + "(\"" + castPtr->get_name()->get_value() + "\")";
 
-  } else if (dynamic_pointer_cast<VectorCachedSpec>(specPtr)) {
-    VectorCachedSpecPtr castPtr = dynamic_pointer_cast<VectorCachedSpec>(specPtr);
+  } else if (dynamic_cast<const VectorCachedSpec*>(&specPtr)) {
+    const VectorCachedSpec* castPtr = dynamic_cast<const VectorCachedSpec*>(&specPtr);
     specToString(out, castPtr->get_vector());
 
-  } else if (dynamic_pointer_cast<VectorConstructorSpec>(specPtr)) {
-    VectorConstructorSpecPtr castPtr = dynamic_pointer_cast<VectorConstructorSpec>(specPtr);
+  } else if (dynamic_cast<const VectorConstructorSpec*>(&specPtr)) {
+    const VectorConstructorSpec* castPtr = dynamic_cast<const VectorConstructorSpec*>(&specPtr);
     out += AdvancedScope::fCVec3 + '(';
     specToString(out, castPtr->get_x());
     out += ',';
@@ -1365,8 +1370,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
     specToString(out, castPtr->get_z());
     out += ')';
 
-  } else if (dynamic_pointer_cast<VectorAdditionSpec>(specPtr)) {
-    VectorAdditionSpecPtr castPtr = dynamic_pointer_cast<VectorAdditionSpec>(specPtr);
+  } else if (dynamic_cast<const VectorAdditionSpec*>(&specPtr)) {
+    const VectorAdditionSpec* castPtr = dynamic_cast<const VectorAdditionSpec*>(&specPtr);
     const std::vector<VectorSpecPtr>& temp = castPtr->get_inputs();
     specToString(out, temp[0]);
     for (size_t i = 1; i < temp.size(); i++) {
@@ -1374,8 +1379,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
       specToString(out, temp[i]);
     }
 
-  } else if (dynamic_pointer_cast<VectorSubtractionSpec>(specPtr)) {
-    VectorSubtractionSpecPtr castPtr = dynamic_pointer_cast<VectorSubtractionSpec>(specPtr);
+  } else if (dynamic_cast<const VectorSubtractionSpec*>(&specPtr)) {
+    const VectorSubtractionSpec* castPtr = dynamic_cast<const VectorSubtractionSpec*>(&specPtr);
     const std::vector<VectorSpecPtr>& temp = castPtr->get_inputs();
     specToString(out, temp[0]);
     for (size_t i = 1; i < temp.size(); i++) {
@@ -1388,12 +1393,12 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
         out += ')';
     }
 
-  } else if (dynamic_pointer_cast<VectorReferenceSpec>(specPtr)) {
-    VectorReferenceSpecPtr castPtr = dynamic_pointer_cast<VectorReferenceSpec>(specPtr);
+  } else if (dynamic_cast<const VectorReferenceSpec*>(&specPtr)) {
+    const VectorReferenceSpec* castPtr = dynamic_cast<const VectorReferenceSpec*>(&specPtr);
     out += castPtr->get_reference_name();
 
-  } else if (dynamic_pointer_cast<VectorOriginOfSpec>(specPtr)) {
-    VectorOriginOfSpecPtr castPtr = dynamic_pointer_cast<VectorOriginOfSpec>(specPtr);
+  } else if (dynamic_cast<const VectorOriginOfSpec*>(&specPtr)) {
+    const VectorOriginOfSpec* castPtr = dynamic_cast<const VectorOriginOfSpec*>(&specPtr);
     bool useBrackets = !!dynamic_pointer_cast<FrameMultiplicationSpec>(castPtr->get_frame());
 
     if (useBrackets)
@@ -1403,8 +1408,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
       out += ')';
     out += ".pos";
 
-  } else if (dynamic_pointer_cast<VectorFrameMultiplicationSpec>(specPtr)) {
-    VectorFrameMultiplicationSpecPtr castPtr = dynamic_pointer_cast<VectorFrameMultiplicationSpec>(specPtr);
+  } else if (dynamic_cast<const VectorFrameMultiplicationSpec*>(&specPtr)) {
+    const VectorFrameMultiplicationSpec* castPtr = dynamic_cast<const VectorFrameMultiplicationSpec*>(&specPtr);
     bool useBrackets = dynamic_pointer_cast<VectorAdditionSpec>(castPtr->get_vector())
                     || dynamic_pointer_cast<VectorSubtractionSpec>(castPtr->get_vector())
                     || dynamic_pointer_cast<VectorFrameMultiplicationSpec>(castPtr->get_vector())
@@ -1418,8 +1423,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
     if (useBrackets)
       out += ')';
 
-  } else if (dynamic_pointer_cast<VectorRotationMultiplicationSpec>(specPtr)) {
-    VectorRotationMultiplicationSpecPtr castPtr = dynamic_pointer_cast<VectorRotationMultiplicationSpec>(specPtr);
+  } else if (dynamic_cast<const VectorRotationMultiplicationSpec*>(&specPtr)) {
+    const VectorRotationMultiplicationSpec* castPtr = dynamic_cast<const VectorRotationMultiplicationSpec*>(&specPtr);
     bool useBrackets = dynamic_pointer_cast<VectorAdditionSpec>(castPtr->get_vector())
                     || dynamic_pointer_cast<VectorSubtractionSpec>(castPtr->get_vector())
                     || dynamic_pointer_cast<VectorFrameMultiplicationSpec>(castPtr->get_vector())
@@ -1433,8 +1438,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
     if (useBrackets)
       out += ')';
 
-  } else if (dynamic_pointer_cast<VectorDoubleMultiplicationSpec>(specPtr)) {
-    VectorDoubleMultiplicationSpecPtr castPtr = dynamic_pointer_cast<VectorDoubleMultiplicationSpec>(specPtr);
+  } else if (dynamic_cast<const VectorDoubleMultiplicationSpec*>(&specPtr)) {
+    const VectorDoubleMultiplicationSpec* castPtr = dynamic_cast<const VectorDoubleMultiplicationSpec*>(&specPtr);
     bool useBracketsVec = dynamic_pointer_cast<VectorAdditionSpec>(castPtr->get_vector())
                     || dynamic_pointer_cast<VectorSubtractionSpec>(castPtr->get_vector())
                     || dynamic_pointer_cast<VectorFrameMultiplicationSpec>(castPtr->get_vector())
@@ -1454,38 +1459,38 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
     if (useBracketsVec)
       out += ')';
 
-  } else if (dynamic_pointer_cast<VectorRotationVectorSpec>(specPtr)) {
-    VectorRotationVectorSpecPtr castPtr = dynamic_pointer_cast<VectorRotationVectorSpec>(specPtr);
+  } else if (dynamic_cast<const VectorRotationVectorSpec*>(&specPtr)) {
+    const VectorRotationVectorSpec* castPtr = dynamic_cast<const VectorRotationVectorSpec*>(&specPtr);
     out+= AdvancedScope::fCVec3 + '(';
     specToString(out, castPtr->get_rotation());
     out+= ')';
 
-  } else if (dynamic_pointer_cast<VectorCrossSpec>(specPtr)) {
-    VectorCrossSpecPtr castPtr = dynamic_pointer_cast<VectorCrossSpec>(specPtr);
+  } else if (dynamic_cast<const VectorCrossSpec*>(&specPtr)) {
+    const VectorCrossSpec* castPtr = dynamic_cast<const VectorCrossSpec*>(&specPtr);
     out+= AdvancedScope::fCross + '(';
     specToString(out, castPtr->get_lhs());
     out+=',';
     specToString(out, castPtr->get_rhs());
     out+= ')';
 
-  } else if (dynamic_pointer_cast<RotationInputSpec>(specPtr)) {
-    RotationInputSpecPtr castPtr = dynamic_pointer_cast<RotationInputSpec>(specPtr);
+  } else if (dynamic_cast<const RotationInputSpec*>(&specPtr)) {
+    const RotationInputSpec* castPtr = dynamic_cast<const RotationInputSpec*>(&specPtr);
     out += AdvancedScope::fInRotation + "(\"" + castPtr->get_name()->get_value() + "\")";
 
-  } else if (dynamic_pointer_cast<RotationQuaternionConstructorSpec>(specPtr)) {
-    RotationQuaternionConstructorSpecPtr castPtr = dynamic_pointer_cast<RotationQuaternionConstructorSpec>(specPtr);
+  } else if (dynamic_cast<const RotationQuaternionConstructorSpec*>(&specPtr)) {
+    const RotationQuaternionConstructorSpec* castPtr = dynamic_cast<const RotationQuaternionConstructorSpec*>(&specPtr);
     out += AdvancedScope::fCRotation + '(' + std::to_string(castPtr->get_x()) + ',' + std::to_string(castPtr->get_y()) + ',' + std::to_string(castPtr->get_z()) + ',' + std::to_string(castPtr->get_w()) + ')';
 
-  } else if (dynamic_pointer_cast<AxisAngleSpec>(specPtr)) {
-    AxisAngleSpecPtr castPtr = dynamic_pointer_cast<AxisAngleSpec>(specPtr);
+  } else if (dynamic_cast<const AxisAngleSpec*>(&specPtr)) {
+    const AxisAngleSpec* castPtr = dynamic_cast<const AxisAngleSpec*>(&specPtr);
     out += AdvancedScope::fCRotation + '(';
     specToString(out, castPtr->get_axis());
     out += ',';
     specToString(out, castPtr->get_angle());
     out += ')';
 
-  } else if (dynamic_pointer_cast<SlerpSpec>(specPtr)) {
-    SlerpSpecPtr castPtr = dynamic_pointer_cast<SlerpSpec>(specPtr);
+  } else if (dynamic_cast<const SlerpSpec*>(&specPtr)) {
+    const SlerpSpec* castPtr = dynamic_cast<const SlerpSpec*>(&specPtr);
     out += AdvancedScope::fSlerp + '(';
     specToString(out, castPtr->get_from());
     out += ',';
@@ -1494,18 +1499,18 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
     specToString(out, castPtr->get_param());
     out += ')';
 
-  } else if (dynamic_pointer_cast<RotationReferenceSpec>(specPtr)) {
-    RotationReferenceSpecPtr castPtr = dynamic_pointer_cast<RotationReferenceSpec>(specPtr);
+  } else if (dynamic_cast<const RotationReferenceSpec*>(&specPtr)) {
+    const RotationReferenceSpec* castPtr = dynamic_cast<const RotationReferenceSpec*>(&specPtr);
     out += castPtr->get_reference_name();
 
-  } else if (dynamic_pointer_cast<InverseRotationSpec>(specPtr)) {
-    InverseRotationSpecPtr castPtr = dynamic_pointer_cast<InverseRotationSpec>(specPtr);
+  } else if (dynamic_cast<const InverseRotationSpec*>(&specPtr)) {
+    const InverseRotationSpec* castPtr = dynamic_cast<const InverseRotationSpec*>(&specPtr);
     out += AdvancedScope::fInvert + '(';
     specToString(out, castPtr->get_rotation());
     out += ')';
 
-  } else if (dynamic_pointer_cast<RotationMultiplicationSpec>(specPtr)) {
-    RotationMultiplicationSpecPtr castPtr = dynamic_pointer_cast<RotationMultiplicationSpec>(specPtr);
+  } else if (dynamic_cast<const RotationMultiplicationSpec*>(&specPtr)) {
+    const RotationMultiplicationSpec* castPtr = dynamic_cast<const RotationMultiplicationSpec*>(&specPtr);
     const std::vector<RotationSpecPtr>& temp = castPtr->get_inputs();
     specToString(out, temp[0]);
 
@@ -1514,24 +1519,24 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
       specToString(out, temp[i]);
     }
 
-  } else if (dynamic_pointer_cast<FrameInputSpec>(specPtr)) {
-    FrameInputSpecPtr castPtr = dynamic_pointer_cast<FrameInputSpec>(specPtr);
+  } else if (dynamic_cast<const FrameInputSpec*>(&specPtr)) {
+    const FrameInputSpec* castPtr = dynamic_cast<const FrameInputSpec*>(&specPtr);
     out += AdvancedScope::fInFrame + "(\"" + castPtr->get_name()->get_value() + "\")";
 
-  } else if (dynamic_pointer_cast<FrameCachedSpec>(specPtr)) {
-    FrameCachedSpecPtr castPtr = dynamic_pointer_cast<FrameCachedSpec>(specPtr);
+  } else if (dynamic_cast<const FrameCachedSpec*>(&specPtr)) {
+    const FrameCachedSpec* castPtr = dynamic_cast<const FrameCachedSpec*>(&specPtr);
     specToString(out, castPtr->get_frame());
 
-  } else if (dynamic_pointer_cast<FrameConstructorSpec>(specPtr)) {
-    FrameConstructorSpecPtr castPtr = dynamic_pointer_cast<FrameConstructorSpec>(specPtr);
+  } else if (dynamic_cast<const FrameConstructorSpec*>(&specPtr)) {
+    const FrameConstructorSpec* castPtr = dynamic_cast<const FrameConstructorSpec*>(&specPtr);
     out += AdvancedScope::fCFrame + '(';
     specToString(out, castPtr->get_rotation());
     out += ',';
     specToString(out, castPtr->get_translation());
     out += ')';
 
-  } else if (dynamic_pointer_cast<OrientationOfSpec>(specPtr)) {
-    OrientationOfSpecPtr castPtr = dynamic_pointer_cast<OrientationOfSpec>(specPtr);
+  } else if (dynamic_cast<const OrientationOfSpec*>(&specPtr)) {
+    const OrientationOfSpec* castPtr = dynamic_cast<const OrientationOfSpec*>(&specPtr);
     bool useBrackets = !!dynamic_pointer_cast<FrameMultiplicationSpec>(castPtr->get_frame());
 
     if (useBrackets)
@@ -1541,8 +1546,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
       out += ')';
     out += ".rot";
 
-  } else if (dynamic_pointer_cast<FrameMultiplicationSpec>(specPtr)) {
-    FrameMultiplicationSpecPtr castPtr = dynamic_pointer_cast<FrameMultiplicationSpec>(specPtr);
+  } else if (dynamic_cast<const FrameMultiplicationSpec*>(&specPtr)) {
+    const FrameMultiplicationSpec* castPtr = dynamic_cast<const FrameMultiplicationSpec*>(&specPtr);
     const std::vector<FrameSpecPtr>& temp = castPtr->get_inputs();
     specToString(out, temp[0]);
 
@@ -1551,18 +1556,18 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
       specToString(out, temp[i]);
     }
 
-  } else if (dynamic_pointer_cast<FrameReferenceSpec>(specPtr)) {
-    FrameReferenceSpecPtr castPtr = dynamic_pointer_cast<FrameReferenceSpec>(specPtr);
+  } else if (dynamic_cast<const FrameReferenceSpec*>(&specPtr)) {
+    const FrameReferenceSpec* castPtr = dynamic_cast<const FrameReferenceSpec*>(&specPtr);
     out += castPtr->get_reference_name();
 
-  } else if (dynamic_pointer_cast<InverseFrameSpec>(specPtr)) {
-    InverseFrameSpecPtr castPtr = dynamic_pointer_cast<InverseFrameSpec>(specPtr);
+  } else if (dynamic_cast<const InverseFrameSpec*>(&specPtr)) {
+    const InverseFrameSpec* castPtr = dynamic_cast<const InverseFrameSpec*>(&specPtr);
     out += AdvancedScope::fInvert + '(';
     specToString(out, castPtr->get_frame());
     out += ')';
 
-  } else if (dynamic_pointer_cast<ControllableConstraintSpec>(specPtr)) {
-    ControllableConstraintSpecPtr castPtr = dynamic_pointer_cast<ControllableConstraintSpec>(specPtr);
+  } else if (dynamic_cast<const ControllableConstraintSpec*>(&specPtr)) {
+    const ControllableConstraintSpec* castPtr = dynamic_cast<const ControllableConstraintSpec*>(&specPtr);
     out += AdvancedScope::fCContC + '(';
     specToString(out, castPtr->lower_);
     out += ',';
@@ -1571,8 +1576,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
     specToString(out, castPtr->weight_);
     out += ",\"" + castPtr->input_->get_value() + "\")";
 
-  } else if (dynamic_pointer_cast<SoftConstraintSpec>(specPtr)) {
-    SoftConstraintSpecPtr castPtr = dynamic_pointer_cast<SoftConstraintSpec>(specPtr);
+  } else if (dynamic_cast<const SoftConstraintSpec*>(&specPtr)) {
+    const SoftConstraintSpec* castPtr = dynamic_cast<const SoftConstraintSpec*>(&specPtr);
     out += AdvancedScope::fCSoftC + '(';
     specToString(out, castPtr->lower_);
     out += ',';
@@ -1583,8 +1588,8 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
     specToString(out, castPtr->expression_);
     out += ",\"" + castPtr->name_->get_value() + "\")";
 
-  } else if (dynamic_pointer_cast<HardConstraintSpec>(specPtr)) {
-    HardConstraintSpecPtr castPtr = dynamic_pointer_cast<HardConstraintSpec>(specPtr);
+  } else if (dynamic_cast<const HardConstraintSpec*>(&specPtr)) {
+    const HardConstraintSpec* castPtr = dynamic_cast<const HardConstraintSpec*>(&specPtr);
     out += AdvancedScope::fCHardC + '(';
     specToString(out, castPtr->lower_);
     out += ',';
@@ -1593,12 +1598,12 @@ void specToString(std::string& out, const SpecPtr& specPtr) {
     specToString(out, castPtr->expression_);
     out += ')';
 
-  } else if (dynamic_pointer_cast<StringSpec>(specPtr)) {
-    StringSpecPtr castPtr = dynamic_pointer_cast<StringSpec>(specPtr);
+  } else if (dynamic_cast<const StringSpec*>(&specPtr)) {
+    const StringSpec* castPtr = dynamic_cast<const StringSpec*>(&specPtr);
     out += '"' + castPtr->get_value() + '"';
 
-  } else if (dynamic_pointer_cast<ListSpec>(specPtr)) {
-    ListSpecPtr castPtr = dynamic_pointer_cast<ListSpec>(specPtr);
+  } else if (dynamic_cast<const ListSpec*>(&specPtr)) {
+    const ListSpec* castPtr = dynamic_cast<const ListSpec*>(&specPtr);
     std::vector<SpecPtr> contents = castPtr->get_value();
     out += '[';
     specToString(out, contents[0]);
@@ -1791,7 +1796,7 @@ template<>
 MinSpecPtr instance(DoubleSpecPtr a, DoubleSpecPtr b) {
   MinSpecPtr out = MinSpecPtr(new MinSpec());
   out->set_lhs(a);
-  out->set_lhs(b);
+  out->set_rhs(b);
   return out;
 }
 
@@ -1799,7 +1804,7 @@ template<>
 MaxSpecPtr instance(DoubleSpecPtr a, DoubleSpecPtr b) {
   MaxSpecPtr out = MaxSpecPtr(new MaxSpec());
   out->set_lhs(a);
-  out->set_lhs(b);
+  out->set_rhs(b);
   return out;
 }
 
@@ -2066,7 +2071,7 @@ template<>
 MinSpecPtr instance(DoubleSpecPtr& a, DoubleSpecPtr& b) {
   MinSpecPtr out = MinSpecPtr(new MinSpec());
   out->set_lhs(a);
-  out->set_lhs(b);
+  out->set_rhs(b);
   return out;
 }
 
@@ -2074,7 +2079,7 @@ template<>
 MaxSpecPtr instance(DoubleSpecPtr& a, DoubleSpecPtr& b) {
   MaxSpecPtr out = MaxSpecPtr(new MaxSpec());
   out->set_lhs(a);
-  out->set_lhs(b);
+  out->set_rhs(b);
   return out;
 }
 

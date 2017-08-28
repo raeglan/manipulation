@@ -76,6 +76,7 @@ using boost::dynamic_pointer_cast;
   bool typesAreEqual(const SpecPtr& a, const SpecPtr& b);
   void getReferenceSpecs(std::vector<SpecPtr>& references, const SpecPtr& specPtr);
   void specToString(std::string& out, const SpecPtr& specPtr);
+  void specToString(std::string& out, const Spec& specPtr);
 
   std::string getReferenceName(const SpecPtr& ptr);
   void setReferenceName(const SpecPtr& ptr, std::string name);

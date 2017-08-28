@@ -140,13 +140,18 @@ SpecPtr FunctionDefinition::createInstance(const std::vector<SpecPtr>& args, Adv
 					if (refName.find(prefix) == std::string::npos)
 						continue;
 
-					std::string localName = refName.substr(prefix.size());
+					auto rit = referenceRenaming.find(refName);
+					if (rit != referenceRenaming.end()) {
+						setReferenceName(references[i], rit->second);
+					} else {
+						std::string localName = refName.substr(prefix.size());
 
-					auto it = constSpecMap.find(localName);
-					if (it != constSpecMap.end()) {
-						if (!it->second) {
-							std::string resolvedName = scope->getPrefix() + instName + "::" + localName;
-							setReferenceName(references[i], resolvedName);
+						auto it = constSpecMap.find(localName);
+						if (it != constSpecMap.end()) {
+							if (!it->second) {
+								std::string resolvedName = scope->getPrefix() + instName + "::" + localName;
+								setReferenceName(references[i], resolvedName);
+							}
 						}
 					}
 				}
