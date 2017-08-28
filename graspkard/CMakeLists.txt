@@ -139,19 +139,19 @@ include_directories(
 
 
 ## Declare a C++ executable
-add_executable(graspkard_node src/pr2_r_vel_controller.cpp)
+# add_executable(graspkard_node src/pr2_r_vel_controller.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(graspkard_node r_libs_visualization r_libs_conversions)
+# add_dependencies(graspkard_node r_libs_visualization r_libs_conversions)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(graspkard_node
-  ${catkin_LIBRARIES}
-  r_libs_visualization
-  r_libs_conversions
-  yaml-cpp
-)
+# target_link_libraries(graspkard_node
+#   ${catkin_LIBRARIES}
+#   r_libs_visualization
+#   r_libs_conversions
+#   yaml-cpp
+# )
 
 # add_executable(movement_server src/action_manager.cpp)
 
