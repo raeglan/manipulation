@@ -136,7 +136,7 @@ include_directories(
 
 ## Declare a C++ executable
  add_executable(suturo_action_server src/main_server.cpp src/GiskardActionServer.cpp)
- add_dependencies(suturo_action_server r_libs_visualization r_libs_conversions suturo_manipulation_msgs_generate_messages_cpp)
+ add_dependencies(suturo_action_server giskard r_libs_visualization r_libs_conversions suturo_manipulation_msgs_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(suturo_action_server
