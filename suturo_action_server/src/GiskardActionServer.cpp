@@ -2,7 +2,8 @@
 #include <suturo_manipulation_msgs/TypedParam.h>
 #include <suturo_manipulation_msgs/Float64Map.h>
 #include <control_msgs/GripperCommand.h>
-#include <giskard/GiskardLangParser.h>
+#include <giskard_suturo_parser/giskard_parser.hpp>
+#include <giskard_suturo_parser/parser.h>
 #include <eigen_conversions/eigen_kdl.h>
 
 #include <visualization_msgs/MarkerArray.h>
@@ -36,8 +37,6 @@ GiskardActionServer::GiskardActionServer(string _name)
 , server(nh, name, boost::bind(&GiskardActionServer::setGoal, this, _1), false)
 , collisionScene(collQueryMap)
 {
-	rGripperPub = nh.advertise<control_msgs::GripperCommand>("r_pr2_gripper_command", 1);
-	lGripperPub = nh.advertise<control_msgs::GripperCommand>("l_pr2_gripper_command", 1);
 	
 	posErrorPub = nh.advertise<suturo_manipulation_msgs::Float64Map>("pos_errors", 1);
 	velErrorPub = nh.advertise<suturo_manipulation_msgs::Float64Map>("vel_errors", 1);
@@ -55,18 +54,34 @@ GiskardActionServer::GiskardActionServer(string _name)
 	ros::param::get("/robot_description", urdf);
 	collisionScene.setRobotDescription(urdf);
 
-	posControllers["head_tilt_joint"] = {
-		nh.advertise<std_msgs::Float64>("/head_tilt_position_controller/command", 1),
-		-1,
-		0.0
-	};
-	posControllers["head_pan_joint"] = {
-		nh.advertise<std_msgs::Float64>("/head_pan_position_controller/command", 1),
-		-1,
-		0.0
-	};
+	string config;
+	if (nh.getParam("config", config)) {
+		try {
+			YAML::Node configNode = YAML::Load(config);
+			loadConfig(configNode);
+		} catch (const YAML::Exception& e) {
+			ROS_ERROR("Parsing of given configuration failed!");
+		}
+	} else {
+		ROS_INFO("No further configuration information given. Using default configuration.");
+	}
 
 	server.start();
+}
+
+void GiskardActionServer::loadConfig(YAML::Node configNode) {
+	if (configNode["position_controllers"]) {
+		map<string, string> ctrls = configNode["position_controllers"].as<map<string, string>>();
+		for (auto it = ctrls.begin(); it != ctrls.end(); it++) {
+			posControllers[it->first] = { nh.advertise<std_msgs::Float64>(it->second, 1), 0.0 };
+		}
+	}
+	if (configNode["gripper_controllers"]) {
+		map<string, string> ctrls = configNode["gripper_controllers"].as<map<string, string>>();
+		for (auto it = ctrls.begin(); it != ctrls.end(); it++) {
+			gripperControllers[it->first] = { nh.advertise<control_msgs::GripperCommand>(it->second, 1), 0.0, 0.0 };
+		}	
+	}
 }
 
 void GiskardActionServer::updatejointState(const sensor_msgs::JointState::ConstPtr& jointState) {
@@ -82,26 +97,23 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	terminateExecution = false;
 	lastFeedback = 0;
 	dT = 0;
-	rGripper_dT = 0;
-	lGripper_dT = 0;
 	lastUpdate = ros::Time::now();
-	rGripperIdx = -1;
-	lGripperIdx = -1;
 
 	visScalars.clear();
 	visVectors.clear();
 	visFrames.clear();
 
 	velControllers.clear();
-	controlledIndices.clear();
-	lastControllablePos = Eigen::VectorXd::Zero(0);
+	lastControllablePos.clear();
 	jointSet.clear();
 	queries.clear();
 	for (auto it = posControllers.begin(); it != posControllers.end(); it++) {
-		it->second.idx = -1;
 		it->second.dT = 0;
 	}
 
+	for (auto it = gripperControllers.begin(); it != gripperControllers.end(); it++) {
+		it->second.dT = 0;
+	}
 
 	controllerInitialized = false;
 	collisionScene.clearQueryLinks();
@@ -109,15 +121,15 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	
 	try {
 		Node yamlController = YAML::Load(goal->controller_yaml);
-		giskard::QPControllerSpec spec = yamlController.as<giskard::QPControllerSpec>();
-		controller = giskard::generate(spec);
+		giskard_core::QPControllerSpec spec = yamlController.as<giskard_core::QPControllerSpec>();
+		controller = giskard_core::generate(spec);
 	} catch (YAML::Exception e) {
 		ROS_ERROR("%s", e.what());
 		MoveRobotResult res;
 		res.reason_for_termination = MoveRobotResult::DEFECT_YAML;
 		try {
-			giskard::GiskardLangParser glParser;
-			giskard::QPControllerSpec spec = glParser.parseQPController(goal->controller_yaml);
+			giskard_suturo::GiskardLangParser glParser;
+			giskard_core::QPControllerSpec spec = glParser.parseQPController(goal->controller_yaml);
 			
 			YAML::Node yamlSpec = YAML::Load("");
 			yamlSpec["spec"] = spec;
@@ -126,21 +138,20 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 			fout << yamlSpec;
 			fout.close();
 
-			controller = giskard::generate(spec);
+			controller = giskard_core::generate(spec);
 
-		} catch (giskard::GiskardLangParser::EOSException e) {
+		} catch (const std::exception& e) {
 			ROS_ERROR("%s", e.what());
-			server.setAborted(res);
-			return;
-		} catch (giskard::GiskardLangParser::ParseException e) {
-			ROS_ERROR("%s", e.what());
-			server.setAborted(res);
-			return;
-		} catch (std::invalid_argument e) {
-			ROS_ERROR("%s", e.what());
-			res.reason_for_termination = MoveRobotResult::DEFECT_CONTROLLER;
-			server.setAborted(res);
-			return;
+
+			try {
+				giskard_suturo::GiskardPPParser gppparser;
+				giskard_core::QPControllerSpec spec = gppparser.parseFromString(goal->controller_yaml);
+				controller = giskard_core::generate(spec);			
+			} catch (const std::exception& e) {
+				ROS_ERROR("%s", e.what());				
+				server.setAborted(res);
+				return;
+			}
 		}
 
 	} catch (std::invalid_argument e) {
@@ -151,17 +162,14 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		return;
 	}
 	
-	const giskard::Scope& scope = controller.get_scope();
+	const giskard_core::Scope& scope = controller.get_scope();
 
-	vector<string> jointInputs = scope.get_joint_inputs();
+	vector<string> jointInputs = controller.get_input_names(giskard_core::tJoint);
 	unordered_set<string> controlledSet(controller.get_controllable_names().begin(), controller.get_controllable_names().end());
 	
 	const std::vector<std::string>& controllableNames = controller.get_controllable_names();
-	for (size_t i = 0; i < controllableNames.size(); i++) {
-		controlledIndices[controllableNames[i]] = i;
-	}
 
-	lastCommand = Eigen::VectorXd::Zero(controlledIndices.size());
+	lastCommand = controller.get_command_map();
 
 	bool bControlledJointsEnded = false;
 
@@ -170,31 +178,13 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 		jointSet.insert(jointName);
 		
 		if (controlledSet.find(jointName) != controlledSet.end()) {
-			if (bControlledJointsEnded) {
-				ROS_ERROR("The segment of controlled joints has ended, yet %s is added as controlled joint. This will not end well!", jointName.c_str());
-				MoveRobotResult res;
-				res.reason_for_termination = MoveRobotResult::DEFECT_CONTROLLER;
-				server.setAborted(res);
-				return;
-			}
-
-			velControllers.push_back(nh.advertise<std_msgs::Float64>("/" + jointName.substr(0, jointName.size() - 6) + "_velocity_controller/command", 1));
-			if (jointName.compare("r_gripper_joint") == 0)
-				rGripperIdx = i;
-			else if (jointName.compare("l_gripper_joint") == 0)
-				lGripperIdx = i;
-
-			if (posControllers.find(jointName) != posControllers.end())
-				posControllers[jointName].idx = i;
-		} else {
-			bControlledJointsEnded = true;
+			velControllers[jointName] = nh.advertise<std_msgs::Float64>("/" + jointName.substr(0, jointName.size() - 6) + "_velocity_controller/command", 1);
 		}
 	}
 
 	vector<suturo_manipulation_msgs::TypedParam> backlog;
 
-
-	auto inputMap = scope.get_inputs();
+	auto inputMap = scope.get_input_map();
 	for (auto it = jointInputs.begin(); it != jointInputs.end(); it++) {
 		inputMap.erase(*it);
 	}
@@ -202,12 +192,16 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	for (size_t i = 0; i < goal->params.size(); i++) {
 		TypedParam p = goal->params[i];
 
-		if (p.name.compare("r_gripper_effort") == 0) {
-			rGripperEffort = ::atof(p.value.c_str());
-			continue;
-		} else if (p.name.compare("l_gripper_effort") == 0) {
-			lGripperEffort = ::atof(p.value.c_str());
-			continue;
+		size_t effortSubstrIdx = p.name.find("_effort");
+		if (effortSubstrIdx != string::npos) {
+			string gripperName = p.name.substr(0, effortSubstrIdx);
+			auto gIt = gripperControllers.find(gripperName);
+			if (gIt != gripperControllers.end()) {
+				gIt->second.effort = ::atof(p.value.c_str());
+				continue;
+			} else {
+				ROS_WARN("Received effort parameter '%s', but can't find gripper '%s'! Interpreting it as normal parameter...", p.name.c_str(), gripperName.c_str());
+			}
 		}
 
 		inputMap.erase(p.name);
@@ -356,7 +350,7 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 
 	generateVisualsFromScope(scope);
 
-	state = Eigen::VectorXd::Zero(scope.get_input_size());
+	state = Eigen::VectorXd::Zero(controller.get_input_size());
 
 	for (auto p: backlog) {
 		switch (p.type) {
@@ -418,10 +412,10 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	}
 
 	ROS_INFO("Setting velocity commands to zero!");
-	for (unsigned int i=0; i < velControllers.size(); i++) {
+	for (auto it = velControllers.begin(); it != velControllers.end(); it++) {
 		std_msgs::Float64 command;
 		command.data = 0.0;
-		velControllers[i].publish(command);
+		it->second.publish(command);
 	}
 
 	visManager.clearAllMarkers(&visPub);
@@ -435,14 +429,16 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 	dT = (now - lastUpdate).toSec();
 	lastUpdate = now;
 
-	Eigen::VectorXd vels = Eigen::VectorXd::Zero(controlledIndices.size());
+	map<string, double> vels;
+	map<string, double> pos;
 
 	for (size_t i = 0; i < jointStateMsg.name.size(); i++) {
 		auto it = jointSet.find(jointStateMsg.name[i]);
 		if (it != jointSet.end()) {
-			controller.get_scope().set_input(jointStateMsg.name[i], jointStateMsg.position[i], state);
-			if (controlledIndices.find(jointStateMsg.name[i]) != controlledIndices.end()) {
-				vels[controlledIndices[jointStateMsg.name[i]]] = jointStateMsg.velocity[i];
+			controller.set_input(state, jointStateMsg.name[i], jointStateMsg.position[i]);
+			if (lastCommand.find(jointStateMsg.name[i]) != lastCommand.end()) {
+				vels[jointStateMsg.name[i]] = jointStateMsg.velocity[i];
+				pos[jointStateMsg.name[i]] = jointStateMsg.position[i];
 			}
 		}
 	}
@@ -451,23 +447,20 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 	//Eigen::VectorXd velErrors = Eigen::VectorXd::Zero(controlledIndices.size());
 	double dTjs = (jointStateMsg.header.stamp - lastUpdate).toSec();
 
-	if (lastControllablePos.size() == controlledIndices.size()) {
+	if (lastControllablePos.size() == vels.size()) {
 		suturo_manipulation_msgs::Float64Map posErrorMsg;
 		suturo_manipulation_msgs::Float64Map velErrorMsg;
-		for (auto it = controlledIndices.begin(); it != controlledIndices.end(); it++) {
+		for (auto it = vels.begin(); it != vels.end(); it++) {
 			posErrorMsg.names.push_back(it->first);
-			posErrorMsg.values.push_back(state[it->second] - (lastControllablePos[it->second] + lastCommand[it->second] * dTjs));
+			posErrorMsg.values.push_back(pos[it->first] - (lastControllablePos[it->first] + lastCommand[it->first] * dTjs));
 			velErrorMsg.names.push_back(it->first);
-			velErrorMsg.values.push_back(vels[it->second] - lastCommand[it->second]);
-			lastControllablePos[it->second] = state[it->second];
+			velErrorMsg.values.push_back(it->second - lastCommand[it->first]);
+			lastControllablePos[it->first] = pos[it->first];
 		}
 		posErrorPub.publish(posErrorMsg);
 		velErrorPub.publish(velErrorMsg);
 	} else {
-		lastControllablePos = Eigen::VectorXd::Zero(controlledIndices.size());
-		for (auto it = controlledIndices.begin(); it != controlledIndices.end(); it++) {
-			lastControllablePos[it->second] = state[it->second];
-		}
+		lastControllablePos = pos;
 	}
 
 
@@ -498,49 +491,42 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 	if (controller.update(state, nWSR)) {
 
 
-		Eigen::VectorXd commands = controller.get_command();
+		map<string, double> commands = controller.get_command_map();
 		lastCommand = commands;
 
-		for (unsigned int i=0; i < velControllers.size(); i++) {
-			std_msgs::Float64 command;
-			command.data = commands[i];
-			velControllers[i].publish(command);
-		}
 		lastUpdate = ros::Time::now();
+		for (auto it = commands.begin(); it != commands.end(); it++) {
+			double position = pos[it->first];
 
-		for (auto it = posControllers.begin(); it != posControllers.end(); it++) {
-			if (it->second.idx > -1) {
-				it->second.dT += dT;
-				if (it->second.dT > 0.2) {
+			auto vIt = velControllers.find(it->first);
+			if (vIt != velControllers.end()) {
+				std_msgs::Float64 command;
+				command.data = it->second;
+				vIt->second.publish(command);
+			}
+			
+			auto pIt = posControllers.find(it->first);
+			if (pIt != posControllers.end()) {
+				pIt->second.dT += dT;
+				if (pIt->second.dT > 0.2) {
 					std_msgs::Float64 command;
-					command.data = state[it->second.idx] + commands[it->second.idx] * it->second.dT;
-					it->second.pub.publish(command);
-					it->second.dT = 0;
-				}		
+					command.data = position + it->second * pIt->second.dT;
+					pIt->second.pub.publish(command);
+					pIt->second.dT = 0;
+				}	
 			}
-		}
 
-		if (rGripperIdx > -1) {
-			rGripper_dT += dT;
-			if (rGripper_dT > 0.2) {
-				control_msgs::GripperCommand cmd;
-				cmd.position = state[rGripperIdx] + commands[rGripperIdx] * rGripper_dT;
-				cmd.max_effort = rGripperEffort;
+			auto gIt = gripperControllers.find(it->first);
+			if (gIt != gripperControllers.end()) {
+				gIt->second.dT += dT;	
+				if (gIt->second.dT > 0.2) {
+					control_msgs::GripperCommand cmd;
+					cmd.position = position + it->second * gIt->second.dT;
+					cmd.max_effort = gIt->second.effort;
 
-				rGripperPub.publish(cmd);
-				rGripper_dT = 0;
-			}
-		}
-
-		if (lGripperIdx > -1) {
-			lGripper_dT += dT;
-			if (lGripper_dT > 0.2) {
-				control_msgs::GripperCommand cmd;
-				cmd.position = state[lGripperIdx] + commands[lGripperIdx] * lGripper_dT;
-				cmd.max_effort = lGripperEffort;
-
-				lGripperPub.publish(cmd);
-				lGripper_dT = 0;
+					gIt->second.pub.publish(cmd);
+					gIt->second.dT = 0;
+				}
 			}
 		}
 
@@ -597,7 +583,7 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 	}
 }
 
-void GiskardActionServer::generateVisualsFromScope(const giskard::Scope& scope) {
+void GiskardActionServer::generateVisualsFromScope(const giskard_core::Scope& scope) {
 	map<string, KDL::Expression<double>::Ptr > scalars = scope.get_scalar_expressions();
 	for (auto it = scalars.begin(); it != scalars.end(); it++) {
 		string name = it->first;
@@ -642,11 +628,23 @@ void GiskardActionServer::generateVisualsFromScope(const giskard::Scope& scope) 
 }
 
 bool GiskardActionServer::decodeDouble(const std::string& name, string value) {
-	return controller.get_scope().set_input(name, ::atof(value.c_str()), state);
+	try {
+		controller.set_input(state, name, ::atof(value.c_str()));
+		return true;
+	} catch (const std::exception& e) {
+		cerr << e.what() << endl;
+	}
+	return false;
 }
 
 bool GiskardActionServer::decodeDouble(const std::string& name, double value) {
-	return controller.get_scope().set_input(name, value, state);
+	try {
+		controller.set_input(state, name, value);
+		return true;
+	} catch (const std::exception& e) {
+		cerr << e.what() << endl;
+	}
+	return false;
 }
 
 bool GiskardActionServer::decodeVector(const std::string& name, string vector) {
@@ -656,13 +654,23 @@ bool GiskardActionServer::decodeVector(const std::string& name, string vector) {
 	ss >> x;
 	ss >> y;
 	ss >> z;
-	return controller.get_scope().set_input(name, 
-		Eigen::Vector3d(x,y,z),
-		state);
+	try {
+		controller.set_input(state, name, Eigen::Vector3d(x,y,z));
+		return true;
+	} catch (const std::exception& e) {
+		cerr << e.what() << endl;
+	}
+	return false;
 }
 
 bool GiskardActionServer::decodeVector(const std::string& name, Eigen::Vector3d vector) {
-	return controller.get_scope().set_input(name, vector, state);
+	try {
+		controller.set_input(state, name, vector);
+		return true;
+	} catch (const std::exception& e) {
+		cerr << e.what() << endl;
+	}
+	return false;
 }
 
 bool GiskardActionServer::decodeTransform(const std::string& name, string transform) {
@@ -680,14 +688,26 @@ bool GiskardActionServer::decodeTransform(const std::string& name, string transf
 	Eigen::Vector3d position = Eigen::Vector3d(x,y,z);
 	Eigen::Vector3d axis = Eigen::Vector3d(ax,ay,az);
 	double angle = a;
-	return controller.get_scope().set_input(name, axis, angle, position, state);
+	try {
+		controller.set_input(state, name, axis, angle, position);
+		return true;
+	} catch (const std::exception& e) {
+		cerr << e.what() << endl;
+	}
+	return false;
 }
 
 bool GiskardActionServer::decodeTransform(const std::string& name, tf::Transform transform) {
 	tf::Vector3 pos = transform.getOrigin();
     tf::Vector3 rot = transform.getRotation().getAxis();
     double angle = transform.getRotation().getAngle();
-	return controller.get_scope().set_input(name, 
+	try {
+		controller.set_input(state, name, 
 			Eigen::Vector3d(rot.x(), rot.y(), rot.z()), angle,
-			Eigen::Vector3d(pos.x(), pos.y(), pos.z()), state);
+			Eigen::Vector3d(pos.x(), pos.y(), pos.z()));
+		return true;
+	} catch (const std::exception& e) {
+		cerr << e.what() << endl;
+	}
+	return false;
 }

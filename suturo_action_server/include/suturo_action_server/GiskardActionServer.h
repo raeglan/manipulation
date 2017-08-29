@@ -9,7 +9,7 @@
 
 #include <r_libs/VisualizationManager.h>
 
-#include <giskard/giskard.hpp>
+#include <giskard_core/giskard_core.hpp>
 
 #include <unordered_map>
 #include <unordered_set>
@@ -30,6 +30,7 @@ public:
 	GiskardActionServer(string _name);
 
 	virtual void setGoal(const suturo_manipulation_msgs::MoveRobotGoalConstPtr& goal);
+	virtual void loadConfig(YAML::Node config);
 
 	virtual void updateLoop() {};
 	void jointStateCallback(const sensor_msgs::JointState jointStateMsg);
@@ -53,31 +54,35 @@ protected:
 	ros::NodeHandle nh;
 	actionlib::SimpleActionServer<suturo_manipulation_msgs::MoveRobotAction> server;
 
-	giskard::QPController controller;
+	giskard_core::QPController controller;
 	Eigen::VectorXd state;
-	vector<ros::Publisher> velControllers;
+	map<std::string, ros::Publisher> velControllers;
 	
 	struct posController {
 		ros::Publisher pub;
-		int idx;
 		double dT;
 	};
 	unordered_map<string, posController> posControllers;
 
-	unordered_map<string, size_t> controlledIndices;
+	struct gripperController {
+		ros::Publisher pub;
+		double effort;
+		double dT;
+	}; 
+	unordered_map<string, gripperController> gripperControllers;
 
 	unordered_set<string> jointSet;
 
 	vector<boost::shared_ptr<AQuery>> queries;
 
-	Eigen::VectorXd lastCommand;
-	Eigen::VectorXd lastControllablePos;
+	map<string, double> lastCommand;
+	map<string, double> lastControllablePos;
 	ros::Time lastUpdate;
 
 private:
 	mutex jsMutex;
 
-	void generateVisualsFromScope(const giskard::Scope& scope);
+	void generateVisualsFromScope(const giskard_core::Scope& scope);
 	
 	bool newJS;
 	sensor_msgs::JointState currentJS;

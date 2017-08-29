@@ -1,0 +1,58 @@
+import "package://giskard_suturo_parser/gpplib/math.gpp";
+
+def list<softC> axisAlignment(vec3 axisA, vec3 axisB, scalar weight) {
+	dot = axisA * axisB;
+	err = 1 - dot;
+	return [softC(err, err, weight, dot, "Axis alignment")];
+};
+
+def list<softC> rotationAlignment(rotation rotA, rotation rotB, scalar weight) {
+	return axisAlignment(rotA * unitX, rotB * unitX, weight) + axisAlignment(rotA * unitZ, rotB * unitZ, weight);
+};
+
+def list<softC> positionAlignment(vec3 posA, vec3 posB, scalar weight) {
+	dist = norm(posA - posB);
+	err = -dist;
+	return [softC(err, err, weight, dist, "Position alignment")];
+};
+
+def list<softC> frameAlignment(frame frameA, frame frameB, scalar weight) {
+	return rotationAlignment(frameA.rot, frameB.rot, weight) + positionAlignment(frameA.pos, frameB.pos, weight);
+};
+
+def list<softC> lookAt(frame camera, vec3 position, scalar weight) {
+	lookDir = camera.rot * unitX;
+	goalDir = position - camera.pos;
+	dot = lookDir * goalDir;
+	err = norm(goalDir) - dot;
+	return [softC(err, err, weight, dot, "look at")];
+};
+
+def list<softC> ballGrasp(frame gripper, vec3 ball, scalar radius, scalar weight) {
+	gripperY = gripper.rot * unitY;
+	moveDir = ball - gripper.pos;
+	dot = moveDir * gripperY;
+	rotErr = -dot;
+	moveScale = min(1, radius / max(0.02, abs(dot)));
+	dist = norm(moveDir);
+	distErr = moveScale * -dist;
+	return [softC(rotErr, rotErr, weight, dot, "ball grasp: orientation"), softC(distErr, distErr, weight, dist, "ball grasp: position")];
+};
+
+def list<softC> avoidSupportingPlane(frame gripper, frame plane, scalar gRadius, scalar weight) {
+	planeZ = plane.rot * unitZ;
+	gripperX = gripper.rot * unitX;
+	gripperY = gripper.rot * unitY;
+	
+	# Distance of gripper to plane 
+	gPlaneDist = planeZ * (gripper.pos - plane.pos);
+
+	# Measure of steepness
+	steepDot = gripperX * planeZ;
+
+	# Measure of roll
+	roll = 1 - abs(gripperY * planeZ);
+	rollErr = min(max(gRadius - gPlaneDist - gRadius, 0) / gRadius, 1) - roll;
+
+	return [softC(rollErr, 1, weight, roll, "avd s.plane: roll"), softC(-1, -steepDot, weight, steepDot, "avd s.plane: steep")]; 
+};

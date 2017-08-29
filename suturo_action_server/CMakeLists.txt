@@ -8,6 +8,7 @@ find_package(octomap REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
   giskard_core
+  giskard_suturo_parser
   message_generation
   message_runtime
   roscpp

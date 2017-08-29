@@ -15,7 +15,8 @@ find_package(catkin REQUIRED COMPONENTS
   tf_conversions
   rviz
   visualization_msgs
-  giskard
+  giskard_core
+  giskard_suturo_parser
 )
 
 add_definitions(-std=c++11 -g)

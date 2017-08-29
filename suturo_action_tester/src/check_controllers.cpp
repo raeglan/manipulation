@@ -19,8 +19,8 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <giskard/giskard.hpp>
-#include <giskard/GiskardLangParser.h>
+#include <giskard_core/giskard_core.hpp>
+#include <giskard_suturo_parser/giskard_parser.hpp>
 #include <dirent.h>
 
 #include <string>
@@ -52,14 +52,14 @@ int main(int argc, char **argv)
         string filename = ent->d_name;
         string filePath = dirPath + filename;
         
-        giskard::QPControllerSpec spec;
+        giskard_core::QPControllerSpec spec;
         bool isController = false;
         bool failed = false;
         if (filename.find(".yaml") != string::npos) {
           total ++;
           try {
             YAML::Node node = YAML::LoadFile(filePath);
-            spec = node.as<giskard::QPControllerSpec>();
+            spec = node.as<giskard_core::QPControllerSpec>();
             isController = true;
           } catch (const YAML::Exception& e) {
             cerr << "Error while parsing '" << (filePath) << "':" << endl << e.what() << endl; 
@@ -80,13 +80,13 @@ int main(int argc, char **argv)
             fileStr.assign((std::istreambuf_iterator<char>(t)),
               std::istreambuf_iterator<char>());
 
-            giskard::GiskardLangParser glParser;
+            giskard_suturo::GiskardLangParser glParser;
             spec = glParser.parseQPController(fileStr);
             isController = true;
-          } catch (giskard::GiskardLangParser::EOSException e) {
+          } catch (giskard_suturo::GiskardLangParser::EOSException e) {
             cerr << "Error while parsing '" << (filePath) << "':" << std::endl << e.what() << std::endl; 
             failed = true;
-          } catch (giskard::GiskardLangParser::ParseException e) {
+          } catch (giskard_suturo::GiskardLangParser::ParseException e) {
             cerr << "Error while parsing '" << (filePath) << "':" << std::endl << e.what() << std::endl; 
             failed = true;
           }
@@ -94,24 +94,24 @@ int main(int argc, char **argv)
         
         if (isController) {
           try {
-            giskard::QPController controller = giskard::generate(spec);
+            giskard_core::QPController controller = giskard_core::generate(spec);
             fout << filename << std::endl;
 
-            std::map<const std::string, giskard::Scope::ScopeInput> inputs = controller.get_scope().get_inputs();
+            std::map<std::string, const giskard_core::Scope::InputPtr&> inputs = controller.get_input_map();
             for(auto it = inputs.begin(); it != inputs.end(); it++) {
-              if (it->second.type != giskard::Scope::Joint) {
+              if (it->second->get_type() != giskard_core::tJoint) {
                 fout << "   ";
-                switch (it->second.type) {
-                  case giskard::Scope::Scalar:
+                switch (it->second->get_type()) {
+                  case giskard_core::tScalar:
                     fout << "double  " << it->first << std::endl;
                   break;
-                  case giskard::Scope::Vector:
+                  case giskard_core::tVector3:
                     fout << "vector3  " << it->first << std::endl;
                   break;
-                  case giskard::Scope::Rotation:
+                  case giskard_core::tRotation:
                     fout << "rotation  " << it->first << std::endl;
                   break;
-                  case giskard::Scope::Frame:
+                  case giskard_core::tFrame:
                     fout << "frame  " << it->first << std::endl;
                   break;
                   default:

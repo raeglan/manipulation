@@ -15,7 +15,7 @@ add_definitions(-std=c++11 -g)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES plate_publisher
-#  CATKIN_DEPENDS roscpp
+  CATKIN_DEPENDS roscpp suturo_perception_msgs
 #  DEPENDS system_lib
 )
 
