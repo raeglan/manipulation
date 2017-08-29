@@ -102,6 +102,7 @@ private:
 	unordered_map<string, TVecPair> visVectors;
 	unordered_map<string, KDL::Expression<KDL::Frame>::Ptr> visFrames;
 
+	ros::Publisher jsCmdPub;
 	ros::Publisher posErrorPub, velErrorPub;
 	ros::Publisher visPub, visScalarPub;
 	VisualizationManager visManager;

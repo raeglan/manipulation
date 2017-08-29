@@ -44,6 +44,8 @@ GiskardActionServer::GiskardActionServer(string _name)
 	visPub = nh.advertise<visualization_msgs::MarkerArray>("visualization", 1);
 	visScalarPub = nh.advertise<suturo_manipulation_msgs::Float64Map>("debug_scalar", 1);
 
+	jsCmdPub = nh.advertise<sensor_msgs::JointState>("/simulator/commands", 1);
+
 	jsSub = nh.subscribe("/joint_states", 1, &GiskardActionServer::updatejointState, this);
 
 	visManager.addNamespace(vPoint, "Points");
@@ -81,6 +83,10 @@ void GiskardActionServer::loadConfig(YAML::Node configNode) {
 		for (auto it = ctrls.begin(); it != ctrls.end(); it++) {
 			gripperControllers[it->first] = { nh.advertise<control_msgs::GripperCommand>(it->second, 1), 0.0, 0.0 };
 		}	
+	}
+	if (configNode["joint_state_command_topic"]) {
+		string topicName = configNode["joint_state_command_topic"].as<string>();
+		jsCmdPub = nh.advertise<sensor_msgs::JointState>(topicName, 1);
 	}
 }
 
@@ -490,13 +496,23 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 
 	if (controller.update(state, nWSR)) {
 
-
 		map<string, double> commands = controller.get_command_map();
 		lastCommand = commands;
+
+		sensor_msgs::JointState jsCmd;
+        jsCmd.name.reserve(commands.size());
+        jsCmd.position.reserve(commands.size());
+        jsCmd.velocity.reserve(commands.size());
+        jsCmd.effort.reserve(commands.size());
 
 		lastUpdate = ros::Time::now();
 		for (auto it = commands.begin(); it != commands.end(); it++) {
 			double position = pos[it->first];
+			
+			jsCmd.name.push_back(it->first);
+			jsCmd.velocity.push_back(it->second);
+            jsCmd.position.push_back(0);
+            jsCmd.effort.push_back(0);
 
 			auto vIt = velControllers.find(it->first);
 			if (vIt != velControllers.end()) {
@@ -529,6 +545,8 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 				}
 			}
 		}
+
+		jsCmdPub.publish(jsCmd);
 
 		/// ---------------- VISUALIZATION --------------------
 
