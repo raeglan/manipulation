@@ -1,0 +1,20 @@
+- git:
+    local-name: expressiongraph
+    uri: https://github.com/SemRoCo/expressiongraph.git
+    version: master
+- git:
+    local-name: qpoases
+    uri: https://github.com/SemRoCo/qpOASES.git
+    version: master
+- git:
+    local-name: giskard_core
+    uri: https://github.com/ARoefer/giskard.git
+- git:
+    local-name: giskard_ide
+    uri: https://github.com/ARoefer/giskard_ide.git
+- git:
+    local-name: giskard_parser_wrappers
+    uri: https://github.com/ARoefer/giskard_parser_wrappers.git
+- git:
+    local-name: iai_naive_kinematics_sim
+    uri: https://github.com/code-iai/iai_naive_kinematics_sim.git
