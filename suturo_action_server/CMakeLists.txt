@@ -7,7 +7,7 @@ project(suturo_action_server)
 find_package(octomap REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
-  giskard
+  giskard_core
   message_generation
   message_runtime
   roscpp
@@ -28,7 +28,7 @@ add_definitions(-std=c++11 -g)
 
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS suturo_manipulation_msgs giskard r_libs roscpp tf_conversions
+  CATKIN_DEPENDS suturo_manipulation_msgs giskard_core r_libs roscpp tf_conversions
 )
 
 ###########
