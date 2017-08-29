@@ -25,8 +25,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-
+ 
  add_executable(plate_publisher src/plate_publisher.cpp)
+ add_dependencies(plate_publisher suturo_perception_msgs_generate_messages_cpp)
 
  target_link_libraries(plate_publisher
   ${catkin_LIBRARIES}
