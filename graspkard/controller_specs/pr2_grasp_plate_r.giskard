@@ -50,7 +50,7 @@ scope = {
 	gio_z = gio_rot * unitZ;
 
 	# Grasping
-	grasp_goal = 0.01;
+	grasp_goal = 0.05;
 	grasp_err = grasp_goal - j_gripper;
 
 	ang_scale = 10;

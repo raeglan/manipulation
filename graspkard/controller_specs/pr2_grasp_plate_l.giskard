@@ -56,7 +56,7 @@ scope = {
 	#VIS__gio__obj_pos = obj_rot * gio_pos;
 
 	# Grasping
-	grasp_goal = 0.02;
+	grasp_goal = 0.05;
 	grasp_err = grasp_goal - j_gripper;
 
 	ang_scale = 10;
