@@ -11,6 +11,7 @@ scope:
   - gripper_ctrl: {double-mul: [ctrl_sign, 20]}
 
   - feedback: {abs: pos_diff}
+  - VIS__vel: gripper_ctrl
 
 controllable-constraints:
   - controllable-constraint: [neg_vel_limit_gripper, pos_vel_limit_gripper, 1, l_gripper_joint]
@@ -20,6 +21,6 @@ soft-constraints:
 
 hard-constraints:
   - hard-constraint:
-    - {double-sub: [-0.001, gripper_joint]}
+    - {double-sub: [-0.01, gripper_joint]}
     - {double-sub: [0.1, gripper_joint]}
     - gripper_joint
