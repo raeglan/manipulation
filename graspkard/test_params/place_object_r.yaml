@@ -1,0 +1,15 @@
+- name: goal_position
+  type: transform
+  const: false
+  value: goal_position base_link
+
+- name: object_in_gripper
+  type: transform
+  const: false
+  value: object_in_gripper r_wrist_roll_link
+
+- name: object_height
+  type: double
+  const: true
+  value: 0.14
+

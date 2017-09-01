@@ -1,6 +1,5 @@
 <launch>
 	<node pkg="suturo_action_server" type="suturo_action_server" name="movement_server" output="screen">
-		<remap from="~r_pr2_gripper_command" to="/r_gripper_controller/command"/>
-		<remap from="~l_pr2_gripper_command" to="/l_gripper_controller/command"/>
+		<param name="config" textfile="$(find suturo_action_server)/config/pr2_action_server_config.yaml"/>
 	</node>
 </launch>

@@ -3,7 +3,7 @@
   const: true
   value: 0.0
 
-- name: l_gripper_effort
+- name: l_gripper_joint_effort
   type: double
   const: true
   value: 50.0

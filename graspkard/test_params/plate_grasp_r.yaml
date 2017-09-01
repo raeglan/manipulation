@@ -1,0 +1,24 @@
+- name: obj_frame
+  type: transform
+  const: false
+  value: plate1 base_link
+
+- name: edge_r
+  type: double
+  const: true
+  value: 0.11
+
+- name: edge_z
+  type: double
+  const: true
+  value: 0.016
+
+- name: edge_d
+  type: double
+  const: true
+  value: 0.025
+
+- name: edge_ang
+  type: double
+  const: true
+  value: 1.92

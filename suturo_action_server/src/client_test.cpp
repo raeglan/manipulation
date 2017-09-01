@@ -23,6 +23,12 @@ namespace YAML {
         rhs.type = suturo_manipulation_msgs::TypedParam::TRANSFORM;
       } else if (type.compare("elapsedtime") == 0) {
         rhs.type = suturo_manipulation_msgs::TypedParam::ELAPSEDTIME;
+      } else if (type.compare("vector") == 0) {
+        rhs.type = suturo_manipulation_msgs::TypedParam::VECTOR;
+      } else if (type.compare("collisionquery") == 0) {
+        rhs.type = suturo_manipulation_msgs::TypedParam::COLLISIONQUERY;
+      } else if (type.compare("visualize") == 0) {
+        rhs.type = suturo_manipulation_msgs::TypedParam::VISUALIZE;
       } else {
         cerr << "Type '" << type << "' of node '" << rhs.name << "' is unknown!" << endl;
         return false;
@@ -87,15 +93,15 @@ int main(int argc, char **argv)
   ac.sendGoal(goal);
 
   //wait for the action to return
-  bool finished_before_timeout = ac.waitForResult(ros::Duration(20.0));
+  // bool finished_before_timeout = ac.waitForResult(ros::Duration(20.0));
 
-  if (finished_before_timeout) {
-    actionlib::SimpleClientGoalState state = ac.getState();
-    ROS_INFO("Action finished: %s",state.toString().c_str());
-  } else {
-    //ac.cancelGoal();
-    ROS_INFO("Action did not finish before the time out.");
-  }
+  // if (finished_before_timeout) {
+  //   actionlib::SimpleClientGoalState state = ac.getState();
+  //   ROS_INFO("Action finished: %s",state.toString().c_str());
+  // } else {
+  //   //ac.cancelGoal();
+  //   ROS_INFO("Action did not finish before the time out.");
+  // }
 
   //exit
   return 0;

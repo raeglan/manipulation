@@ -96,6 +96,16 @@ public:
                                             float a = 1.f, 
                                             string frame_id = "odom_combined");
 
+    void annotatedPoint(vector<visualization_msgs::Marker> &array,
+                                            int ns, 
+                                            Vector3d pos,
+                                            string text, 
+                                            float r = 1.f, 
+                                            float g = 1.f, 
+                                            float b = 1.f, 
+                                            float a = 1.f, 
+                                            string frame_id = "odom_combined");
+
     void poseMarker(vector<visualization_msgs::Marker> &array, 
                     int ns, 
                     Affine3d pose, 

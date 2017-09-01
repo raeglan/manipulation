@@ -1,0 +1,178 @@
+pr2_place_control_l.yaml
+   double  cylinder_height
+   frame  cylinder_in_gripper
+   double  cylinder_width
+   frame  target_frame
+------------------------------------------------------
+pr2_move_and_flip_r.giskard
+   frame  goal_frame
+   double  goal_radius
+   frame  spatula_in_gripper
+   double  spatula_radius
+------------------------------------------------------
+torso_pos.giskard
+   double  deltaTime
+   double  goal_tilt
+------------------------------------------------------
+pr2_move_and_flip_l.giskard
+   frame  goal_frame
+   double  goal_radius
+   frame  spatula_in_gripper
+   double  spatula_radius
+------------------------------------------------------
+pr2_cut_position_l.giskard
+   frame  cake_frame
+   double  cake_height
+   double  cake_length
+   double  cake_width
+   double  handle_length
+   frame  knife_ee_frame
+   double  knife_height
+   double  slice_width
+------------------------------------------------------
+pr2_push_cake_r.giskard
+   frame  cake_frame
+   frame  knife_in_wrist
+------------------------------------------------------
+pr2_look_at.giskard
+   frame  focal_point
+------------------------------------------------------
+pr2_grasp_control_l.yaml
+   frame  cylinder_frame
+   double  cylinder_height
+   double  cylinder_width
+------------------------------------------------------
+knife_grasp_l.yaml
+   double  handle_height
+   double  handle_length
+   frame  target_frame
+------------------------------------------------------
+pr2_move_cake_l.giskard
+   frame  cake
+   frame  knife_in_gripper
+   frame  plate
+------------------------------------------------------
+pr2_release_r.giskard
+   double  gripper_opening
+   frame  start_pose
+------------------------------------------------------
+knife_grasp_r.yaml
+   double  handle_height
+   double  handle_length
+   frame  target_frame
+------------------------------------------------------
+gripper_control_l.yaml
+   double  gripper_goal
+------------------------------------------------------
+pr2_push_cake_l.giskard
+   frame  cake_frame
+   frame  knife_in_wrist
+------------------------------------------------------
+nodding.giskard
+   double  pan_goal
+   double  time
+------------------------------------------------------
+pr2_detach_knife_l.giskard
+   frame  knife_frame_wrist
+   frame  rack_frame
+------------------------------------------------------
+pr2_detach_knife_r.giskard
+   frame  knife_frame_wrist
+   frame  rack_frame
+------------------------------------------------------
+pr2_grasp_fingerHandle_r.giskard
+   double  handle_depth
+   frame  handle_frame
+   double  handle_width
+------------------------------------------------------
+gripper_control_r.yaml
+   double  gripper_goal
+------------------------------------------------------
+pr2_upper_body_joint_control.yaml
+   double  l_elbow_flex_joint_goal
+   double  l_forearm_roll_joint_goal
+   double  l_shoulder_lift_joint_goal
+   double  l_shoulder_pan_joint_goal
+   double  l_upper_arm_roll_joint_goal
+   double  l_wrist_flex_joint_goal
+   double  l_wrist_roll_joint_goal
+   double  r_elbow_flex_joint_goal
+   double  r_forearm_roll_joint_goal
+   double  r_shoulder_lift_joint_goal
+   double  r_shoulder_pan_joint_goal
+   double  r_upper_arm_roll_joint_goal
+   double  r_wrist_flex_joint_goal
+   double  r_wrist_roll_joint_goal
+   double  torso_lift_joint_goal
+------------------------------------------------------
+pr2_grasp_fingerHandle_l.giskard
+   double  handle_depth
+   frame  handle_frame
+   double  handle_width
+------------------------------------------------------
+pr2_move_cake_r.giskard
+   frame  cake
+   frame  knife_in_gripper
+   frame  plate
+------------------------------------------------------
+pr2_grasp_control_r.yaml
+   frame  cylinder_frame
+   double  cylinder_height
+   double  cylinder_width
+------------------------------------------------------
+pr2_right_arm_joint_control.yaml
+   double  elbow_flex_joint_goal
+   double  forearm_roll_joint_goal
+   double  shoulder_lift_joint_goal
+   double  shoulder_pan_joint_goal
+   double  upper_arm_roll_joint_goal
+   double  wrist_flex_joint_goal
+   double  wrist_roll_joint_goal
+------------------------------------------------------
+pr2_release_l.giskard
+   double  gripper_opening
+   frame  start_pose
+------------------------------------------------------
+pr2_cut_position_r.giskard
+   frame  cake_frame
+   double  cake_height
+   double  cake_length
+   double  cake_width
+   double  handle_length
+   frame  knife_ee_frame
+   double  knife_height
+   double  slice_width
+------------------------------------------------------
+pr2_self_collision_test.giskard
+   frame  goal_frame_r
+   vector3  goal_pos_l
+------------------------------------------------------
+pr2_grasp_plate_r.giskard
+   double  edge_angle
+   double  edge_depth
+   double  edge_radius
+   double  edge_z
+   frame  plate_frame
+------------------------------------------------------
+pr2_cut_r.yaml
+   frame  cake_frame
+   double  cake_height
+   double  cake_length
+   double  cake_width
+   double  knife_height
+   frame  knife_in_gripper
+   double  slice_width
+------------------------------------------------------
+pr2_place_control_r.yaml
+   double  cylinder_height
+   frame  cylinder_in_gripper
+   double  cylinder_width
+   frame  target_frame
+------------------------------------------------------
+pr2_grasp_plate_l.giskard
+   double  edge_angle
+   double  edge_depth
+   double  edge_radius
+   double  edge_z
+   frame  plate_frame
+------------------------------------------------------

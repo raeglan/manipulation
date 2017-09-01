@@ -1,9 +1,9 @@
 - name: gripper_goal
   type: double
   const: true
-  value: 0.0
+  value: 0.00
 
-- name: r_gripper_effort
+- name: r_gripper_joint_effort
   type: double
   const: true
   value: 100.0

@@ -5,19 +5,19 @@ project(graspkard)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
-  suturo_manipulation_msgs
-  sensor_msgs
-  std_msgs
-  giskard
-  message_generation
-  message_runtime
-  r_libs
-  roscpp
-  tf_conversions
+  # geometry_msgs
+  # suturo_manipulation_msgs
+  # sensor_msgs
+  # std_msgs
+  # giskard
+  # message_generation
+  # message_runtime
+  # r_libs
+  # roscpp
+  # tf_conversions
 )
 
-add_definitions(-std=c++11 -g)
+# add_definitions(-std=c++11 -g)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -110,7 +110,7 @@ add_definitions(-std=c++11 -g)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES graspkard
-  CATKIN_DEPENDS geometry_msgs suturo_manipulation_msgs giskard r_libs roscpp
+#  CATKIN_DEPENDS geometry_msgs suturo_manipulation_msgs giskard r_libs roscpp
 #  DEPENDS system_lib
 )
 
@@ -121,12 +121,12 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-  ${r_libs_INCLUDE_DIRS}
-  ${YAML_CPP_INCLUDE_DIRS}
-)
+# include_directories(
+#   include
+#   ${catkin_INCLUDE_DIRS}
+#   ${r_libs_INCLUDE_DIRS}
+#   ${YAML_CPP_INCLUDE_DIRS}
+# )
 
 ## Declare a C++ library
 # add_library(graspkard
@@ -139,19 +139,19 @@ include_directories(
 
 
 ## Declare a C++ executable
-add_executable(graspkard_node src/pr2_r_vel_controller.cpp)
+# add_executable(graspkard_node src/pr2_r_vel_controller.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(graspkard_node r_libs_visualization r_libs_conversions)
+# add_dependencies(graspkard_node r_libs_visualization r_libs_conversions)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(graspkard_node
-  ${catkin_LIBRARIES}
-  r_libs_visualization
-  r_libs_conversions
-  yaml-cpp
-)
+# target_link_libraries(graspkard_node
+#   ${catkin_LIBRARIES}
+#   r_libs_visualization
+#   r_libs_conversions
+#   yaml-cpp
+# )
 
 # add_executable(movement_server src/action_manager.cpp)
 

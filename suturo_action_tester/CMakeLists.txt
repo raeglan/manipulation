@@ -15,6 +15,8 @@ find_package(catkin REQUIRED COMPONENTS
   tf_conversions
   rviz
   visualization_msgs
+  giskard_core
+  giskard_suturo_parser
 )
 
 add_definitions(-std=c++11 -g)
@@ -93,7 +95,7 @@ add_library(${PROJECT_NAME} ${SRC_FILES} ${MOCS})
 add_dependencies(suturo_action_tester ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})#suturo_action_tester_generate_messages_cpp)
 
 ## Declare a C++ executable
-# add_executable(suturo_action_tester_node src/suturo_action_tester_node.cpp)
+add_executable(controller_checker src/check_controllers.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -102,6 +104,10 @@ add_dependencies(suturo_action_tester ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}
   ${QT_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(controller_checker
   ${catkin_LIBRARIES}
 )
 

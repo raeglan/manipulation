@@ -1,21 +1,24 @@
 scope = {
-	j_head_pan = input(0);
-	j_head_tilt = input(1);
+	j_head_pan = inputJoint("head_pan_joint");
+	j_head_tilt = inputJoint("head_tilt_joint");
 	
-	pan_goal = input(2);
-	time = input(3);
+	pan_goal = inputScalar("pan_goal");
+	time = inputScalar("time");
 
 
 	panErr = pan_goal + cos(time * 2) * 0.4 - j_head_pan;
 
 	tiltErr = sin(time * 2) * 0.4 + 0.1 - j_head_tilt; 
 
-	feedback = abs(panErr + tiltErr)
+	feedback = abs(panErr + tiltErr);
+
+	clock_center = vec3(0.6, 0, 1.2);
+	VIS__clockhand__clock_center = vec3(abs(sin(time * 2) * 0.4), cos(time * 2) * 0.4, sin(time * 2) * 0.4)
 }
 
 controllableConstraints = {
-	controllableConstraint(-0.6, 0.6, 0.01, 0, "j_head_pan");
-	controllableConstraint(-0.6, 0.6, 0.01, 1, "j_head_tilt")
+	controllableConstraint(-0.6, 0.6, 0.01, "head_pan_joint");
+	controllableConstraint(-0.6, 0.6, 0.01, "head_tilt_joint")
 }
 
 softConstraints = {

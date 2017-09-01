@@ -1,0 +1,8 @@
+unitX = vec3(1,0,0);
+unitY = vec3(0,1,0);
+unitZ = vec3(0,0,1);
+
+def vec3 normalize(vec3 v) {
+	return v * 1.0 / norm(v); 
+};
+
