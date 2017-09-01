@@ -18,3 +18,6 @@
 - git:
     local-name: iai_naive_kinematics_sim
     uri: git@github.com:code-iai/iai_naive_kinematics_sim.git
+- git:
+    local-name: suturo_msgs
+    uri: git@github.com:suturo16/suturo_msgs.git
