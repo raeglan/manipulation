@@ -36,6 +36,7 @@ GiskardActionServer::GiskardActionServer(string _name)
 , nh("~")
 , server(nh, name, boost::bind(&GiskardActionServer::setGoal, this, _1), false)
 , collisionScene(collQueryMap)
+, visRefFrameName("base_link")
 {
 	
 	posErrorPub = nh.advertise<suturo_manipulation_msgs::Float64Map>("pos_errors", 1);
@@ -87,6 +88,9 @@ void GiskardActionServer::loadConfig(YAML::Node configNode) {
 	if (configNode["joint_state_command_topic"]) {
 		string topicName = configNode["joint_state_command_topic"].as<string>();
 		jsCmdPub = nh.advertise<sensor_msgs::JointState>(topicName, 1);
+	}
+	if (configNode["visualization_target_frame"]) {
+		visRefFrameName = configNode["visualization_target_frame"].as<string>();
 	}
 }
 
@@ -560,7 +564,7 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 			KDL::Vector pKDL = it->second->value();
 			Eigen::Vector3d p;
 			tf::vectorKDLToEigen(pKDL, p);
-			visManager.annotatedPoint(ma.markers, vPoint, p, it->first, 0, 0.8f, 0, 1, "base_link");
+			visManager.annotatedPoint(ma.markers, vPoint, p, it->first, 0, 0.8f, 0, 1, visRefFrameName);
 		}
 
 		for (auto it = visVectors.begin(); it != visVectors.end(); it++) {
@@ -569,14 +573,14 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 			Eigen::Vector3d va, vb;
 			tf::vectorKDLToEigen(vaKDL, va);
 			tf::vectorKDLToEigen(vbKDL, vb);
-			visManager.annotatedVector(ma.markers, vVector, vb, va, it->first, 0, 0.8f, 0, 1, "base_link");
+			visManager.annotatedVector(ma.markers, vVector, vb, va, it->first, 0, 0.8f, 0, 1, visRefFrameName);
 		}
 
 		for (auto it = visFrames.begin(); it != visFrames.end(); it++) {
 			KDL::Frame fKDL = it->second->value();
 			Eigen::Affine3d f = Affine3d::Identity();
 			tf::transformKDLToEigen(fKDL,f);
-			visManager.poseMarker(ma.markers, vFrame, f, 0.1, 1.f, "base_link");
+			visManager.poseMarker(ma.markers, vFrame, f, 0.1, 1.f, visRefFrameName);
 		}
 
 		visManager.endDrawCycle(ma.markers);

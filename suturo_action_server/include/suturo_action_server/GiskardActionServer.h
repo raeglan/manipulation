@@ -79,6 +79,7 @@ protected:
 	map<string, double> lastControllablePos;
 	ros::Time lastUpdate;
 
+	string visRefFrameName;
 private:
 	mutex jsMutex;
 
