@@ -234,12 +234,6 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 				break;
 			case TypedParam::VECTOR:
 				break;
-			case TypedParam::COLLISIONQUERY:
-				if (!p.isConst) {
-					queries.push_back(boost::shared_ptr<AQuery>(new CollisionQuery(this, p.value, collQueryMap)));	
-					collisionScene.addQueryLink(p.value);
-				}
-				break;
 			case TypedParam::VISUALIZE: {
 				istringstream ss(p.value);
 				string primaryValue, refPoint;

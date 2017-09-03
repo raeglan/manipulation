@@ -25,8 +25,6 @@ namespace YAML {
         rhs.type = suturo_manipulation_msgs::TypedParam::ELAPSEDTIME;
       } else if (type.compare("vector") == 0) {
         rhs.type = suturo_manipulation_msgs::TypedParam::VECTOR;
-      } else if (type.compare("collisionquery") == 0) {
-        rhs.type = suturo_manipulation_msgs::TypedParam::COLLISIONQUERY;
       } else if (type.compare("visualize") == 0) {
         rhs.type = suturo_manipulation_msgs::TypedParam::VISUALIZE;
       } else {
