@@ -1,0 +1,59 @@
+# Constructors
+vec3(scalar, scalar, scalar)
+vec3(rotation)
+rotation(vec3, scalar)
+rotation(const scalar x, const scalar y, const scalar z, const scalar w)
+frame(rotation, vec3)
+controllableC(scalar low, scalar up, scalar weight, string joint)
+hardC(scalar low, scalar up, scalar expression)
+softC(scalar low, scalar up, scalar weight, scalar expression, string name)
+[expression1, expression2, ...] # All expressions must be of same type
+
+# Inputs
+inputScalar(string)
+inputJoint(string)
+inputRot(string)
+inputFrame(string)
+
+# Infix operators
+<scalar> + <scalar>
+<scalar> - <scalar> 
+<scalar> * <scalar> 
+<scalar> / <scalar> 
+<scalar> * <vec3> 
+<vec3> * <scalar> 
+<vec3> + <vec3> 
+<vec3> - <vec3>
+<vec3> * <vec3> # Dot product 
+<rotation> * <vec3> 
+<frame> * <vec3> 
+<frame> * <frame>
+<list<A>> + <list<A>>
+<string> + <string>
+
+# Attributes 
+<vec3>.x
+<vec3>.y
+<vec3>.z
+<frame>.pos
+<frame>.rot
+
+# Arithmetic functions
+abs(scalar)
+sin(scalar)
+cos(scalar)
+tan(scalar)
+asin(scalar)
+acos(scalar)
+atan(scalar)
+fmod(scalar nominator, scalar denominator)
+max(scalar, scalar)
+min(scalar, scalar)
+if(scalar >=0, scalar then, scalar else)
+norm(vec3)
+slerp(rotation from, rotation to, scalar)
+originOf(frame)
+orientationOf(frame)
+cross(vec3, vec3)
+invert(rotation)
+invert(frame)
