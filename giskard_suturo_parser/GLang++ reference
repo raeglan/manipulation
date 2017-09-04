@@ -8,6 +8,7 @@ controllableC(scalar low, scalar up, scalar weight, string joint)
 hardC(scalar low, scalar up, scalar expression)
 softC(scalar low, scalar up, scalar weight, scalar expression, string name)
 [expression1, expression2, ...] # All expressions must be of same type
+QPController(list<controllableC>, list<softC>, list<hardC>)
 
 # Inputs
 inputScalar(string)
