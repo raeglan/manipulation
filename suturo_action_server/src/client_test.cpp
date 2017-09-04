@@ -39,8 +39,8 @@ namespace YAML {
 // ARGUMENTS: Controller.yaml, Joints.yaml, Params.yaml, feedback
 int main(int argc, char **argv)
 {
-  if (argc < 5) {
-    cerr << "4 arguments needed: Controller.yaml, Joints.yaml, Params.yaml, feedback" << endl;
+  if (argc < 4) {
+    cerr << "3 arguments needed: Controller file, Params.yaml, feedback" << endl;
     return 0;
   }
 
@@ -75,18 +75,12 @@ int main(int argc, char **argv)
   t.close();
 
   try {
-    goal.controlled_joints = YAML::LoadFile(argv[2]).as<vector<string>>();
+    goal.params = YAML::LoadFile(argv[2]).as<vector<suturo_manipulation_msgs::TypedParam>>();
   } catch (const YAML::Exception& e) {
-    cerr << "Parsing of joint names failed! File: " << argv[2] << endl;
+    cerr << "Parsing of params failed! File: " << argv[2] << endl;
   }
 
-  try {
-    goal.params = YAML::LoadFile(argv[3]).as<vector<suturo_manipulation_msgs::TypedParam>>();
-  } catch (const YAML::Exception& e) {
-    cerr << "Parsing of params failed! File: " << argv[3] << endl;
-  }
-
-  goal.feedbackValue = argv[4];
+  goal.feedbackValue = argv[3];
 
   ac.sendGoal(goal);
 
