@@ -633,6 +633,8 @@ void GiskardActionServer::generateVisualsFromScope(const giskard_core::Scope& sc
 			visFrames[visName] = it->second;	
 		}
 	}
+
+	cout << "Found " << visScalars.size() << " scalars, " << visPoints.size() << " points, " << visVectors.size() << " vectors and " << visFrames.size() << " frames to visualize." << endl;
 }
 
 bool GiskardActionServer::decodeDouble(const std::string& name, string value) {

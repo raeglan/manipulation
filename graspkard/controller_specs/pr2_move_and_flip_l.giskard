@@ -101,7 +101,10 @@ scope = {
 	VIS__obstruction_coord = obstruction_coord;
 	VIS__obs_ctrl = low_obs_ctrl;
 	VIS__lookDir__opt_pos = c_vDir;
-	VIS__w2opt__wrist_pos = w2opt
+	VIS__w2opt__wrist_pos = w2opt;
+	VIS__z_low__wrist_pos = z_pos_low * unitZ;
+	VIS__z_high__wrist_pos = z_pos_high * unitZ;
+	VIS__upright__goal_pos = upright_err * unitZ
 }
 
 controllableConstraints = {

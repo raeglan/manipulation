@@ -34,6 +34,7 @@ scope = {
 	elbow = torso_lift * shoulder_pan * shoulder_lift * upper_arm_roll * elbow_flex ;
 	wrist = elbow * forearm_roll * wrist_flex * wrist_roll;
 	knife = wrist * inputFrame("knife_in_gripper");
+	knife_height = inputScalar("knife_height");
 
 	# 
 	cpv = (plate_pos - cake_pos);          # Vector connecting cake and plate
@@ -54,6 +55,7 @@ scope = {
 
 	knife_pos = knife.pos;
 	knife_z = knife_pos.z;
+	knife_z_err = plate_pos.z + 0.015 - knife_z + knife_height;
 
 	kcv = knife_pos - cake_pos;
 	knife_orth_dist = kcv * x_align_goal;
@@ -95,7 +97,7 @@ softConstraints = {
 	softConstraint(knife_align_y_err, knife_align_y_err, weightRotationGoal, knife_align_y, "Knife align y");
 	softConstraint(knife_align_z_err, knife_align_z_err, weightRotationGoal, knife_align_z, "Knife align z");
 	softConstraint(0,0, weightPositionGoal, knife_orth_dist, "Keep knife steady");
-	softConstraint(0,0, weightPositionGoal, knife_z, "Keep knife level")
+	softConstraint(knife_z_err,knife_z_err, weightPositionGoal, knife_z, "Keep knife level")
 	#softConstraint(1, 1, weightRotationGoal, input(9), "Knife roll")
 }	
 
