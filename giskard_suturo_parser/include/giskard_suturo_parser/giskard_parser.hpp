@@ -252,10 +252,11 @@ private:
 							a = resolveChainedExpression<VectorSubtractionSpec>(da,db);
 						}
 						aT = VECTOR;
+					} else {
+						printBinaryTypeError(first, last1, first2, current, aT, bT, c);
+						throwParseError(current, end, "Unexpected type");	
 					}
 
-					printBinaryTypeError(first, last1, first2, current, aT, bT, c);
-					throwParseError(current, end, "Unexpected type");
 				} else {
 					throw EOSException();
 				}
@@ -292,7 +293,6 @@ private:
 							DoubleSpecPtr db = static_pointer_cast<DoubleSpec>(b);						
 							a = resolveChainedExpression<DoubleMultiplicationSpec>(da, db);
 							aT = DOUBLE;
-							break;
 						} else if (aT == DOUBLE && bT == VECTOR) {
 							DoubleSpecPtr da = static_pointer_cast<DoubleSpec>(a); 
 							VectorSpecPtr db = static_pointer_cast<VectorSpec>(b);
@@ -301,7 +301,6 @@ private:
 							temp->set_vector(db);
 							a = temp;
 							aT = VECTOR;
-							break;
 						} else if (aT == VECTOR && bT == DOUBLE) {
 							DoubleSpecPtr da = static_pointer_cast<DoubleSpec>(b); 
 							VectorSpecPtr db = static_pointer_cast<VectorSpec>(a);
@@ -310,7 +309,6 @@ private:
 							temp->set_vector(db);
 							a = temp;
 							aT = VECTOR;
-							break;
 						} else if (aT == VECTOR && bT == VECTOR) {
 							VectorSpecPtr da = static_pointer_cast<VectorSpec>(a); 
 							VectorSpecPtr db = static_pointer_cast<VectorSpec>(b);
@@ -319,7 +317,6 @@ private:
 							temp->set_rhs(db);
 							a = temp;
 							aT = DOUBLE;
-							break;
 						} else if (aT == ROTATION && bT == VECTOR) {
 							RotationSpecPtr da = static_pointer_cast<RotationSpec>(a); 
 							VectorSpecPtr db = static_pointer_cast<VectorSpec>(b);
@@ -328,7 +325,6 @@ private:
 							temp->set_vector(db);
 							a = temp;
 							aT = VECTOR;
-							break;
 						} else if (aT == FRAME && bT == VECTOR) {
 							FrameSpecPtr da = static_pointer_cast<FrameSpec>(a); 
 							VectorSpecPtr db = static_pointer_cast<VectorSpec>(b);
@@ -337,23 +333,21 @@ private:
 							temp->set_vector(db);
 							a = temp;
 							aT = VECTOR;
-							break;
 						} else if (aT == FRAME && bT == FRAME) {
 							FrameSpecPtr da = static_pointer_cast<FrameSpec>(a); 
 							FrameSpecPtr db = static_pointer_cast<FrameSpec>(b);						
 							a = resolveChainedExpression<FrameMultiplicationSpec>(da, db);
 							aT = FRAME;
-							break;
 						} else if (aT == ROTATION && bT == ROTATION) {
 							RotationSpecPtr da = static_pointer_cast<RotationSpec>(a); 
 							RotationSpecPtr db = static_pointer_cast<RotationSpec>(b);						
 							a = resolveChainedExpression<RotationMultiplicationSpec>(da, db);
 							aT = ROTATION;
-							break;
+						} else {
+							printBinaryTypeError(first1, last1, first2, current, aT, bT, c);
+							aT = NONE;
 						}
 						
-						printBinaryTypeError(first1, last1, first2, current, aT, bT, c);
-						aT = NONE;
 						break;
 					default:
 						if (aT == DOUBLE && bT == DOUBLE) {
@@ -361,10 +355,11 @@ private:
 							DoubleSpecPtr db = static_pointer_cast<DoubleSpec>(b);
 							spec = resolveChainedExpression<DoubleDivisionSpec>(da, db);	
 							aT = DOUBLE;
-							break;
+						} else {
+							printBinaryTypeError(first1, last1, first2, current, aT, bT, c);
+							throwParseError(current, end, "Unexpected type");
 						}
-						printBinaryTypeError(first1, last1, first2, current, aT, bT, c);
-						throwParseError(current, end, "Unexpected type");
+						break;
 					}
 				} else {
 					throw EOSException();
