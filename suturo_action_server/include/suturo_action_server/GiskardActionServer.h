@@ -20,28 +20,97 @@ using namespace std;
 
 struct AQuery; 
 
+
+/**
+ * @brief      Class for giskard action server. Sets up action server, threads and callbacks.
+ */
 class GiskardActionServer {
+	
+	/**
+	 * @brief      Enumeration for visualization types.
+	 */
 	enum VisTypes : int {
 		vPoint,
 		vVector,
 		vFrame
 	};
 public:
+
+	/**
+	 * @brief      Constructor for giskard action server. 
+	 * Constructor for giskard action server. During construction, an actionlib action server is created and command and visualization topics are advertised. Additional configuration information is read from the parameter ~config on the parameter server.
+	 * 
+	 * @param[in]  _name  The name that the actionlib action server will be created with
+	 */
 	GiskardActionServer(string _name);
 
+	/**
+	 * @brief      Goal callback for the action server
+	 *
+	 * @param[in]  goal  The received goal message
+	 */
 	virtual void setGoal(const suturo_manipulation_msgs::MoveRobotGoalConstPtr& goal);
+	
+	/**
+	 * @brief      Configures the action server using a yaml configuration. 
+	 * Configures the action server using a yaml configuration. The yaml structure must be a map.
+	 * The map is scanned for the following keys:
+	 * 	- position_controllers: Defines which joints are supposed be controlled using position commands  
+	 * 	- gripper_controllers: Defines whoch joints should be controlled as grippers
+	 * 	- joint_state_command_topic: Defines topic to which commands are published as sensor_msgs::JointState
+	 * 	- visualization_target_frame: Names the root frame for visualization
+	 * @param[in]  config  Configuration as yaml structure 
+	 */
 	virtual void loadConfig(YAML::Node config);
 
-	virtual void updateLoop() {};
-	void jointStateCallback(const sensor_msgs::JointState jointStateMsg);
+	/**
+	 * @brief      Callback function for receiving joint states
+	 * @param[in]  jointStateMsg  The new joint state message
+	 */
+	void updateJointState(const sensor_msgs::JointState::ConstPtr& jointStateMsg);
 
-	void updatejointState(const sensor_msgs::JointState::ConstPtr& jointState);
+	/**
+	 * @brief      Performs one controller update cycle
+	 * This function performs one controller update. It evaluates all parameter queries, generates and sends new commands and updates the visualization.
+	 * @param[in]  jointState  The current joint state
+	 */
+	void updateController(const sensor_msgs::JointState jointState);
 
+	/**
+	 * @brief      Decodes a scalar parameter from a string and writes it to the state vector.
+	 * @param[in]  name   Name of the corresponding input in the current controller
+	 * @param[in]  value  Scalar encoded as string
+	 * @return     Success of decoding and value assignment.
+	 */
 	bool decodeDouble(const string& name, string value);
+	
+	/**
+	 * @brief      Assigns a scalar parameter to the state vector.
+	 * @param[in]  name   Name of the corresponding input in the current controller
+	 * @param[in]  value  Scalar
+	 * @return     Success of value assignment.
+	 */
 	bool decodeDouble(const string& name, double value);
+	
+	/**
+	 * @brief      Decodes a vector parameter from a string and writes it to the state vector.
+	 * @param[in]  name   Name of the corresponding input in the current controller
+	 * @param[in]  vector  Vector encoded as string: "X Y Z"
+	 * @return     Success of decoding and value assignment.
+	 */
 	bool decodeVector(const string& name, string vector);
+	
+	/**
+	 * @brief      Assigns a vector parameter to the state vector.
+	 * @param[in]  name   Name of the corresponding input in the current controller
+	 * @param[in]  vector  Vector 
+	 * @return     Success of value assignment.
+	 */
 	bool decodeVector(const string& name, Eigen::Vector3d vector);
+	
+	
 	bool decodeTransform(const string& name, string transform);
+	
 	bool decodeTransform(const string& name, tf::Transform transform);
 
 

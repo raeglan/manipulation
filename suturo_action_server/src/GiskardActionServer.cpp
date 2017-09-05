@@ -47,7 +47,7 @@ GiskardActionServer::GiskardActionServer(string _name)
 
 	jsCmdPub = nh.advertise<sensor_msgs::JointState>("/simulator/commands", 1);
 
-	jsSub = nh.subscribe("/joint_states", 1, &GiskardActionServer::updatejointState, this);
+	jsSub = nh.subscribe("/joint_states", 1, &GiskardActionServer::updateJointState, this);
 
 	visManager.addNamespace(vPoint, "Points");
 	visManager.addNamespace(vVector, "Vectors");
@@ -94,7 +94,7 @@ void GiskardActionServer::loadConfig(YAML::Node configNode) {
 	}
 }
 
-void GiskardActionServer::updatejointState(const sensor_msgs::JointState::ConstPtr& jointState) {
+void GiskardActionServer::updateJointState(const sensor_msgs::JointState::ConstPtr& jointState) {
 	if(jsMutex.try_lock()) {
 		currentJS = *jointState;
 		newJS = true;
@@ -389,7 +389,7 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	while (!server.isPreemptRequested() && ros::ok() && !terminateExecution) {
 		if (jsMutex.try_lock()) {
 			if (newJS) {
-				jointStateCallback(currentJS);
+				updateController(currentJS);
 				newJS = false;
 			}
 			jsMutex.unlock();
@@ -428,7 +428,7 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 }	
 
 
-void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState jointStateMsg) {
+void GiskardActionServer::updateController(const sensor_msgs::JointState jointStateMsg) {
 	ros::Time now = ros::Time::now();
 	dT = (now - lastUpdate).toSec();
 	lastUpdate = now;
@@ -479,8 +479,6 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 		ROS_ERROR("Query evaluation failed! Skipping this update step.");
 		return;
 	}
-
-	updateLoop();
 
 	if (!controllerInitialized) {
 		if (controller.start(state, nWSR)) {
