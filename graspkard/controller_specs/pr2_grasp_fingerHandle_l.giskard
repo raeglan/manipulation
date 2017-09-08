@@ -126,7 +126,7 @@ softConstraints = {
 	softConstraint(x_low_err, x_hig_err, weightPositionGoal, gh_xd, "Depth align");
 	softConstraint(-1, pos_ctrl, weightPositionGoal, pos_err, "X-Axis align");
 
-	#softConstraint(elbow_low, 100, weightPositionGoal, elbow_pos.z, "Elbow");
+	softConstraint(elbow_low, 100, weightPositionGoal, elbow_pos.z, "Elbow");
 	softConstraint(tilt_err, tilt_err, weightRotationGoal, tilt_ctrl, "Tilt align");
 	softConstraint(yaw_roll_err, yaw_roll_err, weightRotationGoal, yaw_roll_ctrl, "Yaw Roll align")
 }	
