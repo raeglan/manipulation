@@ -65,14 +65,6 @@ public:
 		Eigen::Vector3d inScene;
 	};
 
-	struct bBox{
-		bBox(float x, float y, float z):x(x), y(y), z(z){};
-		bBox(): x(0), y(0), z(0){};
-		float x;
-		float y;
-		float z;
-	};
-
 	typedef MutexMap<string, CollisionScene::SQueryPoints> QueryMap;
 
 	CollisionScene(QueryMap &_map);
@@ -90,13 +82,24 @@ private:
 		Eigen::Vector3d negBound;
 	};
 
+	struct bBox{
+		bBox(float x, float y, float z):x(x), y(y), z(z){};
+		bBox(): x(0), y(0), z(0){};
+		float x;
+		float y;
+		float z;
+	};
+
 	void traverseTree(SQueryPoints& qPoint, const Eigen::Affine3d tLink, const bBox &linkBox);
 
 	Eigen::Vector3d calcIntersection(const Eigen::Vector3d &v, const struct bBox &box);
 
+	void setRefFrame(const string& pRefFrame);
+
 	ros::NodeHandle nh;
 	ros::CallbackQueue cbQueue;
 	ros::Timer updateTimer;
+
 
 	ros::Subscriber sub;
 	urdf::Model robot;
@@ -106,7 +109,7 @@ private:
 	set<string> links;
 	tf::TransformListener tfListener;
 	Eigen::Affine3d transform;
-	string refFrame = "base_link";
+	string refFrame;
 	string octomapFrame;
 	octomap::OcTree *octree = NULL;
 
