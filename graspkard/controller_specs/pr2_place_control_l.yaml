@@ -203,6 +203,6 @@ hard-constraints:
       - {double-sub: [-0.1, wrist_flex_joint]}
       - wrist_flex_joint
   - hard-constraint:
-      - {double-sub: [0.0, gripper_joint]}
+      - {double-sub: [-0.05, gripper_joint]}
       - {double-sub: [0.1, gripper_joint]}
       - gripper_joint
