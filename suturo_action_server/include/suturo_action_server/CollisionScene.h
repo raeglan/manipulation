@@ -90,11 +90,9 @@ private:
 		Eigen::Vector3d negBound;
 	};
 
-	void traverseTree(SQueryPoints& qPoint, const octomap::OcTreeNode *node, Eigen::Vector3d nodeCoordinates, const Eigen::Affine3d tLink, const bBox &linkBox);
+	void traverseTree(SQueryPoints& qPoint, const Eigen::Affine3d tLink, const bBox &linkBox);
 
 	Eigen::Vector3d calcIntersection(const Eigen::Vector3d &v, const struct bBox &box);
-
-	octomap::OcTreeNode* findClosestChild(const octomap::OcTreeNode* node, Eigen::Vector3d nodeCoordinates, SQueryPoints& qPoint);
 
 	ros::NodeHandle nh;
 	ros::CallbackQueue cbQueue;
@@ -108,7 +106,8 @@ private:
 	set<string> links;
 	tf::TransformListener tfListener;
 	Eigen::Affine3d transform;
-	string refFrame;
+	string refFrame = "base_link";
+	string octomapFrame;
 	octomap::OcTree *octree = NULL;
 
 	mutex octoMapMutex;
