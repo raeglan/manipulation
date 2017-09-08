@@ -37,7 +37,7 @@ scope = {
 
 	# Keep the elbow afloat
 	elbow_pos = elbow.pos;
-	elbow_low = 1 - elbow_pos.z;
+	elbow_low = 0.8 - elbow_pos.z;
 
 
 	grasp_err = 0.1;
