@@ -28,7 +28,7 @@ void CollisionScene::update(const octomap_msgs::Octomap &omap) {
 	//occupancy_map_monitor::OccupancyMapMonitor monitor();
 	//occupancy_map_monitor::DepthImageOctomapUpdater updater();
 
-	refFrame = omap.header.frame_id;
+	octomapFrame = omap.header.frame_id;
 
 	octomap::AbstractOcTree* tree = octomap_msgs::binaryMsgToMap(omap);
 
@@ -131,25 +131,8 @@ Vector3d CollisionScene::calcIntersection(const Vector3d &v, const bBox &box) {
 	return Vector3d();
 }
 
-octomap::OcTreeNode* CollisionScene::findClosestChild(const octomap::OcTreeNode* node, Vector3d nodeCoordinates, SQueryPoints& qPoint){
-	octomap::OcTreeNode* closestChild = NULL;
 
-	for(int i = 0; i<8; i++){
-		if(node->childExists(i)){
-			const octomap::OcTreeNode* child = node->getChild(i);
-			if(child->getOccupancy() > 0){
-				Vector3d childCoordinates;
-
-
-
-			}
-		}
-	}
-	return closestChild;
-}
-
-
-void CollisionScene::traverseTree(SQueryPoints& qPoint, const octomap::OcTreeNode *node, Vector3d nodeCoordinates, const Affine3d tLink, const bBox &linkBox){
+void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, const bBox &linkBox){
 	//tf::TransformBroadcaster br;
 	//tf::Transform transform;
 
@@ -158,32 +141,15 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const octomap::OcTreeNod
 
 	//br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom_combined", "asdLink"));
 
-	
-	if(!node->hasChildren()){
-		return;
-	}
-	
-	
-
-	octomap::OcTreeNode* closestChild = findClosestChild(node, nodeCoordinates, qPoint);
-
-
-	if(closestChild == NULL)
-		return;
-
-	traverseTree(qPoint, closestChild, qPoint.inScene, tLink, linkBox);
-	return;
-	
-
-
-
-
-
-
 	double dist = -1;
 
+	// octoMapMutex.lock();
+	if(octree == NULL){
+		// octoMapMutex.unlock();
+		return;
+	}
 
-	Vector3d linkPos = tLink.translation() - tLink.rotation() * Vector3d(linkBox.x, 0, 0);; //
+	Vector3d linkPos = tLink.translation() - tLink.rotation() * Vector3d(linkBox.x, 0, 0); //- tLink.rotation() * Vector3d(linkBox.x, 0, 0);
 
 	Vector3d linkToCell;
 	Vector3d pointOnCell;
@@ -195,17 +161,6 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const octomap::OcTreeNod
 	Vector3d vecInLink_best;
 	Vector3d pointOnLink_link_best;
 	Vector3d pointOnLink_baselink_best;
-
-
-
-
-
-
-
-
-
-
-
 
 	for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
         end=octree->end_leafs(); it!= end; ++it)
@@ -268,12 +223,12 @@ void CollisionScene::updateQuery() {
 	// TODO: MAGIC
 	ros::Time t1 = ros::Time::now();
 
-	if (links.size() == 0 || refFrame.size() == 0)
+	if (links.size() == 0 || octomapFrame.size() == 0)
 		return;
 
 	tf::StampedTransform temp;
-	tfListener.waitForTransform("base_link", refFrame, ros::Time(0), ros::Duration(0.5));
-	tfListener.lookupTransform("base_link", refFrame, ros::Time(0), temp);
+	tfListener.waitForTransform(refFrame, octomapFrame, ros::Time(0), ros::Duration(0.5));
+	tfListener.lookupTransform(refFrame, octomapFrame, ros::Time(0), temp);
 
 	Affine3d tPoint = Affine3d::Identity();
 	tf::transformTFToEigen (temp, tPoint);
@@ -281,8 +236,8 @@ void CollisionScene::updateQuery() {
 
 	for (const string& linkName: links) {
 			try {
-				tfListener.waitForTransform(refFrame, linkName, ros::Time(0), ros::Duration(0.5));
-				tfListener.lookupTransform(refFrame, linkName, ros::Time(0), temp);
+				tfListener.waitForTransform(octomapFrame, linkName, ros::Time(0), ros::Duration(0.5));
+				tfListener.lookupTransform(octomapFrame, linkName, ros::Time(0), temp);
 
 				Affine3d tLink = Affine3d::Identity();
 				tf::transformTFToEigen (temp, tLink);
@@ -291,7 +246,7 @@ void CollisionScene::updateQuery() {
 
 				// Iterate over Octomap
 
-				octomap::OcTreeNode* rootNode = octree->getRoot();
+				//octomap::OcTreeNode *node = octree->getRoot();
 
 				SQueryPoints qPoint;
 
@@ -305,9 +260,7 @@ void CollisionScene::updateQuery() {
 					}
 				}
 
-				Vector3d rootCoordinates;
-
-				traverseTree(qPoint, rootNode, rootCoordinates, tLink, it->second);
+				traverseTree(qPoint, tLink, it->second);
 
 				qPoint.inScene = tPoint * qPoint.inScene;//
 
@@ -317,7 +270,7 @@ void CollisionScene::updateQuery() {
 
 			} catch(tf::TransformException ex) {
 				cerr << ex.what() << endl;
-				ROS_WARN("TF-Query for link '%s' in '%s' failed!", linkName.c_str(), refFrame.c_str());
+				ROS_WARN("TF-Query for link '%s' in '%s' failed!", linkName.c_str(), octomapFrame.c_str());
 			}
 		//}
 	}
