@@ -14,11 +14,17 @@
 #include <mutex>
 
 #include <pcl_ros/point_cloud.h>
+//#include "suturo_action_server/Octree.h"
 
 using namespace std;
 
 #define READER_PID 0
 #define WRITER_PID 1
+
+namespace suturo_octree{
+	class Octree;
+}
+
 
 template<typename K, typename V>
 class MutexMap {
@@ -114,9 +120,10 @@ private:
 	set<string> links;
 	tf::TransformListener tfListener;
 	Eigen::Affine3d transform;
-	string refFrame;
+	string controllerRefFrame;
 	string octomapFrame;
 	octomap::OcTree *octree = NULL;
+	suturo_octree::Octree* octree2 = NULL;
 
 	mutex octoMapMutex;
 };
