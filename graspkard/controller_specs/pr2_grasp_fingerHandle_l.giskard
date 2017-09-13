@@ -37,7 +37,7 @@ scope = {
 
 	# Keep the elbow afloat
 	elbow_pos = elbow.pos;
-	elbow_low = 1 - elbow_pos.z;
+	elbow_low = 0.8 - elbow_pos.z;
 
 
 	grasp_err = 0.1;
@@ -126,7 +126,7 @@ softConstraints = {
 	softConstraint(x_low_err, x_hig_err, weightPositionGoal, gh_xd, "Depth align");
 	softConstraint(-1, pos_ctrl, weightPositionGoal, pos_err, "X-Axis align");
 
-	#softConstraint(elbow_low, 100, weightPositionGoal, elbow_pos.z, "Elbow");
+	softConstraint(elbow_low, 100, weightPositionGoal, elbow_pos.z, "Elbow");
 	softConstraint(tilt_err, tilt_err, weightRotationGoal, tilt_ctrl, "Tilt align");
 	softConstraint(yaw_roll_err, yaw_roll_err, weightRotationGoal, yaw_roll_ctrl, "Yaw Roll align")
 }	
@@ -137,7 +137,7 @@ hardConstraints = {
 	# # Left arm constraints
 	hardConstraint(-0.5646 - j_shoulder_pan,  2.1353 - j_shoulder_pan,   j_shoulder_pan);
 	hardConstraint(-0.3536 - j_shoulder_lift, 1.2963 - j_shoulder_lift,  j_shoulder_lift);
-	hardConstraint(-3.75   - j_upper_arm_roll,  0.65 - j_upper_arm_roll, j_upper_arm_roll);
+	hardConstraint(-0.65   - j_upper_arm_roll,  3.75 - j_upper_arm_roll, j_upper_arm_roll);
 	hardConstraint(-2.1213 - j_elbow_flex,     -0.15 - j_elbow_flex,     j_elbow_flex);
 	hardConstraint(-2.0    - j_wrist_flex,      -0.1 - j_wrist_flex,     j_wrist_flex)
 }

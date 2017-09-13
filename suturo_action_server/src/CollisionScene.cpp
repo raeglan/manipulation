@@ -15,8 +15,13 @@
 
 using namespace Eigen;
 
+/**
+ * @brief      Constructs the CollisionScene.
+ *
+ * @param      _map  The mutex map which maps SQueryPoints to the query links
+ */
 CollisionScene::CollisionScene(QueryMap &_map) 
- : map(_map)		
+ : map(_map), refFrame("base_link")		
 {
 	//nh.setCallbackQueue(&cbQueue);
 	//updateTimer = nh.createTimer(ros::Duration(0.025), &CollisionScene::updateQuery, this);
@@ -26,6 +31,7 @@ CollisionScene::CollisionScene(QueryMap &_map)
 	//ros::spin();
 }
 
+
 void CollisionScene::updateOctree(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr& input){
 	for(auto it = input->points.begin(); it != input->points.end(); it++){
 
@@ -33,6 +39,13 @@ void CollisionScene::updateOctree(const pcl::PointCloud<pcl::PointXYZRGB>::Const
 	}
 }
 
+
+
+/**
+ * @brief      updates the internal octree of of the CollisionScene.
+ *
+ * @param[in]  omap  The octomap_msg
+ */
 void CollisionScene::update(const octomap_msgs::Octomap &omap) {
 	//occupancy_map_monitor::OccupancyMapMonitor monitor();
 	//occupancy_map_monitor::DepthImageOctomapUpdater updater();
@@ -54,6 +67,10 @@ void CollisionScene::update(const octomap_msgs::Octomap &omap) {
 
 }
 
+
+/**
+ * @brief      updates the bounding boxes of every query link in the CollisionScene.
+ */
 void CollisionScene::updateBboxes(){
 	bboxMap.clear();
 	for (const string& linkName: links) {
@@ -103,6 +120,12 @@ void CollisionScene::updateBboxes(){
 
 }
 
+
+/**
+ * @brief      Sets the robot description.
+ *
+ * @param[in]  urdfStr  The urdf string
+ */
 void CollisionScene::setRobotDescription(const string& urdfStr) {
 	// TODO: GENERATE URDF
 	if (!robot.initString(urdfStr)){
@@ -110,6 +133,22 @@ void CollisionScene::setRobotDescription(const string& urdfStr) {
     }
 }
 
+
+/**
+ * @brief      Sets the reference frame of the CollisionScene.
+ *
+ * @param[in]  pRefFrame  The reference frame
+ */
+void CollisionScene::setRefFrame(const string& pRefFrame){
+	refFrame = pRefFrame;
+}
+
+
+/**
+ * @brief      Adds a query link to the CollisionScene.
+ *
+ * @param[in]  link  The query link
+ */
 void CollisionScene::addQueryLink(const string& link) {
 	links.insert(link);
 }
@@ -119,6 +158,14 @@ void CollisionScene::clearQueryLinks() {
 }
 
 
+/**
+ * @brief      Calculates the intersection of a Vector from the center of the bounding box and the bounding box.
+ *
+ * @param[in]  v     The Vector from the center of the bounding box
+ * @param[in]  box   The box
+ *
+ * @return     The intersection.
+ */
 Vector3d CollisionScene::calcIntersection(const Vector3d &v, const bBox &box) {
 	Vector3d scaledX = v / abs(v.x());
 	Vector3d xintersect = scaledX * box.x;
@@ -141,6 +188,13 @@ Vector3d CollisionScene::calcIntersection(const Vector3d &v, const bBox &box) {
 }
 
 
+/**
+ * @brief      iterates over every leaf of the octree to find the closest voxel to the link.
+ *
+ * @param      qPoint   The SQueryPoints for the link
+ * @param[in]  tLink    The transform for the link
+ * @param[in]  linkBox  The bounding box for the link
+ */
 void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, const bBox &linkBox){
 	//tf::TransformBroadcaster br;
 	//tf::Transform transform;
@@ -228,6 +282,9 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, co
 
 
 
+/**
+ * @brief      updates the SQueryPoints for every link in the CollisionScene.
+ */
 void CollisionScene::updateQuery() {
 	// TODO: MAGIC
 	ros::Time t1 = ros::Time::now();

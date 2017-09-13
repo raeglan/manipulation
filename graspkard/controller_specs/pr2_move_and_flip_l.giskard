@@ -126,7 +126,7 @@ softConstraints = {
 	softConstraint(low_obs_ctrl, 100, 0.2, obstruction_coord, "Visual obstruction");
 	softConstraint(elbow_low, 100, weightPositionGoal, elbow_pos.z, "Elbow");
 	#softConstraint(-1000, wrist_high_ctrl, weightPositionGoal, wrist_z_dist, "Wrist z position");
-	softConstraint(-0.01, -0.01, 1, j_gripper, "Keep grasped")
+	softConstraint(-0.1, -0.1, 1, j_gripper, "Keep grasped")
 }	
 
 hardConstraints = {

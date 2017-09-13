@@ -37,14 +37,13 @@ scope:
   - wrist_roll_joint: {input-joint: l_wrist_roll_joint}
 
   # definition goal input variables
-  - torso_lift_joint_goal: {input-scalar: torso_lift_joint_goal}
-  - shoulder_pan_joint_goal: {input-scalar: l_shoulder_pan_joint_goal}
-  - shoulder_lift_joint_goal: {input-scalar: l_shoulder_lift_joint_goal}
-  - upper_arm_roll_joint_goal: {input-scalar: l_upper_arm_roll_joint_goal}
-  - elbow_flex_joint_goal: {input-scalar: l_elbow_flex_joint_goal}
-  - forearm_roll_joint_goal: {input-scalar: l_forearm_roll_joint_goal}
-  - wrist_flex_joint_goal: {input-scalar: l_wrist_flex_joint_goal}
-  - wrist_roll_joint_goal: {input-scalar: l_wrist_roll_joint_goal}
+  - shoulder_pan_joint_goal: {input-scalar: shoulder_pan_joint_goal}
+  - shoulder_lift_joint_goal: {input-scalar: shoulder_lift_joint_goal}
+  - upper_arm_roll_joint_goal: {input-scalar: upper_arm_roll_joint_goal}
+  - elbow_flex_joint_goal: {input-scalar: elbow_flex_joint_goal}
+  - forearm_roll_joint_goal: {input-scalar: forearm_roll_joint_goal}
+  - wrist_flex_joint_goal: {input-scalar: wrist_flex_joint_goal}
+  - wrist_roll_joint_goal: {input-scalar: wrist_roll_joint_goal}
 
   # definition goals and control laws
   - shoulder_pan_error: {double-sub: [shoulder_pan_joint_goal, shoulder_pan_joint]}
@@ -86,7 +85,6 @@ scope:
 
 controllable-constraints:
   # arm joints
-  - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, torso_lift_joint]
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, l_shoulder_pan_joint]
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, l_shoulder_lift_joint]
   - controllable-constraint: [neg_vel_limit_arm_joints, pos_vel_limit_arm_joints, weight_arm_joints, l_upper_arm_roll_joint]
