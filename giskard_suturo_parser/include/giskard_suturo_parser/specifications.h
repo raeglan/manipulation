@@ -4,10 +4,21 @@
 using namespace giskard_core;
 
 namespace giskard_suturo {
+
+/**
+ * @brief      Creates a specification matching the type of the given pointer.
+ *
+ * @param[in]  ptr   Pointer of desired type
+ *
+ * @return     Pointer matching the desired type
+ */
 SpecPtr createTypeObject(const SpecPtr& ptr);
 
 class AdvancedScope;
 
+/**
+ * @brief      Reference for string scope variables.
+ */
 class StringReferenceSpec : public StringSpec
 {
 public:
@@ -28,6 +39,9 @@ private:
 
 typedef typename boost::shared_ptr<StringReferenceSpec> StringReferenceSpecPtr;
 
+/**
+ * @brief      Specification for string concatenation.
+ */
 class ConcatStringSpec : public StringSpec {
 public:
     ConcatStringSpec(const StringSpecPtr& _lhs, const StringSpecPtr& _rhs)
@@ -48,14 +62,26 @@ private:
 typedef boost::shared_ptr<ConcatStringSpec> ConcatStringSpecPtr;
 
 
+/**
+ * @brief      Super class for list specifications.
+ */
 class ListSpec : public Spec {
 public:
   virtual std::vector<SpecPtr> get_value() const = 0;
+
+  /**
+   * @brief      Returns pointer determining the type of the list's contents.
+   *
+   * @return     Type pointer
+   */
   virtual const SpecPtr innerType() const = 0;
 };
 
 typedef typename boost::shared_ptr<ListSpec> ListSpecPtr;
 
+/**
+ * @brief      Reference for list specifications.
+ */
 class ListReferenceSpec : public ListSpec
 {
 public:
@@ -79,6 +105,9 @@ private:
 
 typedef typename boost::shared_ptr<ListReferenceSpec> ListReferenceSpecPtr;
 
+/**
+ * @brief      List constructor specification.
+ */
 class ConstListSpec : public ListSpec {
 public:
 	ConstListSpec(const std::vector<SpecPtr>& val);
@@ -98,6 +127,9 @@ private:
 
 typedef boost::shared_ptr<ConstListSpec> ConstListSpecPtr;
 
+/**
+ * @brief      Specification for list concatenation.
+ */
 class ConcatListSpec : public ListSpec {
 public:
     ConcatListSpec(const ListSpecPtr& _lhs, const ListSpecPtr& _rhs);
