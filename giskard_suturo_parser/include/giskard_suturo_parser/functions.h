@@ -4,6 +4,9 @@
 
 namespace giskard_suturo {
     
+    /**
+     * @brief      This class models the definition of a function.
+     */
     class FunctionDefinition : public AdvancedScope {
     public:
         FunctionDefinition(const std::string& _name, AdvancedScopePtr superScope) 
@@ -13,36 +16,121 @@ namespace giskard_suturo {
             AdvancedScope::addScope(superScope);
         }
         
+        /**
+         * @brief      Adds an argument to the function's signature.
+         *
+         * @param[in]  name  Name of the argument
+         * @param[in]  spec  Specification of the argument
+         */
         void addArgument(std::string name, SpecPtr spec);
+
+        /**
+         * @brief      Adds a scope entry.
+         *
+         * @param[in]  name  Name of the entry
+         * @param[in]  spec  Specification
+         */
         void addSpec(std::string name, SpecPtr spec);
+
+        /**
+         * @brief      Adds a super scope. Function definitions can only have one super scope. Trying to add more will cause an exception to be thrown.
+         *
+         * @param[in]  superScope  Super scope to add
+         */
         void addScope(boost::shared_ptr<AdvancedScope> superScope);
+
+        /**
+         * @brief      Adds a scope.
+         *
+         * @param[in]  alias       The alias
+         * @param[in]  superScope  The super scope
+         */
         void addScope(std::string alias, boost::shared_ptr<AdvancedScope> superScope);
+
+
+        /**
+         * @brief      Creates an instance of this function with the given parameters in the given scope.
+         *
+         * @param[in]  args   Arguments for the function call
+         * @param      scope  The scope creating the instance
+         *
+         * @return     A reference specification linking to the name of the return value of the instance
+         */
         SpecPtr createInstance(const std::vector<SpecPtr>& args, AdvancedScopePtr& scope) const;
+        
+        /**
+         * @brief      Checks whether a list of specifications matches the function's signature.
+         *
+         * @param[in]  args  The specifications to check against
+         *
+         * @return     True if the check passes, false otherwise.
+         */
         bool checkTypeSignatureAgreement(const std::vector<SpecPtr> args) const;
+        
+        /**
+         * @brief      Sets the specification calculating the return value of the function.
+         *
+         * @param[in]  retSpec  The return specification
+         */
         void setReturnSpec(const SpecPtr& retSpec) { returnExpression = retSpec; }
+        
+        /**
+         * @brief      Gets the return specification.
+         *
+         * @return     The return specification.
+         */
         const SpecPtr getReturnSpec() const { return returnExpression; }
+
+        /**
+         * @brief      Gets the type trace of the function's signature.
+         *
+         * @return     List of types matching the function's signature
+         */
         std::vector<SpecPtr> getSignature() const;
         
+        /** Name of the defined function */
         const std::string name;
     protected:
+
+        /**
+         * @brief      Internal method for checking whether a specification is constant within this function definition.
+         *
+         * @param[in]  specPtr  Specification to check.
+         *
+         * @return     True if specification is constant, False otherwise.
+         */
         bool isConstSpec(const SpecPtr& specPtr) const;
         
     private:
+        /** Specification of this function's return value */
         SpecPtr returnExpression;
+
+        /** Placeholder specifications for arguments */
         std::vector<SpecPtr> argumentSpecs;
+
+        /** Names of the function's arguments */
         std::vector<std::string> arguments;
+
+        /** Map caching whether specifications are constant */
         std::unordered_map<std::string, bool> constSpecMap;
     };
     
+    /**
+     * @brief      Base structure for caching function instances within function definitions.
+     */
     struct SFunctionCallCache {
         SFunctionCallCache(std::vector<SpecPtr> _arguments, FnDefPtr _fnDef)
         : arguments(_arguments)
         , functionDefinition(_fnDef)
         { }
         
+        /** Arguments of the instance */
         std::vector<SpecPtr> arguments;
+
+        /** Function definition used for instancing */
         FnDefPtr functionDefinition;
         
+        /** Instantiates function call */
         SpecPtr createInstance(AdvancedScopePtr& scope) const {
             return functionDefinition->createInstance(arguments, scope);
         }
@@ -50,6 +138,9 @@ namespace giskard_suturo {
     
     typedef typename boost::shared_ptr<SFunctionCallCache> SFunctionCallCachePtr;
     
+    /**
+     * @brief      Function call cache for scalar functions.
+     */
     class DoubleFunctionCallCache : public DoubleSpec, public SFunctionCallCache {
     public:
         DoubleFunctionCallCache(std::vector<SpecPtr> _arguments, FnDefPtr _fnDef)
@@ -83,6 +174,9 @@ namespace giskard_suturo {
         }   
     };
     
+    /**
+     * @brief      Function call cache for vector functions. 
+     */
     class VectorFunctionCallCache : public VectorSpec, public SFunctionCallCache {
     public:
         VectorFunctionCallCache(std::vector<SpecPtr> _arguments, FnDefPtr _fnDef)
@@ -116,6 +210,9 @@ namespace giskard_suturo {
         }   
     };
     
+    /**
+     * @brief      Function call cache for rotation functions.
+     */
     class RotationFunctionCallCache : public RotationSpec, public SFunctionCallCache {
     public:
         RotationFunctionCallCache(std::vector<SpecPtr> _arguments, FnDefPtr _fnDef)
@@ -149,6 +246,9 @@ namespace giskard_suturo {
         }   
     };
     
+    /**
+     * @brief      Function call cache for frame functions.
+     */
     class FrameFunctionCallCache : public FrameSpec, public SFunctionCallCache {
     public:
         FrameFunctionCallCache(std::vector<SpecPtr> _arguments, FnDefPtr _fnDef)
@@ -182,6 +282,9 @@ namespace giskard_suturo {
         }   
     };
     
+    /**
+     * @brief      Function call cache for string functions.
+     */
     class StringFunctionCallCache : public StringSpec, public SFunctionCallCache {
     public:
         StringFunctionCallCache(std::vector<SpecPtr> _arguments, FnDefPtr _fnDef)
@@ -215,6 +318,9 @@ namespace giskard_suturo {
         }   
     };
     
+    /**
+     * @brief      Function call cache for list functions.
+     */
     class ListFunctionCallCache : public ListSpec, public SFunctionCallCache {
     public:
         ListFunctionCallCache(std::vector<SpecPtr> _arguments, FnDefPtr _fnDef)
@@ -252,6 +358,14 @@ namespace giskard_suturo {
         }
     };
     
+    /**
+     * @brief      Creates a function call cache.
+     *
+     * @param[in]  arguments  Arguments for the call
+     * @param[in]  fnDef      Function definition
+     *
+     * @return     A function call cache
+     */
     SpecPtr createFunctionCallCache(std::vector<SpecPtr> arguments, FnDefPtr fnDef);
     
 }

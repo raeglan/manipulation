@@ -9,6 +9,9 @@ using namespace giskard_core;
 
 namespace giskard_suturo {
 
+/**
+ * @brief      Parser for the first custom suturo Giskard language.
+ */
 class GiskardLangParser {
 public:
 	struct EOSException : std::exception {
@@ -29,6 +32,13 @@ public:
 	, constDNegOnePtr(new DoubleConstSpec(-1.0))
 	{}
 
+	/**
+	 * @brief      Parses a QPController specification from a string.
+	 *
+	 * @param[in]  text  The input text
+	 *
+	 * @return     QPController specification
+	 */
 	QPControllerSpec parseQPController(const string& text) {
 		QPControllerSpec out;
 
@@ -129,6 +139,10 @@ public:
 	}
 
 private:
+
+	/**
+	 * @brief      Enumeration of supported data types
+	 */
 	enum EType : int {
 		NONE = 0,
 		DOUBLE,
@@ -144,17 +158,35 @@ private:
 		LAST
 	};
 
+	/** Specification of constant "0" */ 
 	DoubleConstSpecPtr constDZeroPtr; 
+
+	/** Specification of constant "-1" */
 	DoubleConstSpecPtr constDNegOnePtr;
+
+	/** Mapping of type keywords to enumerated types */
 	unordered_map<string, EType> typeMap;
 
+	/** Cursor iterator */
 	typedef string::const_iterator SIt;
+	
+	/** Current line number */
 	int lineNumber;
+
+	/** Iterator marking the start of a line */
 	SIt lineStart;
 
+	/** Mapping of enumerated types to readable names */
 	string typeNames[LAST] = {"None", "Double", "Vector", "Rotation", "Frame", "Hard Constraint", "Soft Constraint", "Controllable Constraint", "String", "Integer"};
 
 
+	/**
+	 * @brief      Throws a formated parser error.
+	 *
+	 * @param[in]  current  Current cursor
+	 * @param[in]  end      End cursor
+	 * @param[in]  msg      Error message
+	 */
 	void throwParseError(const SIt& current, const SIt& end, const string& msg) {
 		stringstream ss;
 		SIt cursor = current;
@@ -166,6 +198,14 @@ private:
 		throw ParseException(ss.str());
 	}
 
+	/**
+	 * @brief      Skips spaces, line breaks and comments.
+	 *
+	 * @param      cursor  Cursor being moved
+	 * @param[in]  end     End cursor
+	 *
+	 * @return     Has the end cursor been reached
+	 */
 	bool consumeSpaces(SIt& cursor, const SIt& end) {
 		bool comment = false;
 		while(cursor != end) {
@@ -191,12 +231,34 @@ private:
 
 
 
+	/**
+	 * @brief      Prints a binary type error.
+	 *
+	 * @param[in]  a1    Beginning of expression A
+	 * @param[in]  a2    End of expression A
+	 * @param[in]  b1    Beginning of expression B
+	 * @param[in]  b2    End of expression B
+	 * @param[in]  aT    Type of expression A
+	 * @param[in]  bT    Type of expression B
+	 * @param[in]  c     Operand character
+	 */
 	void printBinaryTypeError(const SIt& a1, const SIt& a2, const SIt& b1, const SIt& b2, EType aT, EType bT, char c) {
 		cerr << "TYPE MISMATCH: No overload for '" << c << "' known for types: " << endl
 		 << "   " << typeNames[aT] << ": " << string(a1, a2) <<  endl
 		 << "   " << typeNames[bT] << ": " << string(b1, b2) << endl;
 	}
 
+	/**
+	 * @brief      Fuses expressions containing input lists of equal type into one expression.
+	 *
+	 * @param[in]  a     Left hand expression
+	 * @param[in]  b     Right hand expression
+	 *
+	 * @tparam     T     Type of resulting expression
+	 * @tparam     E     Type of left and right hand expression
+	 *
+	 * @return     Fused expression
+	 */
 	template <typename T, typename E>
 	boost::shared_ptr<T> resolveChainedExpression(boost::shared_ptr<E> a, boost::shared_ptr<E> b) {
 		boost::shared_ptr<T> temp = dynamic_pointer_cast<T>(b);
@@ -211,16 +273,19 @@ private:
 		return temp;
 	}
 
+	/**
+	 * @brief      Parser rule for parsing expressions
+	 *
+	 * @param      spec     Resulting specification
+	 * @param      current  Cursor
+	 * @param[in]  end      End cursor
+	 *
+	 * @return     Type of the parsed expression
+	 */
 	EType parseExpression(SpecPtr &spec, SIt& current, const SIt& end) {
 		SIt first = current;
 		SpecPtr a;
 		EType aT = parseTerm(a, current, end);
-
-		// if (aT == NONE) {
-		// 	cerr << "TYPE ASSESMENT FAILED:" << endl;
-		// 		 << "'" << string(first, current) << "'" << endl;
-		// 	return NONE;
-		// }
 
 		if(!consumeSpaces(current, end)) {
 			char c = *current;
@@ -266,6 +331,15 @@ private:
 		return aT;
 	}
 
+	/**
+	 * @brief      Parser rule for parsing terms.
+	 *
+	 * @param      spec     Resulting specification
+	 * @param      current  Cursor
+	 * @param[in]  end      End cursor
+	 *
+	 * @return     Type of the parsed term
+	 */
 	EType parseTerm(SpecPtr &spec, SIt& current, const SIt& end) {
 		SIt first1 = current;
 		SpecPtr a;
@@ -362,11 +436,26 @@ private:
 		return aT;
 	}
 
+	/**
+	 * @brief      Printout for unexpected character errors
+	 *
+	 * @param      from  Beginning cursor
+	 * @param      to    End cursor
+	 * @param[in]  c     Expected character
+	 */
 	void printUnexpectedChar(SIt& from, SIt& to, char c) {
 		cerr << "Expected " << c << ":" << endl
 		 << "   '" << string(from, to) << "'" << endl;
 	}
 
+	/**
+	 * @brief      Parses a scalar value into a double value.
+	 *
+	 * @param      cursor  Cursor
+	 * @param[in]  end     End cursor
+	 *
+	 * @return     Parsed value
+	 */
 	double parseDouble(SIt& cursor, const SIt& end) {
 		SIt it = cursor;
 		char c = *cursor;
@@ -380,6 +469,14 @@ private:
 		return out;
 	}
 
+	/**
+	 * @brief      Parses a sequence of letters, digits and underscores.
+	 *
+	 * @param      cursor  Cursor
+	 * @param[in]  end     End cursor
+	 *
+	 * @return     Parsed string
+	 */
 	string consumeName(SIt& cursor, const SIt& end) {
 		SIt start = cursor;
 		char c = *cursor;
@@ -393,6 +490,15 @@ private:
 		return string(start, cursor);
 	}
 
+	/**
+	 * @brief      Creates a reference specification.
+	 *
+	 * @param[in]  name  Name of the reference
+	 *
+	 * @tparam     T     Referenced specification type
+	 *
+	 * @return     Referenced of type T
+	 */
 	template <typename T>
 	boost::shared_ptr<T> createReferenceSpec(const string& name) {
 		boost::shared_ptr<T> out = boost::shared_ptr<T>(new T());
@@ -401,6 +507,13 @@ private:
 	}
 
 
+	/**
+	 * @brief      Parser rule for parsing a scope.
+	 *
+	 * @param      current  Cursor
+	 * @param[in]  end      End cursor
+	 * @param      out      Parsed scope specification
+	 */
 	void parseScope(SIt& current, const SIt& end, ScopeSpec& out) {
 		if (consumeSpaces(current, end))
 			throw EOSException();
@@ -438,6 +551,15 @@ private:
 		current++;
 	}
 
+	/**
+	 * @brief      Parser rule for parsing a scope entry.
+	 *
+	 * @param      current  Cursor
+	 * @param[in]  end      End cursor
+	 * @param      out      Parsed scope entry
+	 *
+	 * @return     Type of scope entry's expression
+	 */
 	EType parseScopeEntry(SIt& current, const SIt& end, ScopeEntry& out) {
 		if (consumeSpaces(current, end))
 			throw EOSException();
@@ -456,6 +578,16 @@ private:
 		return NONE;
 	}
 
+	/**
+	 * @brief      Parser rule parsing attribute access.
+	 *
+	 * @param      spec     Resulting specification
+	 * @param      current  Cursor
+	 * @param[in]  end      End cursor
+	 * @param[in]  t        Data type of data being accessed
+	 *
+	 * @return     Type of the attribute access
+	 */
 	EType parseAttributeAccess(SpecPtr& spec, SIt& current, const SIt& end, EType t) {
 
 		if (current == end)
@@ -511,6 +643,15 @@ private:
 		return t;
 	}
 
+	/**
+	 * @brief      Parser rule for parsing a factor.
+	 *
+	 * @param      spec     Resulting specification
+	 * @param      current  Cursor
+	 * @param[in]  end      End cursor
+	 *
+	 * @return     Type of parsed factor
+	 */
 	EType parseFactor(SpecPtr &spec, SIt& current, const SIt& end) {
 		if (consumeSpaces(current, end))
 			throw EOSException();
@@ -647,21 +788,26 @@ private:
 		return t;
 	}
 
+	/**
+	 * @brief      Prints the readable names of a list of enumerated types.
+	 *
+	 * @param[in]  v     List of types to print
+	 */
 	void printTypes(const vector<EType>& v) {
 		for(size_t i = 0; i < v.size(); i++)
 			cerr << v[i] << " ";
 	}
 
-	int constDoubleToInt(const SpecPtr& spec) {
-		DoubleConstSpecPtr p = dynamic_pointer_cast<DoubleConstSpec>(spec);
-		if (p)
-			return round(p->get_value());
-		else {
-			cerr << "UNABLE TO CAST TO CONST DOUBLE!" << endl;
-			throw exception();
-		}
-	}
-
+	/**
+	 * @brief      Parser rule for parsing function calls.
+	 *
+	 * @param      spec     Resulting specifications
+	 * @param[in]  name     Name of the function
+	 * @param      current  Cursor
+	 * @param[in]  end      End Cursor
+	 *
+	 * @return     Type of the parsed function specification
+	 */
 	EType parseFunction(SpecPtr &spec, const string& name, SIt& current, const SIt& end) {
 		vector<SpecPtr> specs;
 		vector<EType> types;
@@ -1089,6 +1235,14 @@ private:
 		return NONE;
 	}
 
+	/**
+	 * @brief      Parser rule for parsing a list of expressions. Lists can either be enclosed by '()' or '{}'.
+	 *
+	 * @param      specs    Resulting specification list
+	 * @param      types    Types of parsed expressions
+	 * @param      current  Cursor
+	 * @param[in]  end      End cursor
+	 */
 	void parseNTuple(vector<SpecPtr>& specs, vector<EType>& types, SIt& current, const SIt& end) {
 		if (current != end) {
 			char c = *current;

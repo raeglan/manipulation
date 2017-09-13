@@ -25,6 +25,9 @@ namespace rviz {
 
 namespace SuturoSim {
 	
+/**
+ * @brief      !DEPRECATED! Panel for setting up a simple scenario with interactive markers.
+ */
 class SuturoSimPanel : public rviz::Panel {
 	Q_OBJECT
 public:
