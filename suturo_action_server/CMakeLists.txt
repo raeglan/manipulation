@@ -22,6 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
   control_msgs
   pluginlib
   octomap_msgs
+  pcl_ros
 )
 
 add_definitions(-std=c++11 -g)
@@ -56,6 +57,7 @@ target_link_libraries(suturo_action_server
   r_libs_conversions
   yaml-cpp
   ${OCTOMAP_LIBRARIES}
+  ${PCL_LIBRARIES}
 )
 
 add_executable(client_test src/client_test.cpp)

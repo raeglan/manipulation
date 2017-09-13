@@ -13,6 +13,8 @@
 
 #include <mutex>
 
+#include <pcl_ros/point_cloud.h>
+
 using namespace std;
 
 #define READER_PID 0
@@ -94,6 +96,8 @@ private:
 
 	Eigen::Vector3d calcIntersection(const Eigen::Vector3d &v, const struct bBox &box);
 
+	void updateOctree(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr& input);
+
 	void setRefFrame(const string& pRefFrame);
 
 	ros::NodeHandle nh;
@@ -102,6 +106,7 @@ private:
 
 
 	ros::Subscriber sub;
+	ros::Subscriber sub2;
 	urdf::Model robot;
 	unordered_map<string, SRobotLink> linkMap;
 	unordered_map<string, bBox> bboxMap;

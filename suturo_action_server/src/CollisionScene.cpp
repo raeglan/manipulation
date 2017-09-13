@@ -12,6 +12,7 @@
 
 #include <iostream>
 
+
 using namespace Eigen;
 
 /**
@@ -25,9 +26,19 @@ CollisionScene::CollisionScene(QueryMap &_map)
 	//nh.setCallbackQueue(&cbQueue);
 	//updateTimer = nh.createTimer(ros::Duration(0.025), &CollisionScene::updateQuery, this);
 	sub = nh.subscribe("/octomap_binary", 10, &CollisionScene::update, this);
+	sub2 = nh.subscribe("/kinect_head/depth_registered/points", 1, &CollisionScene::updateOctree, this);
 	//setRobotDescription("/opt/ros/indigo/share/robot_state_publisher/test/pr2.urdf");
 	//ros::spin();
 }
+
+
+void CollisionScene::updateOctree(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr& input){
+	for(auto it = input->points.begin(); it != input->points.end(); it++){
+
+		
+	}
+}
+
 
 
 /**
