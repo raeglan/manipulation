@@ -11,6 +11,7 @@ public:
 	~Octree();
 	void addPoint(Point3f point);
 	suturo_octree::Node* getRoot();
+	int getDepth();
 
 private:
 	void init();

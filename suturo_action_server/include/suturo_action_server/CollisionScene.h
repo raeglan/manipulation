@@ -14,6 +14,9 @@
 #include <mutex>
 
 #include <pcl_ros/point_cloud.h>
+#include <visualization_msgs/Marker.h>
+#include <visualization_msgs/MarkerArray.h>
+#include <thread>
 //#include "suturo_action_server/Octree.h"
 
 using namespace std;
@@ -102,15 +105,23 @@ private:
 
 	Eigen::Vector3d calcIntersection(const Eigen::Vector3d &v, const struct bBox &box);
 
-	void updateOctree(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr& input);
+	void updatePointCloud(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr& input);
 
 	void setRefFrame(const string& pRefFrame);
+
+	void updateOctreeVisualization();
+	void updateOctreeThread();
+	void swapPointClouds();
 
 	ros::NodeHandle nh;
 	ros::CallbackQueue cbQueue;
 	ros::Timer updateTimer;
 
-
+	bool swap = false;
+	pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr activePointCloudPointer;
+	pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr pointCloudPointer;
+	std::thread t;
+	ros::Publisher octreeVisPub;
 	ros::Subscriber sub;
 	ros::Subscriber sub2;
 	urdf::Model robot;
@@ -121,9 +132,9 @@ private:
 	tf::TransformListener tfListener;
 	Eigen::Affine3d transform;
 	string controllerRefFrame;
-	string octomapFrame;
+	string octomapFrame = "head_mount_kinect_rgb_optical_frame";
 	octomap::OcTree *octree = NULL;
 	suturo_octree::Octree* octree2 = NULL;
 
-	mutex octoMapMutex;
+	mutex pointCloudMutex;
 };

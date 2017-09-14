@@ -92,6 +92,10 @@ Node* Octree::getRoot(){
 	return rootNode;
 }
 
+int Octree::getDepth(){
+	return depth;
+}
+
 /*
 void Octree::addPoint(float size, int depth, Point3f point, Node& n) {
 	

@@ -14,6 +14,7 @@
 #include "suturo_action_server/Octree.h"
 
 
+
 using namespace Eigen;
 using namespace suturo_octree;
 
@@ -28,20 +29,102 @@ CollisionScene::CollisionScene(QueryMap &_map)
 	//nh.setCallbackQueue(&cbQueue);
 	//updateTimer = nh.createTimer(ros::Duration(0.025), &CollisionScene::updateQuery, this);
 	//sub = nh.subscribe("/octomap_binary", 10, &CollisionScene::update, this);
-	sub2 = nh.subscribe("/kinect_head/depth_registered/points", 1, &CollisionScene::updateOctree, this);
+	sub2 = nh.subscribe("/kinect_head/depth_registered/points", 1, &CollisionScene::updatePointCloud, this);
+	octreeVisPub = nh.advertise<visualization_msgs::MarkerArray>("octreeVis", 1);
+	t = std::thread(&CollisionScene::updateOctreeThread, this);
+	
+
 	//setRobotDescription("/opt/ros/indigo/share/robot_state_publisher/test/pr2.urdf");
 	//ros::spin();
 }
 
+void CollisionScene::updateOctreeVisualization(){
+	int start = 0;
+	int end = 0;
 
-void CollisionScene::updateOctree(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr& input){
-	suturo_octree::Octree* octree = new suturo_octree::Octree(2, 5, Point3f());
-	octomapFrame = "head_mount_kinect_rgb_optical_frame";
-	for(auto it = input->points.begin(); it != input->points.end(); it++){
-		octree->addPoint(Point3f(it->x, it->y, it->z));
+	for (int i = 0; i < octree2->getDepth(); i++) {
+			start += pow(8, i);
 	}
-	delete(octree2);
-	octree2 = octree;
+
+	end = start + pow(8, octree2->getDepth());
+
+		//1
+		//8
+		//73
+		//585
+		//4681
+		//37449
+		//299593
+
+		visualization_msgs::Marker marker;
+		visualization_msgs::MarkerArray marker_array_msg;
+
+		for ( int i = start; i < end; i++){
+			if(octree2->getRoot()[i].isOccupied()){
+				marker.header.frame_id = "head_mount_kinect_rgb_optical_frame";
+   				marker.header.stamp = ros::Time();
+   				marker.ns = "my_namespace";
+   				marker.id = i;
+   		 		marker.type = visualization_msgs::Marker::CUBE;
+   				marker.action = visualization_msgs::Marker::ADD;
+   				marker.pose.position.x = octree2->getRoot()[i].getCenter().position.x;
+   				marker.pose.position.y = octree2->getRoot()[i].getCenter().position.y;
+    			marker.pose.position.z = octree2->getRoot()[i].getCenter().position.z;
+   				marker.pose.orientation.x = 0.0;
+    			marker.pose.orientation.y = 0.0;
+    			marker.pose.orientation.w = 1.0;
+    			marker.pose.orientation.z = 0.0;
+   				marker.scale.x = 0.12;
+    			marker.scale.y = 0.12;
+    			marker.scale.z = 0.12;
+    			marker.color.a = 1.0;
+    			marker.color.g = 1.0;
+    			marker_array_msg.markers.push_back(marker);
+			}
+    
+
+		octreeVisPub.publish(marker_array_msg);
+		}
+	
+}
+
+void CollisionScene::swapPointClouds(){
+	pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr temp;
+	temp = activePointCloudPointer;
+	activePointCloudPointer = pointCloudPointer;
+	pointCloudPointer = temp;
+}
+
+void CollisionScene::updateOctreeThread(){
+	while(!pointCloudPointer);
+
+	while(true){
+		
+		pointCloudMutex.lock();
+		if(swap){
+			swapPointClouds();
+			swap = false;
+		}
+		pointCloudMutex.unlock();
+
+		suturo_octree::Octree* octree = new suturo_octree::Octree(2, 5, Point3f());
+		octomapFrame = "head_mount_kinect_rgb_optical_frame";
+		for(auto it = activePointCloudPointer->points.begin(); it != activePointCloudPointer->points.end(); it++){
+			octree->addPoint(Point3f(it->x, it->y, it->z));
+		}
+		delete(octree2);
+		octree2 = octree;
+		//updateOctreeVisualization();
+	}
+	
+}
+
+
+void CollisionScene::updatePointCloud(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr& input){
+	pointCloudMutex.lock();
+	pointCloudPointer = input->makeShared();
+	swap = true;
+	pointCloudMutex.unlock();
 }
 
 
@@ -210,20 +293,20 @@ Vector3d CollisionScene::calcIntersection(const Vector3d &v, const bBox &box) {
  * @param[in]  tLink    The transform for the link
  * @param[in]  linkBox  The bounding box for the link
  */
-void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, const bBox &linkBox){
+void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLinkInOct, const bBox &linkBox){
 
 	if(octree2 == NULL){
 		return;
 	}
 
 	Node* n = octree2->getRoot();
-	Point3f linkPos(tLink.translation().x(), tLink.translation().y(), tLink.translation().z());
+	Point3f linkPos(tLinkInOct.translation().x(), tLinkInOct.translation().y(), tLinkInOct.translation().z());
 
 	while(!n->isLeaf()){
 		int closestNode;
 		float closestDistance = -1;
 		for (int i = 0; i < 8; i++) {
-			if(n->isOccupied()){
+			if(n->operator[](i)->isOccupied()){
 				float dist = (n->operator[](i)->getCenter() - linkPos).norm();
 				if (dist < closestDistance || closestDistance < 0) {
 					closestDistance = dist;
@@ -237,7 +320,7 @@ void CollisionScene::traverseTree(SQueryPoints& qPoint, const Affine3d tLink, co
 	Point3f center = n->getCenter();
 
 	qPoint.inScene = Vector3d(center.position.x, center.position.y, center.position.z);
-  qPoint.onLink = tLink.translation();
+  	qPoint.onLink = Vector3d(0,0,0);
 
 
 }
@@ -353,8 +436,8 @@ void CollisionScene::updateQuery() {
 				tfListener.waitForTransform(octomapFrame, linkName, ros::Time(0), ros::Duration(0.5));
 				tfListener.lookupTransform(octomapFrame, linkName, ros::Time(0), temp);
 
-				Affine3d tLink = Affine3d::Identity();
-				tf::transformTFToEigen (temp, tLink);
+				Affine3d tLinkInOct = Affine3d::Identity();
+				tf::transformTFToEigen (temp, tLinkInOct);
 
 				//Affine3d iLink = tLink.inverse();
 
@@ -374,7 +457,7 @@ void CollisionScene::updateQuery() {
 					}
 				}
 
-				traverseTree(qPoint, tLink, it->second);
+				traverseTree(qPoint, tLinkInOct, it->second);
 
 				qPoint.inScene = tPoint * qPoint.inScene;//
 
