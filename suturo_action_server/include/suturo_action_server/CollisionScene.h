@@ -7,8 +7,6 @@
 
 #include <unordered_map>
 
-#include <octomap_msgs/Octomap.h>
-#include <octomap/octomap.h>
 #include <tf/transform_listener.h>
 
 #include <mutex>
@@ -80,7 +78,6 @@ public:
 
 	CollisionScene(QueryMap &_map);
 
-	void update(const octomap_msgs::Octomap &omap);
 	void setRobotDescription(const string& urdfStr);
 	void addQueryLink(const string& link);
 	void clearQueryLinks();
@@ -117,13 +114,14 @@ private:
 	ros::CallbackQueue cbQueue;
 	ros::Timer updateTimer;
 
+	int octreeDepth = 6;
+	int octreeSize = 2;
 	bool swap = false;
 	pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr activePointCloudPointer;
 	pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr pointCloudPointer;
 	std::thread t;
 	ros::Publisher octreeVisPub;
-	ros::Subscriber sub;
-	ros::Subscriber sub2;
+	ros::Subscriber pointCloudSubscriber;
 	urdf::Model robot;
 	unordered_map<string, SRobotLink> linkMap;
 	unordered_map<string, bBox> bboxMap;
@@ -133,7 +131,6 @@ private:
 	Eigen::Affine3d transform;
 	string controllerRefFrame;
 	string octomapFrame = "head_mount_kinect_rgb_optical_frame";
-	octomap::OcTree *octree = NULL;
 	suturo_octree::Octree* octree2 = NULL;
 
 	mutex pointCloudMutex;

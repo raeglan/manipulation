@@ -5,21 +5,22 @@
 namespace suturo_octree{
 
 
-class Octree {
-public:
-	Octree(float size, int depth, Point3f center);
-	~Octree();
-	void addPoint(Point3f point);
-	suturo_octree::Node* getRoot();
-	int getDepth();
+	class Octree {
+	public:
+		Octree(float size, int depth, Point3f center);
+		~Octree();
+		void addPoint(Point3f point);
+		suturo_octree::Node* getRoot();
+		int getDepth();
+		float getSize();
 
-private:
-	void init();
+	private:
+		void init();
 
-	suturo_octree::Node* rootNode;
-	float size;
-	Point3f center;
-	int depth;
-};
+		suturo_octree::Node* rootNode;
+		float size;
+		Point3f center;
+		int depth;
+	};
 
 }
