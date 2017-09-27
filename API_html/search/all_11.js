@@ -32,5 +32,6 @@ var searchData=
   ['stringfunctioncallcache',['StringFunctionCallCache',['../classgiskard__suturo_1_1StringFunctionCallCache.html',1,'giskard_suturo']]],
   ['stringreferencespec',['StringReferenceSpec',['../classgiskard__suturo_1_1StringReferenceSpec.html',1,'giskard_suturo']]],
   ['superscopes',['superScopes',['../classgiskard__suturo_1_1AdvancedScope.html#ab4a2ea0c6a7d6401c7e5b2795a3094bb',1,'giskard_suturo::AdvancedScope']]],
-  ['suturosimpanel',['SuturoSimPanel',['../classSuturoSim_1_1SuturoSimPanel.html',1,'SuturoSim']]]
+  ['suturosimpanel',['SuturoSimPanel',['../classSuturoSim_1_1SuturoSimPanel.html',1,'SuturoSim']]],
+  ['swappointclouds',['swapPointClouds',['../classCollisionScene.html#ae6d94b627968a2508cd2ac43a83cf1bf',1,'CollisionScene']]]
 ];
