@@ -7,18 +7,25 @@
 
 #include <unordered_map>
 
-#include <octomap_msgs/Octomap.h>
-#include <octomap/octomap.h>
 #include <tf/transform_listener.h>
 
 #include <mutex>
 
 #include <pcl_ros/point_cloud.h>
+#include <visualization_msgs/Marker.h>
+#include <visualization_msgs/MarkerArray.h>
+#include <thread>
+//#include "suturo_action_server/Octree.h"
 
 using namespace std;
 
 #define READER_PID 0
 #define WRITER_PID 1
+
+namespace suturo_octree{
+	class Octree;
+}
+
 
 template<typename K, typename V>
 class MutexMap {
@@ -70,8 +77,8 @@ public:
 	typedef MutexMap<string, CollisionScene::SQueryPoints> QueryMap;
 
 	CollisionScene(QueryMap &_map);
+	~CollisionScene();
 
-	void update(const octomap_msgs::Octomap &omap);
 	void setRobotDescription(const string& urdfStr);
 	void addQueryLink(const string& link);
 	void clearQueryLinks();
@@ -96,27 +103,52 @@ private:
 
 	Eigen::Vector3d calcIntersection(const Eigen::Vector3d &v, const struct bBox &box);
 
-	void updateOctree(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr& input);
+	void updatePointCloud(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr& input);
 
 	void setRefFrame(const string& pRefFrame);
+
+	void updateOctreeVisualization();
+	void updateOctreeThread();
+	void swapPointClouds();
 
 	ros::NodeHandle nh;
 	ros::CallbackQueue cbQueue;
 	ros::Timer updateTimer;
-
-
-	ros::Subscriber sub;
-	ros::Subscriber sub2;
+	/**
+	 * The depth of the octree. A depth greater than 7 is not recommended due to memory consumption.
+	 */
+	int octreeDepth = 6;
+	/**
+	 * The size of the octree in m.
+	 */
+	int octreeSize = 2;
+	bool swap = false;
+	bool stopUpdateThread;
+	pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr activePointCloudPointer;
+	pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr pointCloudPointer;
+	/**
+	 * The octree update thread.
+	 */
+	std::thread t;
+	ros::Publisher octreeVisPublisher;
+	ros::Subscriber pointCloudSubscriber;
 	urdf::Model robot;
-	unordered_map<string, SRobotLink> linkMap;
+	/**
+	 * This map contains the bounding boxes for each link.
+	 */
 	unordered_map<string, bBox> bboxMap;
+	/**
+	 * The mutex map which maps SQueryPoints to the query links.
+	 */
 	QueryMap& map;
+	/**
+	 * The set of all the links with collision queries.
+	 */
 	set<string> links;
 	tf::TransformListener tfListener;
-	Eigen::Affine3d transform;
-	string refFrame;
-	string octomapFrame;
-	octomap::OcTree *octree = NULL;
+	string controllerRefFrame;
+	string octomapFrame = "head_mount_kinect_rgb_optical_frame";
+	suturo_octree::Octree* octree = NULL;
 
-	mutex octoMapMutex;
+	mutex pointCloudMutex;
 };
