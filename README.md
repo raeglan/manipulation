@@ -1,4 +1,4 @@
-# manipulation
+# CaterROS Manipulation
 
 Welcome to the CaterROS manipulation repository. This repository contains all the manipulation components used by the CaterROS project. 
 
