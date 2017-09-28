@@ -1,5 +1,5 @@
 <launch>
-  <include file="$(find iai_naive_kinematics_sim)/launch/pr2.launch"/>
+  <include file="/home/kevin/catkin_ws/src/giskard_ide/launch/pr2.launch"/>
   <!-- <node pkg="suturo_action_server" type="suturo_action_server" name="movement_server" output="screen">
   	<remap from="~joint_states" to="/joint_states" />
   </node> -->

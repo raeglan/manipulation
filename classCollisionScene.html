@@ -146,7 +146,7 @@ Private Member Functions</h2></td></tr>
 <tr class="memdesc:a287195084a9b8dd1eb7fbbf093766eb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the intersection of a Vector from the center of the bounding box and the bounding box.  <a href="#a287195084a9b8dd1eb7fbbf093766eb1">More...</a><br/></td></tr>
 <tr class="separator:a287195084a9b8dd1eb7fbbf093766eb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a16b5e86c6b438cee575dbafb47506970"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCollisionScene.html#a16b5e86c6b438cee575dbafb47506970">updatePointCloud</a> (const pcl::PointCloud&lt; pcl::PointXYZRGB &gt;::ConstPtr &amp;input)</td></tr>
-<tr class="memdesc:a16b5e86c6b438cee575dbafb47506970"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a copy of the point cloud to the point cloud pointer.  <a href="#a16b5e86c6b438cee575dbafb47506970">More...</a><br/></td></tr>
+<tr class="memdesc:a16b5e86c6b438cee575dbafb47506970"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a copy of the point cloud to the point cloud pointer and notifies the octree update thread.  <a href="#a16b5e86c6b438cee575dbafb47506970">More...</a><br/></td></tr>
 <tr class="separator:a16b5e86c6b438cee575dbafb47506970"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0458b7a7748c991626e7154b6cacbd0a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCollisionScene.html#a0458b7a7748c991626e7154b6cacbd0a">setRefFrame</a> (const string &amp;pRefFrame)</td></tr>
 <tr class="memdesc:a0458b7a7748c991626e7154b6cacbd0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the reference frame of the <a class="el" href="classCollisionScene.html">CollisionScene</a>.  <a href="#a0458b7a7748c991626e7154b6cacbd0a">More...</a><br/></td></tr>
@@ -225,6 +225,18 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>octomapFrame</b> = 
 <tr class="memitem:a9957ef59711be6baa110dc8483c58afe"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9957ef59711be6baa110dc8483c58afe"></a>
 mutex&#160;</td><td class="memItemRight" valign="bottom"><b>pointCloudMutex</b></td></tr>
 <tr class="separator:a9957ef59711be6baa110dc8483c58afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6a235ea3b7e74f8fe9f76cc5a186fe4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af6a235ea3b7e74f8fe9f76cc5a186fe4"></a>
+mutex&#160;</td><td class="memItemRight" valign="bottom"><b>octreeMutex</b></td></tr>
+<tr class="separator:af6a235ea3b7e74f8fe9f76cc5a186fe4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcc89a2a0b7b1c8a4ab2ba17e6163304"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adcc89a2a0b7b1c8a4ab2ba17e6163304"></a>
+mutex&#160;</td><td class="memItemRight" valign="bottom"><b>cvMutex</b></td></tr>
+<tr class="separator:adcc89a2a0b7b1c8a4ab2ba17e6163304"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2b620a644670d65641ac47b8148bbe1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa2b620a644670d65641ac47b8148bbe1"></a>
+condition_variable&#160;</td><td class="memItemRight" valign="bottom"><b>cv</b></td></tr>
+<tr class="separator:aa2b620a644670d65641ac47b8148bbe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09358750196a9ccb07e60dcaa33b912f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a09358750196a9ccb07e60dcaa33b912f"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>newPointCloud</b> = false</td></tr>
+<tr class="separator:a09358750196a9ccb07e60dcaa33b912f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ad814c6de8d0c1b6c3c9cf8e75ea19358"></a>
@@ -448,7 +460,7 @@ mutex&#160;</td><td class="memItemRight" valign="bottom"><b>pointCloudMutex</b><
 </table>
 </div><div class="memdoc">
 
-<p>Makes a copy of the point cloud to the point cloud pointer. </p>
+<p>Makes a copy of the point cloud to the point cloud pointer and notifies the octree update thread. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">input</td><td>The point cloud message </td></tr>
@@ -592,7 +604,7 @@ mutex&#160;</td><td class="memItemRight" valign="bottom"><b>pointCloudMutex</b><
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Sep 26 2017 22:46:18 for Manipulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Sep 28 2017 16:54:16 for Manipulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

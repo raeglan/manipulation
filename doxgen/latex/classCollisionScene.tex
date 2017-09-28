@@ -46,7 +46,7 @@ void \hyperlink{classCollisionScene_a338284876502577c783b745ba7bac385}{traverse\
 Eigen\-::\-Vector3d \hyperlink{classCollisionScene_a287195084a9b8dd1eb7fbbf093766eb1}{calc\-Intersection} (const Eigen\-::\-Vector3d \&v, const struct \hyperlink{structCollisionScene_1_1bBox}{b\-Box} \&box)
 \begin{DoxyCompactList}\small\item\em Calculates the intersection of a Vector from the center of the bounding box and the bounding box. \end{DoxyCompactList}\item 
 void \hyperlink{classCollisionScene_a16b5e86c6b438cee575dbafb47506970}{update\-Point\-Cloud} (const pcl\-::\-Point\-Cloud$<$ pcl\-::\-Point\-X\-Y\-Z\-R\-G\-B $>$\-::Const\-Ptr \&input)
-\begin{DoxyCompactList}\small\item\em Makes a copy of the point cloud to the point cloud pointer. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Makes a copy of the point cloud to the point cloud pointer and notifies the octree update thread. \end{DoxyCompactList}\item 
 void \hyperlink{classCollisionScene_a0458b7a7748c991626e7154b6cacbd0a}{set\-Ref\-Frame} (const string \&p\-Ref\-Frame)
 \begin{DoxyCompactList}\small\item\em Sets the reference frame of the \hyperlink{classCollisionScene}{Collision\-Scene}. \end{DoxyCompactList}\item 
 \hypertarget{classCollisionScene_a493a467161c0bab5d6717f58d96d3e00}{void \hyperlink{classCollisionScene_a493a467161c0bab5d6717f58d96d3e00}{update\-Octree\-Visualization} ()}\label{classCollisionScene_a493a467161c0bab5d6717f58d96d3e00}
@@ -118,6 +118,18 @@ set$<$ string $>$ \hyperlink{classCollisionScene_ab6fe95cec3f4207074aabedce8b4be
 
 \item 
 \hypertarget{classCollisionScene_a9957ef59711be6baa110dc8483c58afe}{mutex {\bfseries point\-Cloud\-Mutex}}\label{classCollisionScene_a9957ef59711be6baa110dc8483c58afe}
+
+\item 
+\hypertarget{classCollisionScene_af6a235ea3b7e74f8fe9f76cc5a186fe4}{mutex {\bfseries octree\-Mutex}}\label{classCollisionScene_af6a235ea3b7e74f8fe9f76cc5a186fe4}
+
+\item 
+\hypertarget{classCollisionScene_adcc89a2a0b7b1c8a4ab2ba17e6163304}{mutex {\bfseries cv\-Mutex}}\label{classCollisionScene_adcc89a2a0b7b1c8a4ab2ba17e6163304}
+
+\item 
+\hypertarget{classCollisionScene_aa2b620a644670d65641ac47b8148bbe1}{condition\-\_\-variable {\bfseries cv}}\label{classCollisionScene_aa2b620a644670d65641ac47b8148bbe1}
+
+\item 
+\hypertarget{classCollisionScene_a09358750196a9ccb07e60dcaa33b912f}{bool {\bfseries new\-Point\-Cloud} = false}\label{classCollisionScene_a09358750196a9ccb07e60dcaa33b912f}
 
 \end{DoxyCompactItemize}
 
@@ -243,7 +255,7 @@ iterates over every leaf of the octree to find the closest voxel to the link.
 )\hspace{0.3cm}{\ttfamily [private]}}}\label{classCollisionScene_a16b5e86c6b438cee575dbafb47506970}
 
 
-Makes a copy of the point cloud to the point cloud pointer. 
+Makes a copy of the point cloud to the point cloud pointer and notifies the octree update thread. 
 
 
 \begin{DoxyParams}[1]{Parameters}
