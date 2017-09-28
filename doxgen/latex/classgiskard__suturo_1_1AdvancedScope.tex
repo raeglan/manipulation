@@ -1,0 +1,669 @@
+\hypertarget{classgiskard__suturo_1_1AdvancedScope}{\section{giskard\-\_\-suturo\-:\-:Advanced\-Scope Class Reference}
+\label{classgiskard__suturo_1_1AdvancedScope}\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+}
+
+
+The advanced scope class supports layered scopes and named search scopes.  
+
+
+
+
+{\ttfamily \#include $<$advanced\-\_\-scope.\-h$>$}
+
+Inheritance diagram for giskard\-\_\-suturo\-:\-:Advanced\-Scope\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classgiskard__suturo_1_1AdvancedScope}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structgiskard__suturo_1_1AdvancedScope_1_1ScopeInsert}{Scope\-Insert}
+\begin{DoxyCompactList}\small\item\em Structure recording under which name a scope was inserted into this scope. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classgiskard__suturo_1_1AdvancedScope_abd316ae06ac4991dbb381990546de4cd}{Advanced\-Scope} (std\-::string \-\_\-file\-Path=\char`\"{}\char`\"{}, std\-::string \-\_\-search\-Path=\char`\"{}\char`\"{}, std\-::string \-\_\-prefix=\char`\"{}\char`\"{}, std\-::vector$<$ Advanced\-Scope\-Ptr $>$ \-\_\-super\-Scopes=std\-::vector$<$ Advanced\-Scope\-Ptr $>$())
+\begin{DoxyCompactList}\small\item\em Constructor for the advanced scope class. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classgiskard__suturo_1_1AdvancedScope_af2149977ef0016e5139f7b89f515de5b}{add\-Spec} (Scope\-Entry entry)
+\begin{DoxyCompactList}\small\item\em Inserts a scope entry into this scope. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classgiskard__suturo_1_1AdvancedScope_ab3f65ac01f553fabc64c899dde9a4db9}{add\-Spec} (std\-::string name, Spec\-Ptr spec)
+\begin{DoxyCompactList}\small\item\em Inserts an entry into this scope. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classgiskard__suturo_1_1AdvancedScope_a72372eceea6a63c12eb7cf278a7e55ec}{add\-Scope} (Advanced\-Scope\-Ptr super\-Scope)
+\begin{DoxyCompactList}\small\item\em Adds a super scope to this scope. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classgiskard__suturo_1_1AdvancedScope_ad67b4f7fdf25994fccf3a553b741ecd4}{add\-Scope} (std\-::string alias, Advanced\-Scope\-Ptr super\-Scope)
+\begin{DoxyCompactList}\small\item\em Adds a super scope to this scope, that can be referenced by an alias. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classgiskard__suturo_1_1AdvancedScope_a00d4f842341d0bda0af8e6a7fe5a1746}{add\-Function} (Fn\-Def\-Ptr function)
+\begin{DoxyCompactList}\small\item\em Adds a function definition to this scope. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1AdvancedScope_a5f51209c16c4267f4dea99ea66780e68}{call\-Function} (const std\-::string \&name, std\-::vector$<$ Spec\-Ptr $>$ \&arguments, Advanced\-Scope\-Ptr \&caller)
+\begin{DoxyCompactList}\small\item\em Generates a function call to the named function with the given arguments. The function can be defined either in this scope or in the super scopes. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1AdvancedScope_a155e1556e7180712c939cb63c7904ee4}{call\-Local\-Function} (const std\-::string \&name, std\-::vector$<$ Spec\-Ptr $>$ \&arguments, Advanced\-Scope\-Ptr \&caller)
+\begin{DoxyCompactList}\small\item\em Generates a function call to the named function with the given arguments. The function must be defined in this scope. \end{DoxyCompactList}\item 
+bool \hyperlink{classgiskard__suturo_1_1AdvancedScope_ab3e2735f8e0e947dbb76a6bae17f63a4}{has\-Function\-Call} (const std\-::string \&name, std\-::vector$<$ Spec\-Ptr $>$ \&arguments, \hyperlink{structgiskard__suturo_1_1FunctionCall}{Function\-Call} \&call) const 
+\begin{DoxyCompactList}\small\item\em Determines whether a function has been called before with the given arguments. \end{DoxyCompactList}\item 
+bool \hyperlink{classgiskard__suturo_1_1AdvancedScope_a613ef84fadf020dc111737499db7b8bb}{has\-Function} (const std\-::string \&name, const std\-::vector$<$ Spec\-Ptr $>$ \&signature) const 
+\begin{DoxyCompactList}\small\item\em Determines whether this scope or one of it's super scopes defines a function with matching name and argument signature. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1AdvancedScope_a6e4525139ff040d42a073643bb0ab483}{get\-Local\-Spec} (const std\-::string \&name) const 
+\begin{DoxyCompactList}\small\item\em Search for a specification only in this scope. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1AdvancedScope_ab44fac23fb71135abd66b65a5053a3ee}{get\-Spec} (const std\-::string \&name) const 
+\begin{DoxyCompactList}\small\item\em Find a specification in this scope or it's super scopes. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1AdvancedScope_a0381a9d28f74e2ce9101e65ea280e05b}{get\-Spec} (const std\-::string \&name, std\-::string \&global\-Prefix) const 
+\begin{DoxyCompactList}\small\item\em Find a specification and attach the give prefix to the reference. \end{DoxyCompactList}\item 
+Advanced\-Scope\-Ptr \hyperlink{classgiskard__suturo_1_1AdvancedScope_a21718dbd064b203878bea71ed38e41c0}{get\-Scope} (const std\-::string \&alias) const 
+\begin{DoxyCompactList}\small\item\em Get a scope by it's alias. \end{DoxyCompactList}\item 
+Advanced\-Scope\-Ptr \hyperlink{classgiskard__suturo_1_1AdvancedScope_a7489f59d843c5ae6cd0849b7bfd08579}{get\-Scope\-By\-File} (const std\-::string \&\hyperlink{classgiskard__suturo_1_1AdvancedScope_a2b3e583a28325902fec73e0063646cab}{file\-Path}) const 
+\begin{DoxyCompactList}\small\item\em Get a scope by the file it was generated from. \end{DoxyCompactList}\item 
+bool \hyperlink{classgiskard__suturo_1_1AdvancedScope_a96cdc688a623cf277ea441533813e16b}{is\-Super\-Scope} (const std\-::string \&\hyperlink{classgiskard__suturo_1_1AdvancedScope_a2b3e583a28325902fec73e0063646cab}{file\-Path}) const 
+\begin{DoxyCompactList}\small\item\em Determines whether one of this scope's super scopes is generated from the given file. \end{DoxyCompactList}\item 
+bool \hyperlink{classgiskard__suturo_1_1AdvancedScope_af1e4c6fa16b5ee78fcc58c17a8b0dfeb}{is\-Name\-Taken} (const std\-::string \&name) const 
+\begin{DoxyCompactList}\small\item\em Determines whether a name is already taken. \end{DoxyCompactList}\item 
+bool \hyperlink{classgiskard__suturo_1_1AdvancedScope_a5bc06fbeb129fe8955f66a468dcf4b63}{equals} (const Spec \&other) const 
+\begin{DoxyCompactList}\small\item\em Equality check required by giskard\-\_\-core\-::\-Spec. \end{DoxyCompactList}\item 
+void \hyperlink{classgiskard__suturo_1_1AdvancedScope_a618f025a37c10a1e5daedbe7552b29ea}{get\-\_\-input\-\_\-specs} (std\-::vector$<$ const Input\-Spec $\ast$ $>$ \&inputs) const 
+\begin{DoxyCompactList}\small\item\em Gets the input specs. Required by giskard\-\_\-core\-::\-Spec. \end{DoxyCompactList}\item 
+void \hyperlink{classgiskard__suturo_1_1AdvancedScope_a7fde68d72d367aeb8cdda1fff7b39fbe}{convert} (Scope\-Spec \&scope, std\-::unordered\-\_\-set$<$ const \hyperlink{classgiskard__suturo_1_1AdvancedScope}{Advanced\-Scope} $\ast$ $>$ \&generated) const 
+\begin{DoxyCompactList}\small\item\em Generation method generating a giskard\-\_\-core\-::\-Scope\-Spec from this scope. \end{DoxyCompactList}\item 
+std\-::vector$<$ Advanced\-Scope\-Ptr $>$ \hyperlink{classgiskard__suturo_1_1AdvancedScope_a617f245bf85101b329f02b1bbbb36adf}{get\-Super\-Scopes} () const 
+\begin{DoxyCompactList}\small\item\em Get a list of all of this scope's super scopes. \end{DoxyCompactList}\item 
+const std\-::string \& \hyperlink{classgiskard__suturo_1_1AdvancedScope_aaa72dd5b730fd5d97d25f9c4ed902630}{get\-Prefix} () const 
+\begin{DoxyCompactList}\small\item\em Get this scope's global prefix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const std\-::string \hyperlink{classgiskard__suturo_1_1AdvancedScope_a2b3e583a28325902fec73e0063646cab}{file\-Path}
+\item 
+const std\-::string \hyperlink{classgiskard__suturo_1_1AdvancedScope_a10d0cc3f9602ef2bca32dd44bc49e30e}{search\-Path}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const std\-::string \hyperlink{classgiskard__suturo_1_1AdvancedScope_a2cc175184a5c1f1e9ca8265cfb5463bc}{f\-Abs} = \char`\"{}abs\char`\"{}
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a229cb23a623f37c4f3533efb0a7c26c5}{static const std\-::string {\bfseries f\-Sin} = \char`\"{}sin\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a229cb23a623f37c4f3533efb0a7c26c5}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_ac8939a6445302c56481d5e5ab2aa2260}{static const std\-::string {\bfseries f\-Cos} = \char`\"{}cos\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_ac8939a6445302c56481d5e5ab2aa2260}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a8e90b6ecdf4391956ce88b0328fe2d66}{static const std\-::string {\bfseries f\-Tan} = \char`\"{}tan\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a8e90b6ecdf4391956ce88b0328fe2d66}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a925b5ff49be8abcea970900841796087}{static const std\-::string {\bfseries f\-A\-Sin} = \char`\"{}asin\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a925b5ff49be8abcea970900841796087}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a55ae314601243ceca32285fc17d06943}{static const std\-::string {\bfseries f\-A\-Cos} = \char`\"{}acos\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a55ae314601243ceca32285fc17d06943}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_ad0522497c8ce16b5ec56abf2d2c9403b}{static const std\-::string {\bfseries f\-A\-Tan} = \char`\"{}atan\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_ad0522497c8ce16b5ec56abf2d2c9403b}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a73b18d71f520b6621e556470b7e60c1d}{static const std\-::string {\bfseries f\-F\-Mod} = \char`\"{}fmod\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a73b18d71f520b6621e556470b7e60c1d}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a74b316e323409569e45caa2072fe0b3a}{static const std\-::string {\bfseries f\-Max} = \char`\"{}max\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a74b316e323409569e45caa2072fe0b3a}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_ab635fc6b4b11aef4cd62cfd05cb41101}{static const std\-::string {\bfseries f\-Min} = \char`\"{}min\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_ab635fc6b4b11aef4cd62cfd05cb41101}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a84317a70e4f9848c605ea6146680ea56}{static const std\-::string {\bfseries f\-If} = \char`\"{}if\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a84317a70e4f9848c605ea6146680ea56}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a9dfbba0ef6ef69e48b4af6e14eedd320}{static const std\-::string {\bfseries f\-Norm} = \char`\"{}norm\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a9dfbba0ef6ef69e48b4af6e14eedd320}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a483ae8d453909b20d73f91663c2b8fac}{static const std\-::string {\bfseries f\-Slerp} = \char`\"{}slerp\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a483ae8d453909b20d73f91663c2b8fac}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a1569a558fda38cf17016a0acfc70528a}{static const std\-::string {\bfseries f\-Cross} = \char`\"{}cross\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a1569a558fda38cf17016a0acfc70528a}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a184e75e674ae425e6960f0782a0ec521}{static const std\-::string {\bfseries f\-Invert} = \char`\"{}invert\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a184e75e674ae425e6960f0782a0ec521}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a3c935d0795ddbd53815578743bae76ff}{static const std\-::string {\bfseries f\-In\-Scalar} = \char`\"{}input\-Scalar\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a3c935d0795ddbd53815578743bae76ff}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a9422f2a3ced8d5b26cbe9b8bbbd23188}{static const std\-::string {\bfseries f\-In\-Joint} = \char`\"{}input\-Joint\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a9422f2a3ced8d5b26cbe9b8bbbd23188}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_ab402ad810b3f7fca305851fab396cb16}{static const std\-::string {\bfseries f\-In\-Vec3} = \char`\"{}input\-Vec3\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_ab402ad810b3f7fca305851fab396cb16}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_adde25528eee6dc5a1c61a36a5e713d76}{static const std\-::string {\bfseries f\-In\-Rotation} = \char`\"{}input\-Rotation\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_adde25528eee6dc5a1c61a36a5e713d76}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a66d281a35eb22330caaaac0ca9d1e4d8}{static const std\-::string {\bfseries f\-In\-Frame} = \char`\"{}input\-Frame\char`\"{}}\label{classgiskard__suturo_1_1AdvancedScope_a66d281a35eb22330caaaac0ca9d1e4d8}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_ad5bb37db8e30289c3c35b8745e00912a}{static const std\-::string {\bfseries f\-C\-Vec3} = Giskard\-P\-P\-Parser\-::s\-Vec3}\label{classgiskard__suturo_1_1AdvancedScope_ad5bb37db8e30289c3c35b8745e00912a}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a47a64840e1430d0a7268eac235b2b32d}{static const std\-::string {\bfseries f\-C\-Rotation} = Giskard\-P\-P\-Parser\-::s\-Rotation}\label{classgiskard__suturo_1_1AdvancedScope_a47a64840e1430d0a7268eac235b2b32d}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a9b4dd4bb9124f90e49adfaaf1b8b5ba5}{static const std\-::string {\bfseries f\-C\-Frame} = Giskard\-P\-P\-Parser\-::s\-Frame}\label{classgiskard__suturo_1_1AdvancedScope_a9b4dd4bb9124f90e49adfaaf1b8b5ba5}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_ae2d7c13d5e7940be15a9dfd9c0f0dda1}{static const std\-::string {\bfseries f\-C\-Hard\-C} = Giskard\-P\-P\-Parser\-::s\-Hard}\label{classgiskard__suturo_1_1AdvancedScope_ae2d7c13d5e7940be15a9dfd9c0f0dda1}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_aff09a5d9175eb5ecd2e623eea81cb574}{static const std\-::string {\bfseries f\-C\-Soft\-C} = Giskard\-P\-P\-Parser\-::s\-Soft}\label{classgiskard__suturo_1_1AdvancedScope_aff09a5d9175eb5ecd2e623eea81cb574}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_acd3551f4badb7c595a2c37739b09d12c}{static const std\-::string {\bfseries f\-C\-Cont\-C} = Giskard\-P\-P\-Parser\-::s\-Controllable}\label{classgiskard__suturo_1_1AdvancedScope_acd3551f4badb7c595a2c37739b09d12c}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\-::string \hyperlink{classgiskard__suturo_1_1AdvancedScope_ac69aab3b5b22fc62d1d0f8e213e86ec5}{prefix}
+\item 
+std\-::vector$<$ std\-::string $>$ \hyperlink{classgiskard__suturo_1_1AdvancedScope_a6a788662a6c7df9eaa3a8419b466990d}{spec\-Insert\-History}
+\item 
+std\-::vector$<$ \hyperlink{structgiskard__suturo_1_1AdvancedScope_1_1ScopeInsert}{Scope\-Insert} $>$ \hyperlink{classgiskard__suturo_1_1AdvancedScope_af5081ec45e81c905ed286da7a72532c3}{scope\-Insert\-History}
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\-::vector$<$ Advanced\-Scope\-Ptr $>$ \hyperlink{classgiskard__suturo_1_1AdvancedScope_ab4a2ea0c6a7d6401c7e5b2795a3094bb}{super\-Scopes}
+\item 
+std\-::unordered\-\_\-map\\*
+$<$ std\-::string, \\*
+Advanced\-Scope\-Ptr $>$ \hyperlink{classgiskard__suturo_1_1AdvancedScope_a9a27c5f444714caf79ec05ac606c84a5}{aliased\-Scopes}
+\item 
+std\-::unordered\-\_\-map\\*
+$<$ std\-::string, std\-::vector\\*
+$<$ Fn\-Def\-Ptr $>$ $>$ \hyperlink{classgiskard__suturo_1_1AdvancedScope_a32385ec7d5bdd31f190473293e3445f8}{function\-Definitions}
+\item 
+std\-::unordered\-\_\-map\\*
+$<$ std\-::string, std\-::vector\\*
+$<$ \hyperlink{structgiskard__suturo_1_1FunctionCall}{Function\-Call} $>$ $>$ \hyperlink{classgiskard__suturo_1_1AdvancedScope_a6208063287509649126390c5960abfb8}{function\-Calls}
+\item 
+std\-::unordered\-\_\-map\\*
+$<$ std\-::string, Spec\-Ptr $>$ \hyperlink{classgiskard__suturo_1_1AdvancedScope_a92bbb9dc2613a1331a95f7e0310dd342}{specs}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The advanced scope class supports layered scopes and named search scopes. 
+
+This class was specifically designed for the G\-Lang++ parser procedure. It supports concepts like super scopes that it searches when queried for an expression. It also supports aliased imported scopes that can specifically queried for expressions. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_abd316ae06ac4991dbb381990546de4cd}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!Advanced\-Scope@{Advanced\-Scope}}
+\index{Advanced\-Scope@{Advanced\-Scope}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{Advanced\-Scope}]{\setlength{\rightskip}{0pt plus 5cm}giskard\-\_\-suturo\-::\-Advanced\-Scope\-::\-Advanced\-Scope (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-file\-Path = {\ttfamily \char`\"{}\char`\"{}}, }
+\item[{std\-::string}]{\-\_\-search\-Path = {\ttfamily \char`\"{}\char`\"{}}, }
+\item[{std\-::string}]{\-\_\-prefix = {\ttfamily \char`\"{}\char`\"{}}, }
+\item[{std\-::vector$<$ Advanced\-Scope\-Ptr $>$}]{\-\_\-super\-Scopes = {\ttfamily std\-:\-:vector$<$AdvancedScopePtr$>$()}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classgiskard__suturo_1_1AdvancedScope_abd316ae06ac4991dbb381990546de4cd}
+
+
+Constructor for the advanced scope class. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-file\-Path} & File that this scope is being parsed from \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-search\-Path} & Base path for the relative search for imported files. \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-prefix} & Prefix of this scope. \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-super\-Scopes} & List of super scopes \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a00d4f842341d0bda0af8e6a7fe5a1746}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!add\-Function@{add\-Function}}
+\index{add\-Function@{add\-Function}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{add\-Function}]{\setlength{\rightskip}{0pt plus 5cm}void giskard\-\_\-suturo\-::\-Advanced\-Scope\-::add\-Function (
+\begin{DoxyParamCaption}
+\item[{Fn\-Def\-Ptr}]{function}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classgiskard__suturo_1_1AdvancedScope_a00d4f842341d0bda0af8e6a7fe5a1746}
+
+
+Adds a function definition to this scope. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em function} & The function definition to add \\
+\hline
+\end{DoxyParams}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a72372eceea6a63c12eb7cf278a7e55ec}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!add\-Scope@{add\-Scope}}
+\index{add\-Scope@{add\-Scope}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{add\-Scope}]{\setlength{\rightskip}{0pt plus 5cm}void giskard\-\_\-suturo\-::\-Advanced\-Scope\-::add\-Scope (
+\begin{DoxyParamCaption}
+\item[{Advanced\-Scope\-Ptr}]{super\-Scope}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classgiskard__suturo_1_1AdvancedScope_a72372eceea6a63c12eb7cf278a7e55ec}
+
+
+Adds a super scope to this scope. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em super\-Scope} & The super scope \\
+\hline
+\end{DoxyParams}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_ad67b4f7fdf25994fccf3a553b741ecd4}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!add\-Scope@{add\-Scope}}
+\index{add\-Scope@{add\-Scope}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{add\-Scope}]{\setlength{\rightskip}{0pt plus 5cm}void giskard\-\_\-suturo\-::\-Advanced\-Scope\-::add\-Scope (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{alias, }
+\item[{Advanced\-Scope\-Ptr}]{super\-Scope}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classgiskard__suturo_1_1AdvancedScope_ad67b4f7fdf25994fccf3a553b741ecd4}
+
+
+Adds a super scope to this scope, that can be referenced by an alias. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em alias} & Alias to use for this scope \\
+\hline
+\mbox{\tt in}  & {\em super\-Scope} & Scope to add \\
+\hline
+\end{DoxyParams}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_af2149977ef0016e5139f7b89f515de5b}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!add\-Spec@{add\-Spec}}
+\index{add\-Spec@{add\-Spec}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{add\-Spec}]{\setlength{\rightskip}{0pt plus 5cm}void giskard\-\_\-suturo\-::\-Advanced\-Scope\-::add\-Spec (
+\begin{DoxyParamCaption}
+\item[{Scope\-Entry}]{entry}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classgiskard__suturo_1_1AdvancedScope_af2149977ef0016e5139f7b89f515de5b}
+
+
+Inserts a scope entry into this scope. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em entry} & The entry to insert \\
+\hline
+\end{DoxyParams}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_ab3f65ac01f553fabc64c899dde9a4db9}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!add\-Spec@{add\-Spec}}
+\index{add\-Spec@{add\-Spec}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{add\-Spec}]{\setlength{\rightskip}{0pt plus 5cm}void giskard\-\_\-suturo\-::\-Advanced\-Scope\-::add\-Spec (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{name, }
+\item[{Spec\-Ptr}]{spec}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classgiskard__suturo_1_1AdvancedScope_ab3f65ac01f553fabc64c899dde9a4db9}
+
+
+Inserts an entry into this scope. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the entry \\
+\hline
+\mbox{\tt in}  & {\em spec} & Specification of the expression \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented in \hyperlink{classgiskard__suturo_1_1FunctionDefinition_a723dc9bc2d5f964805dadc8af9a8c948}{giskard\-\_\-suturo\-::\-Function\-Definition}.
+
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a5f51209c16c4267f4dea99ea66780e68}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!call\-Function@{call\-Function}}
+\index{call\-Function@{call\-Function}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{call\-Function}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Advanced\-Scope\-::call\-Function (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name, }
+\item[{std\-::vector$<$ Spec\-Ptr $>$ \&}]{arguments, }
+\item[{Advanced\-Scope\-Ptr \&}]{caller}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1AdvancedScope_a5f51209c16c4267f4dea99ea66780e68}
+
+
+Generates a function call to the named function with the given arguments. The function can be defined either in this scope or in the super scopes. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the function \\
+\hline
+ & {\em arguments} & Arguments for the call \\
+\hline
+ & {\em caller} & The scope that is calling the function\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The generated specification 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a155e1556e7180712c939cb63c7904ee4}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!call\-Local\-Function@{call\-Local\-Function}}
+\index{call\-Local\-Function@{call\-Local\-Function}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{call\-Local\-Function}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Advanced\-Scope\-::call\-Local\-Function (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name, }
+\item[{std\-::vector$<$ Spec\-Ptr $>$ \&}]{arguments, }
+\item[{Advanced\-Scope\-Ptr \&}]{caller}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1AdvancedScope_a155e1556e7180712c939cb63c7904ee4}
+
+
+Generates a function call to the named function with the given arguments. The function must be defined in this scope. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the function \\
+\hline
+ & {\em arguments} & Arguments for the call \\
+\hline
+ & {\em caller} & The scope making the call\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\{ description\-\_\-of\-\_\-the\-\_\-return\-\_\-value \} 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a7fde68d72d367aeb8cdda1fff7b39fbe}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!convert@{convert}}
+\index{convert@{convert}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{convert}]{\setlength{\rightskip}{0pt plus 5cm}void giskard\-\_\-suturo\-::\-Advanced\-Scope\-::convert (
+\begin{DoxyParamCaption}
+\item[{Scope\-Spec \&}]{scope, }
+\item[{std\-::unordered\-\_\-set$<$ const {\bf Advanced\-Scope} $\ast$ $>$ \&}]{generated}
+\end{DoxyParamCaption}
+) const}}\label{classgiskard__suturo_1_1AdvancedScope_a7fde68d72d367aeb8cdda1fff7b39fbe}
+
+
+Generation method generating a giskard\-\_\-core\-::\-Scope\-Spec from this scope. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em scope} & Scope being generated \\
+\hline
+{\em generated} & Scopes that were already generated \\
+\hline
+\end{DoxyParams}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a5bc06fbeb129fe8955f66a468dcf4b63}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!equals@{equals}}
+\index{equals@{equals}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{equals}]{\setlength{\rightskip}{0pt plus 5cm}bool giskard\-\_\-suturo\-::\-Advanced\-Scope\-::equals (
+\begin{DoxyParamCaption}
+\item[{const Spec \&}]{other}
+\end{DoxyParamCaption}
+) const}}\label{classgiskard__suturo_1_1AdvancedScope_a5bc06fbeb129fe8955f66a468dcf4b63}
+
+
+Equality check required by giskard\-\_\-core\-::\-Spec. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em other} & The other specification\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if scope equals other specification 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a618f025a37c10a1e5daedbe7552b29ea}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!get\-\_\-input\-\_\-specs@{get\-\_\-input\-\_\-specs}}
+\index{get\-\_\-input\-\_\-specs@{get\-\_\-input\-\_\-specs}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{get\-\_\-input\-\_\-specs}]{\setlength{\rightskip}{0pt plus 5cm}void giskard\-\_\-suturo\-::\-Advanced\-Scope\-::get\-\_\-input\-\_\-specs (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ const Input\-Spec $\ast$ $>$ \&}]{inputs}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classgiskard__suturo_1_1AdvancedScope_a618f025a37c10a1e5daedbe7552b29ea}
+
+
+Gets the input specs. Required by giskard\-\_\-core\-::\-Spec. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em inputs} & List of found inputs \\
+\hline
+\end{DoxyParams}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a6e4525139ff040d42a073643bb0ab483}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!get\-Local\-Spec@{get\-Local\-Spec}}
+\index{get\-Local\-Spec@{get\-Local\-Spec}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{get\-Local\-Spec}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Advanced\-Scope\-::get\-Local\-Spec (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name}
+\end{DoxyParamCaption}
+) const}}\label{classgiskard__suturo_1_1AdvancedScope_a6e4525139ff040d42a073643bb0ab483}
+
+
+Search for a specification only in this scope. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the specification\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Found specification 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_aaa72dd5b730fd5d97d25f9c4ed902630}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!get\-Prefix@{get\-Prefix}}
+\index{get\-Prefix@{get\-Prefix}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{get\-Prefix}]{\setlength{\rightskip}{0pt plus 5cm}const std\-::string\& giskard\-\_\-suturo\-::\-Advanced\-Scope\-::get\-Prefix (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classgiskard__suturo_1_1AdvancedScope_aaa72dd5b730fd5d97d25f9c4ed902630}
+
+
+Get this scope's global prefix. 
+
+\begin{DoxyReturn}{Returns}
+Prefix. 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a21718dbd064b203878bea71ed38e41c0}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!get\-Scope@{get\-Scope}}
+\index{get\-Scope@{get\-Scope}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{get\-Scope}]{\setlength{\rightskip}{0pt plus 5cm}Advanced\-Scope\-Ptr giskard\-\_\-suturo\-::\-Advanced\-Scope\-::get\-Scope (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{alias}
+\end{DoxyParamCaption}
+) const}}\label{classgiskard__suturo_1_1AdvancedScope_a21718dbd064b203878bea71ed38e41c0}
+
+
+Get a scope by it's alias. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em alias} & Alias of the scope\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the scope 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a7489f59d843c5ae6cd0849b7bfd08579}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!get\-Scope\-By\-File@{get\-Scope\-By\-File}}
+\index{get\-Scope\-By\-File@{get\-Scope\-By\-File}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{get\-Scope\-By\-File}]{\setlength{\rightskip}{0pt plus 5cm}Advanced\-Scope\-Ptr giskard\-\_\-suturo\-::\-Advanced\-Scope\-::get\-Scope\-By\-File (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{file\-Path}
+\end{DoxyParamCaption}
+) const}}\label{classgiskard__suturo_1_1AdvancedScope_a7489f59d843c5ae6cd0849b7bfd08579}
+
+
+Get a scope by the file it was generated from. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em file\-Path} & File path\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the scope 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_ab44fac23fb71135abd66b65a5053a3ee}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!get\-Spec@{get\-Spec}}
+\index{get\-Spec@{get\-Spec}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{get\-Spec}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Advanced\-Scope\-::get\-Spec (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name}
+\end{DoxyParamCaption}
+) const}}\label{classgiskard__suturo_1_1AdvancedScope_ab44fac23fb71135abd66b65a5053a3ee}
+
+
+Find a specification in this scope or it's super scopes. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the specification\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Found specification 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a0381a9d28f74e2ce9101e65ea280e05b}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!get\-Spec@{get\-Spec}}
+\index{get\-Spec@{get\-Spec}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{get\-Spec}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Advanced\-Scope\-::get\-Spec (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name, }
+\item[{std\-::string \&}]{global\-Prefix}
+\end{DoxyParamCaption}
+) const}}\label{classgiskard__suturo_1_1AdvancedScope_a0381a9d28f74e2ce9101e65ea280e05b}
+
+
+Find a specification and attach the give prefix to the reference. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the specification \\
+\hline
+ & {\em global\-Prefix} & Prefix for the reference\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Reference specification 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a617f245bf85101b329f02b1bbbb36adf}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!get\-Super\-Scopes@{get\-Super\-Scopes}}
+\index{get\-Super\-Scopes@{get\-Super\-Scopes}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{get\-Super\-Scopes}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$Advanced\-Scope\-Ptr$>$ giskard\-\_\-suturo\-::\-Advanced\-Scope\-::get\-Super\-Scopes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classgiskard__suturo_1_1AdvancedScope_a617f245bf85101b329f02b1bbbb36adf}
+
+
+Get a list of all of this scope's super scopes. 
+
+\begin{DoxyReturn}{Returns}
+The super scopes. 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a613ef84fadf020dc111737499db7b8bb}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!has\-Function@{has\-Function}}
+\index{has\-Function@{has\-Function}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{has\-Function}]{\setlength{\rightskip}{0pt plus 5cm}bool giskard\-\_\-suturo\-::\-Advanced\-Scope\-::has\-Function (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name, }
+\item[{const std\-::vector$<$ Spec\-Ptr $>$ \&}]{signature}
+\end{DoxyParamCaption}
+) const}}\label{classgiskard__suturo_1_1AdvancedScope_a613ef84fadf020dc111737499db7b8bb}
+
+
+Determines whether this scope or one of it's super scopes defines a function with matching name and argument signature. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the function \\
+\hline
+\mbox{\tt in}  & {\em signature} & Argument signature\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if a matching function is defined 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_ab3e2735f8e0e947dbb76a6bae17f63a4}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!has\-Function\-Call@{has\-Function\-Call}}
+\index{has\-Function\-Call@{has\-Function\-Call}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{has\-Function\-Call}]{\setlength{\rightskip}{0pt plus 5cm}bool giskard\-\_\-suturo\-::\-Advanced\-Scope\-::has\-Function\-Call (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name, }
+\item[{std\-::vector$<$ Spec\-Ptr $>$ \&}]{arguments, }
+\item[{{\bf Function\-Call} \&}]{call}
+\end{DoxyParamCaption}
+) const}}\label{classgiskard__suturo_1_1AdvancedScope_ab3e2735f8e0e947dbb76a6bae17f63a4}
+
+
+Determines whether a function has been called before with the given arguments. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the function \\
+\hline
+ & {\em arguments} & Arguments for the call \\
+\hline
+ & {\em call} & The call structure storing this call\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if this function has been called with these arguments before, False otherwise. 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_af1e4c6fa16b5ee78fcc58c17a8b0dfeb}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!is\-Name\-Taken@{is\-Name\-Taken}}
+\index{is\-Name\-Taken@{is\-Name\-Taken}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{is\-Name\-Taken}]{\setlength{\rightskip}{0pt plus 5cm}bool giskard\-\_\-suturo\-::\-Advanced\-Scope\-::is\-Name\-Taken (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name}
+\end{DoxyParamCaption}
+) const}}\label{classgiskard__suturo_1_1AdvancedScope_af1e4c6fa16b5ee78fcc58c17a8b0dfeb}
+
+
+Determines whether a name is already taken. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name to check\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the name is taken. 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a96cdc688a623cf277ea441533813e16b}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!is\-Super\-Scope@{is\-Super\-Scope}}
+\index{is\-Super\-Scope@{is\-Super\-Scope}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{is\-Super\-Scope}]{\setlength{\rightskip}{0pt plus 5cm}bool giskard\-\_\-suturo\-::\-Advanced\-Scope\-::is\-Super\-Scope (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{file\-Path}
+\end{DoxyParamCaption}
+) const}}\label{classgiskard__suturo_1_1AdvancedScope_a96cdc688a623cf277ea441533813e16b}
+
+
+Determines whether one of this scope's super scopes is generated from the given file. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em file\-Path} & File path\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if a super scope is generated by this file. 
+\end{DoxyReturn}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classgiskard__suturo_1_1AdvancedScope_a9a27c5f444714caf79ec05ac606c84a5}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!aliased\-Scopes@{aliased\-Scopes}}
+\index{aliased\-Scopes@{aliased\-Scopes}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{aliased\-Scopes}]{\setlength{\rightskip}{0pt plus 5cm}std\-::unordered\-\_\-map$<$std\-::string, Advanced\-Scope\-Ptr$>$ giskard\-\_\-suturo\-::\-Advanced\-Scope\-::aliased\-Scopes\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1AdvancedScope_a9a27c5f444714caf79ec05ac606c84a5}
+Aliased scopes \hypertarget{classgiskard__suturo_1_1AdvancedScope_a2cc175184a5c1f1e9ca8265cfb5463bc}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!f\-Abs@{f\-Abs}}
+\index{f\-Abs@{f\-Abs}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{f\-Abs}]{\setlength{\rightskip}{0pt plus 5cm}const std\-::string giskard\-\_\-suturo\-::\-Advanced\-Scope\-::f\-Abs = \char`\"{}abs\char`\"{}\hspace{0.3cm}{\ttfamily [static]}}}\label{classgiskard__suturo_1_1AdvancedScope_a2cc175184a5c1f1e9ca8265cfb5463bc}
+Names of predefined functions \hypertarget{classgiskard__suturo_1_1AdvancedScope_a2b3e583a28325902fec73e0063646cab}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!file\-Path@{file\-Path}}
+\index{file\-Path@{file\-Path}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{file\-Path}]{\setlength{\rightskip}{0pt plus 5cm}const std\-::string giskard\-\_\-suturo\-::\-Advanced\-Scope\-::file\-Path}}\label{classgiskard__suturo_1_1AdvancedScope_a2b3e583a28325902fec73e0063646cab}
+File path this scope was generated from \hypertarget{classgiskard__suturo_1_1AdvancedScope_a6208063287509649126390c5960abfb8}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!function\-Calls@{function\-Calls}}
+\index{function\-Calls@{function\-Calls}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{function\-Calls}]{\setlength{\rightskip}{0pt plus 5cm}std\-::unordered\-\_\-map$<$std\-::string, std\-::vector$<${\bf Function\-Call}$>$ $>$ giskard\-\_\-suturo\-::\-Advanced\-Scope\-::function\-Calls\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1AdvancedScope_a6208063287509649126390c5960abfb8}
+Cache of function calls \hypertarget{classgiskard__suturo_1_1AdvancedScope_a32385ec7d5bdd31f190473293e3445f8}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!function\-Definitions@{function\-Definitions}}
+\index{function\-Definitions@{function\-Definitions}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{function\-Definitions}]{\setlength{\rightskip}{0pt plus 5cm}std\-::unordered\-\_\-map$<$std\-::string, std\-::vector$<$Fn\-Def\-Ptr$>$ $>$ giskard\-\_\-suturo\-::\-Advanced\-Scope\-::function\-Definitions\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1AdvancedScope_a32385ec7d5bdd31f190473293e3445f8}
+Functions defined by this scope \hypertarget{classgiskard__suturo_1_1AdvancedScope_ac69aab3b5b22fc62d1d0f8e213e86ec5}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!prefix@{prefix}}
+\index{prefix@{prefix}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{prefix}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string giskard\-\_\-suturo\-::\-Advanced\-Scope\-::prefix\hspace{0.3cm}{\ttfamily [protected]}}}\label{classgiskard__suturo_1_1AdvancedScope_ac69aab3b5b22fc62d1d0f8e213e86ec5}
+This scope's global prefix \hypertarget{classgiskard__suturo_1_1AdvancedScope_af5081ec45e81c905ed286da7a72532c3}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!scope\-Insert\-History@{scope\-Insert\-History}}
+\index{scope\-Insert\-History@{scope\-Insert\-History}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{scope\-Insert\-History}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<${\bf Scope\-Insert}$>$ giskard\-\_\-suturo\-::\-Advanced\-Scope\-::scope\-Insert\-History\hspace{0.3cm}{\ttfamily [protected]}}}\label{classgiskard__suturo_1_1AdvancedScope_af5081ec45e81c905ed286da7a72532c3}
+Insert history of scopes \hypertarget{classgiskard__suturo_1_1AdvancedScope_a10d0cc3f9602ef2bca32dd44bc49e30e}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!search\-Path@{search\-Path}}
+\index{search\-Path@{search\-Path}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{search\-Path}]{\setlength{\rightskip}{0pt plus 5cm}const std\-::string giskard\-\_\-suturo\-::\-Advanced\-Scope\-::search\-Path}}\label{classgiskard__suturo_1_1AdvancedScope_a10d0cc3f9602ef2bca32dd44bc49e30e}
+Path to begin local searches from \hypertarget{classgiskard__suturo_1_1AdvancedScope_a6a788662a6c7df9eaa3a8419b466990d}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!spec\-Insert\-History@{spec\-Insert\-History}}
+\index{spec\-Insert\-History@{spec\-Insert\-History}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{spec\-Insert\-History}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$std\-::string$>$ giskard\-\_\-suturo\-::\-Advanced\-Scope\-::spec\-Insert\-History\hspace{0.3cm}{\ttfamily [protected]}}}\label{classgiskard__suturo_1_1AdvancedScope_a6a788662a6c7df9eaa3a8419b466990d}
+Insert order of specifications \hypertarget{classgiskard__suturo_1_1AdvancedScope_a92bbb9dc2613a1331a95f7e0310dd342}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!specs@{specs}}
+\index{specs@{specs}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{specs}]{\setlength{\rightskip}{0pt plus 5cm}std\-::unordered\-\_\-map$<$std\-::string, Spec\-Ptr$>$ giskard\-\_\-suturo\-::\-Advanced\-Scope\-::specs\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1AdvancedScope_a92bbb9dc2613a1331a95f7e0310dd342}
+Scope entries \hypertarget{classgiskard__suturo_1_1AdvancedScope_ab4a2ea0c6a7d6401c7e5b2795a3094bb}{\index{giskard\-\_\-suturo\-::\-Advanced\-Scope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}!super\-Scopes@{super\-Scopes}}
+\index{super\-Scopes@{super\-Scopes}!giskard_suturo::AdvancedScope@{giskard\-\_\-suturo\-::\-Advanced\-Scope}}
+\subsubsection[{super\-Scopes}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$Advanced\-Scope\-Ptr$>$ giskard\-\_\-suturo\-::\-Advanced\-Scope\-::super\-Scopes\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1AdvancedScope_ab4a2ea0c6a7d6401c7e5b2795a3094bb}
+List of super scopes 
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+giskard\-\_\-suturo\-\_\-parser/include/giskard\-\_\-suturo\-\_\-parser/advanced\-\_\-scope.\-h\item 
+giskard\-\_\-suturo\-\_\-parser/src/advanced\-\_\-scope.\-cpp\end{DoxyCompactItemize}

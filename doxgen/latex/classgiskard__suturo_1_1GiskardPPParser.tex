@@ -1,0 +1,897 @@
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser}{\section{giskard\-\_\-suturo\-:\-:Giskard\-P\-P\-Parser Class Reference}
+\label{classgiskard__suturo_1_1GiskardPPParser}\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+}
+
+
+Parser for the second suturo Giskard language. (G\-Lang++)  
+
+
+
+
+{\ttfamily \#include $<$parser.\-h$>$}
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structgiskard__suturo_1_1GiskardPPParser_1_1Context}{Context}
+\begin{DoxyCompactList}\small\item\em Internal structure used for generating stack traces. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\-::string \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a6b478f98c1eb3b0e6ec033779ef513c0}{language\-\_\-name} () const 
+\item 
+std\-::string \hyperlink{classgiskard__suturo_1_1GiskardPPParser_adc21975afa4db6f4ffaafe7e4028fa11}{file\-\_\-suffix} () const 
+\item 
+Q\-P\-Controller\-Spec \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a00550a99afb34d7989a6f5569baee5d1}{parse\-From\-File} (const std\-::string \&file\-Path)
+\begin{DoxyCompactList}\small\item\em Parses a controller specification from a file. \end{DoxyCompactList}\item 
+Q\-P\-Controller\-Spec \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a0202ac022be6ef723f6eaba36783762e}{parse\-From\-String} (const std\-::string \&input)
+\begin{DoxyCompactList}\small\item\em Parses a controller specification form an input string. \end{DoxyCompactList}\item 
+boost\-::shared\-\_\-ptr$<$ \hyperlink{classgiskard__suturo_1_1AdvancedScope}{Advanced\-Scope} $>$ \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a258f15e4269a48f64d2ce1b48397dc04}{get\-Top\-Scope} () const 
+\begin{DoxyCompactList}\small\item\em Returns the scope that is currently active. \end{DoxyCompactList}\item 
+const boost\-::shared\-\_\-ptr\\*
+$<$ \hyperlink{classgiskard__suturo_1_1AdvancedScope}{Advanced\-Scope} $>$ \hyperlink{classgiskard__suturo_1_1GiskardPPParser_ab2d3195d4882590f42a92856ec84c3d1}{parse\-Scope} (const std\-::string \&input)
+\begin{DoxyCompactList}\small\item\em Parse a scope from a string. \end{DoxyCompactList}\item 
+Import\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a392ed0aa7ed397d08dd0044eb00e24c6}{parse\-Import\-Statement} (const std\-::string \&input)
+\begin{DoxyCompactList}\small\item\em Parses an import from a string. \end{DoxyCompactList}\item 
+Scope\-Entry \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a204cc6b1dbb4f4c123ae2381c21e1129}{parse\-Named\-Expression} (const std\-::string \&input)
+\begin{DoxyCompactList}\small\item\em Parses a scope entry from a string. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_af682380db5bae7510af5dd770ff6a40a}{parse\-Expression} (const std\-::string \&input)
+\begin{DoxyCompactList}\small\item\em Parses an expression from a string. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a1cfd0a847425bfc11e5fa3ee44d4f0da}{parse\-Term} (const std\-::string \&input)
+\begin{DoxyCompactList}\small\item\em Parses a term from a string. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a1ce68109ff8fe2a04781387a5e75d01c}{parse\-Factor} (const std\-::string \&input)
+\begin{DoxyCompactList}\small\item\em Parses a factor from a string. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_abc02fe77f1aa658ce54e295dd81f72fd}{parse\-Member\-Access} (const std\-::string \&input)
+\begin{DoxyCompactList}\small\item\em Parses a member access from a string. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_ad70ef6f3bdfef9a9303ab8ed5bd4fc6a}{parse\-Literal} (const std\-::string \&input)
+\begin{DoxyCompactList}\small\item\em Parses a literal from a string. \end{DoxyCompactList}\item 
+Decl\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a1394719bacd4e8b95ea8dc285b5832a5}{parse\-Declaration} (const std\-::string \&input)
+\begin{DoxyCompactList}\small\item\em Parses a declaration from a string. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_ae18049f559432fef1008a7e4a4acbe52}{parse\-Type} (const std\-::string \&input)
+\begin{DoxyCompactList}\small\item\em Parses a type from a string. \end{DoxyCompactList}\item 
+Fn\-Def\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a54d108fb57763f43f24a84655fa3ec54}{parse\-Function\-Definition} (const std\-::string \&input)
+\begin{DoxyCompactList}\small\item\em Parses a function definition from a string. \end{DoxyCompactList}\item 
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a7fa67ff0d0eb84f8d368ee78c4619325}{virtual void \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a7fa67ff0d0eb84f8d368ee78c4619325}{reset} ()}\label{classgiskard__suturo_1_1GiskardPPParser_a7fa67ff0d0eb84f8d368ee78c4619325}
+
+\begin{DoxyCompactList}\small\item\em Resets the internal state of the parser. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const std\-::string \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a01e9ef7fa18417e28380b93b91c389b1}{s\-Scalar} = \char`\"{}scalar\char`\"{}
+\item 
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a38ddaad3ec6be6e5c2eda92e5b6c9660}{static const std\-::string {\bfseries s\-Vec3} = \char`\"{}vec3\char`\"{}}\label{classgiskard__suturo_1_1GiskardPPParser_a38ddaad3ec6be6e5c2eda92e5b6c9660}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a47b3fbf28535d3a20ae47260eb0814b0}{static const std\-::string {\bfseries s\-Rotation} = \char`\"{}rotation\char`\"{}}\label{classgiskard__suturo_1_1GiskardPPParser_a47b3fbf28535d3a20ae47260eb0814b0}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_acbe90b54e0d072aa38143ed191b17bd0}{static const std\-::string {\bfseries s\-Frame} = \char`\"{}frame\char`\"{}}\label{classgiskard__suturo_1_1GiskardPPParser_acbe90b54e0d072aa38143ed191b17bd0}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_ab9e6fa7b662128e5f67f7d59c0388893}{static const std\-::string {\bfseries s\-Controllable} = \char`\"{}controllable\-C\char`\"{}}\label{classgiskard__suturo_1_1GiskardPPParser_ab9e6fa7b662128e5f67f7d59c0388893}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a6bda30a80e9ada00b36102d07b230052}{static const std\-::string {\bfseries s\-Soft} = \char`\"{}soft\-C\char`\"{}}\label{classgiskard__suturo_1_1GiskardPPParser_a6bda30a80e9ada00b36102d07b230052}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a6b06fc54e7ebb1cf5b5ccae822eaf498}{static const std\-::string {\bfseries s\-Hard} = \char`\"{}hard\-C\char`\"{}}\label{classgiskard__suturo_1_1GiskardPPParser_a6b06fc54e7ebb1cf5b5ccae822eaf498}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a747fe4deef996de2256cc1644e19d850}{static const std\-::string {\bfseries s\-String} = \char`\"{}string\char`\"{}}\label{classgiskard__suturo_1_1GiskardPPParser_a747fe4deef996de2256cc1644e19d850}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a4e008a54eecc0a6109017a33d18d14fd}{static const std\-::string {\bfseries s\-Map} = \char`\"{}map\char`\"{}}\label{classgiskard__suturo_1_1GiskardPPParser_a4e008a54eecc0a6109017a33d18d14fd}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a0670f3c7d3b107fc2a4fac8b49bad655}{static const std\-::string {\bfseries s\-List} = \char`\"{}list\char`\"{}}\label{classgiskard__suturo_1_1GiskardPPParser_a0670f3c7d3b107fc2a4fac8b49bad655}
+
+\item 
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_ae411566b3794b1fc22c55f325703d81a}{static const std\-::string {\bfseries s\-Scope} = \char`\"{}scope\char`\"{}}\label{classgiskard__suturo_1_1GiskardPPParser_ae411566b3794b1fc22c55f325703d81a}
+
+\end{DoxyCompactItemize}
+\subsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_ab36f4a6dcda51ea4e93ff51133596bd6}{typedef std\-::string\-::const\-\_\-iterator {\bfseries S\-It}}\label{classgiskard__suturo_1_1GiskardPPParser_ab36f4a6dcda51ea4e93ff51133596bd6}
+
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a8e475797a969228c979758e5fb2113d1}{set\-Input} (const std\-::string \&input)
+\begin{DoxyCompactList}\small\item\em Sets the current parser input. \end{DoxyCompactList}\item 
+Q\-P\-Controller\-Spec \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a8cdfdc1fabf8e37114e87829353c0a28}{generate\-Q\-P} ()
+\begin{DoxyCompactList}\small\item\em Parser rule, parsing and generating the \char`\"{}\-Q\-P\-Controller\char`\"{} constructor. \end{DoxyCompactList}\item 
+boost\-::shared\-\_\-ptr$<$ \hyperlink{classgiskard__suturo_1_1AdvancedScope}{Advanced\-Scope} $>$ \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a304048c5760494529fbdb1dc350faef1}{parse\-Scope} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parsing a scope. \end{DoxyCompactList}\item 
+Import\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a4a578fa8cb1146dcfaef6339cbf21191}{parse\-Import\-Statement} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parsing an import statement. \end{DoxyCompactList}\item 
+Scope\-Entry \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a8468037631a6bd116cdc0fe13b8092e3}{parse\-Named\-Expression} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parsing a scope entry. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_aee7c06ef0abfabde31bcf04ae1adb2ce}{parse\-Expression} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parsing an expression. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a3e58dd2c0122a8c2b2ce0cac05316cb9}{parse\-Term} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parsing a term. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a3f94b81b31397d1f84e0af44c3e2aed0}{parse\-Factor} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parsing a factor. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a65a09e46160e3a4f4b88882eebb07c28}{parse\-Member\-Access} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parsing member access. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_ad7d2f3327f7f48a7273af852f51fbe5a}{parse\-Literal} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parsing member. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_afb645a65de0e1816d40e327b72d89903}{parse\-Reference} (std\-::string name)
+\begin{DoxyCompactList}\small\item\em Function creating a reference based on a name and the current state of the parser. \end{DoxyCompactList}\item 
+Decl\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a94117935edd3c3935226f3a34ca485cf}{parse\-Declaration} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parsing an import statement. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a05e00946126ec889106a2e19279be47f}{parse\-Type} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parsing a type keyword. \end{DoxyCompactList}\item 
+Spec\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a422493cb0e62b04443b5a0058e7e65b8}{parse\-Function\-Call} (const std\-::string \&name)
+\begin{DoxyCompactList}\small\item\em Parser rule parsing a function call. \end{DoxyCompactList}\item 
+Fn\-Def\-Ptr \hyperlink{classgiskard__suturo_1_1GiskardPPParser_ad4c9438a4c33559ec898d76967732b49}{parse\-Function\-Definition} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parsing a function definition. \end{DoxyCompactList}\item 
+char \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a226b9afa3d4c45dd416acb62dc0e9738}{moveahead} ()
+\begin{DoxyCompactList}\small\item\em Skips at least one character and all the following white spaces, line breaks and comments. \end{DoxyCompactList}\item 
+bool \hyperlink{classgiskard__suturo_1_1GiskardPPParser_afb006a7326d82ab54d0eeaa72542ba99}{skip\-Char} (char c)
+\begin{DoxyCompactList}\small\item\em Skipper that returns true if it skipped the given character. \end{DoxyCompactList}\item 
+std\-::string \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a67a1fb5de322d7578db6daf326b18611}{lstr} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parses a string consisting of alphanumeric characters and underscores. The string must not begin with a digit. \end{DoxyCompactList}\item 
+std\-::string \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a488c72ec868b096a0efaea5c2587e6fd}{qstr} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parsing a quoted string. \end{DoxyCompactList}\item 
+double \hyperlink{classgiskard__suturo_1_1GiskardPPParser_aa870bd8151cc3e8e39ae130475a86430}{scalar} ()
+\begin{DoxyCompactList}\small\item\em Parser rule parsing a scalar value. \end{DoxyCompactList}\item 
+char \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a29ed8d6871277989e9ae23c8fa0adbb5}{skip} ()
+\begin{DoxyCompactList}\small\item\em Skipper rule, skipping white spaces, line breaks and comments. \end{DoxyCompactList}\item 
+std\-::string \hyperlink{classgiskard__suturo_1_1GiskardPPParser_ae34ba71ad3c4018730bd8dffb1c1044c}{type\-String} (Spec\-Ptr \&ptr)
+\begin{DoxyCompactList}\small\item\em Helper function generating a readable name for the type of a specification. \end{DoxyCompactList}\item 
+std\-::string \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a9907eb00aaf8065f387a5bdac3f5de17}{type\-List} (std\-::vector$<$ Spec\-Ptr $>$ \&v)
+\begin{DoxyCompactList}\small\item\em Helper function generating a readable list of type names for a list of specifications. \end{DoxyCompactList}\item 
+bool \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a95845d2c48b050a3a000879dbe5968b8}{is\-Blacklisted} (std\-::string name)
+\begin{DoxyCompactList}\small\item\em Determines whether a name is already taken by a keyword. \end{DoxyCompactList}\item 
+void \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a2a108e8cd73b619ccb1baa943fe6a747}{throw\-Error} (std\-::string msg)
+\begin{DoxyCompactList}\small\item\em Function for throwing parser errors containing a call trace. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+resource\-\_\-retriever\-::\-Retriever \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a6ae65d54b237bd3321091310825b702b}{resource\-Retriever}
+\item 
+boost\-::shared\-\_\-ptr$<$ \hyperlink{classgiskard__suturo_1_1AdvancedScope}{Advanced\-Scope} $>$ \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a63fc104102b073b0a5f9dfa1fa93eea3}{search\-Scope}
+\item 
+std\-::stack$<$ boost\-::shared\-\_\-ptr\\*
+$<$ \hyperlink{classgiskard__suturo_1_1AdvancedScope}{Advanced\-Scope} $>$ $>$ \hyperlink{classgiskard__suturo_1_1GiskardPPParser_ae8670c50103c477e9a3a1774bcd0cfbc}{scope\-Stack}
+\item 
+std\-::stack$<$ \hyperlink{structgiskard__suturo_1_1GiskardPPParser_1_1Context}{Context} $>$ \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a27bec9e4c3824a46126cce10474b0c97}{trace\-Stack}
+\item 
+std\-::string \hyperlink{classgiskard__suturo_1_1GiskardPPParser_aab4e3732ffd6ad76e3915e17b3655b0c}{access\-Prefix}
+\item 
+std\-::string \hyperlink{classgiskard__suturo_1_1GiskardPPParser_ad6743dbba552509d2d55cdb874ac7e76}{last\-Keyword}
+\item 
+S\-It \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a7dee6cfbff88604796d7968fc190e810}{it}
+\item 
+S\-It \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a22435e6cc45304914888b6c53b3eeb17}{end}
+\item 
+size\-\_\-t \hyperlink{classgiskard__suturo_1_1GiskardPPParser_ae4a702a812d943e99e67ffa7da455ec9}{line\-Number}
+\item 
+S\-It \hyperlink{classgiskard__suturo_1_1GiskardPPParser_ab1fa470eaed886d6ff52f85fe8618c7f}{l\-\_\-begin}
+\item 
+S\-It \hyperlink{classgiskard__suturo_1_1GiskardPPParser_aad16704f4a92d18367568749642da53a}{lit\-It}
+\item 
+const std\-::vector$<$ std\-::string $>$ \hyperlink{classgiskard__suturo_1_1GiskardPPParser_a23c7988ac4807b6c10ff00bd4f340b9e}{blacklist}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Parser for the second suturo Giskard language. (G\-Lang++) 
+
+\subsection{Member Function Documentation}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_adc21975afa4db6f4ffaafe7e4028fa11}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!file\-\_\-suffix@{file\-\_\-suffix}}
+\index{file\-\_\-suffix@{file\-\_\-suffix}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{file\-\_\-suffix}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::file\-\_\-suffix (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classgiskard__suturo_1_1GiskardPPParser_adc21975afa4db6f4ffaafe7e4028fa11}
+\begin{DoxyReturn}{Returns}
+File suffix associated with this language 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a8cdfdc1fabf8e37114e87829353c0a28}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!generate\-Q\-P@{generate\-Q\-P}}
+\index{generate\-Q\-P@{generate\-Q\-P}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{generate\-Q\-P}]{\setlength{\rightskip}{0pt plus 5cm}Q\-P\-Controller\-Spec giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::generate\-Q\-P (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a8cdfdc1fabf8e37114e87829353c0a28}
+
+
+Parser rule, parsing and generating the \char`\"{}\-Q\-P\-Controller\char`\"{} constructor. 
+
+\begin{DoxyReturn}{Returns}
+Generated Q\-P\-Controller specification 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a258f15e4269a48f64d2ce1b48397dc04}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!get\-Top\-Scope@{get\-Top\-Scope}}
+\index{get\-Top\-Scope@{get\-Top\-Scope}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{get\-Top\-Scope}]{\setlength{\rightskip}{0pt plus 5cm}boost\-::shared\-\_\-ptr$<${\bf Advanced\-Scope}$>$ giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::get\-Top\-Scope (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a258f15e4269a48f64d2ce1b48397dc04}
+
+
+Returns the scope that is currently active. 
+
+\begin{DoxyReturn}{Returns}
+Active scope 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a95845d2c48b050a3a000879dbe5968b8}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!is\-Blacklisted@{is\-Blacklisted}}
+\index{is\-Blacklisted@{is\-Blacklisted}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{is\-Blacklisted}]{\setlength{\rightskip}{0pt plus 5cm}bool giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::is\-Blacklisted (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a95845d2c48b050a3a000879dbe5968b8}
+
+
+Determines whether a name is already taken by a keyword. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name to be checked\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if blacklisted, False otherwise. 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a6b478f98c1eb3b0e6ec033779ef513c0}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!language\-\_\-name@{language\-\_\-name}}
+\index{language\-\_\-name@{language\-\_\-name}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{language\-\_\-name}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::language\-\_\-name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a6b478f98c1eb3b0e6ec033779ef513c0}
+\begin{DoxyReturn}{Returns}
+The name of the parsed language 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a67a1fb5de322d7578db6daf326b18611}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!lstr@{lstr}}
+\index{lstr@{lstr}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{lstr}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::lstr (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a67a1fb5de322d7578db6daf326b18611}
+
+
+Parser rule parses a string consisting of alphanumeric characters and underscores. The string must not begin with a digit. 
+
+\begin{DoxyReturn}{Returns}
+Parsed string 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a226b9afa3d4c45dd416acb62dc0e9738}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!moveahead@{moveahead}}
+\index{moveahead@{moveahead}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{moveahead}]{\setlength{\rightskip}{0pt plus 5cm}char giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::moveahead (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a226b9afa3d4c45dd416acb62dc0e9738}
+
+
+Skips at least one character and all the following white spaces, line breaks and comments. 
+
+\begin{DoxyReturn}{Returns}
+The character the skipper stopped on 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a1394719bacd4e8b95ea8dc285b5832a5}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Declaration@{parse\-Declaration}}
+\index{parse\-Declaration@{parse\-Declaration}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Declaration}]{\setlength{\rightskip}{0pt plus 5cm}Decl\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Declaration (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{input}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1GiskardPPParser_a1394719bacd4e8b95ea8dc285b5832a5}
+
+
+Parses a declaration from a string. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & Input string\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Parsed declaration structure 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a94117935edd3c3935226f3a34ca485cf}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Declaration@{parse\-Declaration}}
+\index{parse\-Declaration@{parse\-Declaration}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Declaration}]{\setlength{\rightskip}{0pt plus 5cm}Decl\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Declaration (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a94117935edd3c3935226f3a34ca485cf}
+
+
+Parser rule parsing an import statement. 
+
+\begin{DoxyReturn}{Returns}
+Parsed import statement 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_af682380db5bae7510af5dd770ff6a40a}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Expression@{parse\-Expression}}
+\index{parse\-Expression@{parse\-Expression}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Expression}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Expression (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{input}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1GiskardPPParser_af682380db5bae7510af5dd770ff6a40a}
+
+
+Parses an expression from a string. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & Input string\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Parsed expression specification 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_aee7c06ef0abfabde31bcf04ae1adb2ce}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Expression@{parse\-Expression}}
+\index{parse\-Expression@{parse\-Expression}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Expression}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Expression (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_aee7c06ef0abfabde31bcf04ae1adb2ce}
+
+
+Parser rule parsing an expression. 
+
+\begin{DoxyReturn}{Returns}
+Parsed expression 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a1ce68109ff8fe2a04781387a5e75d01c}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Factor@{parse\-Factor}}
+\index{parse\-Factor@{parse\-Factor}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Factor}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Factor (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{input}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1GiskardPPParser_a1ce68109ff8fe2a04781387a5e75d01c}
+
+
+Parses a factor from a string. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & Input string\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Parsed factor specification 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a3f94b81b31397d1f84e0af44c3e2aed0}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Factor@{parse\-Factor}}
+\index{parse\-Factor@{parse\-Factor}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Factor}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Factor (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a3f94b81b31397d1f84e0af44c3e2aed0}
+
+
+Parser rule parsing a factor. 
+
+\begin{DoxyReturn}{Returns}
+Parsed factor 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a00550a99afb34d7989a6f5569baee5d1}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-From\-File@{parse\-From\-File}}
+\index{parse\-From\-File@{parse\-From\-File}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-From\-File}]{\setlength{\rightskip}{0pt plus 5cm}Q\-P\-Controller\-Spec giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-From\-File (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{file\-Path}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1GiskardPPParser_a00550a99afb34d7989a6f5569baee5d1}
+
+
+Parses a controller specification from a file. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em file\-Path} & File path\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Controller specification 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a0202ac022be6ef723f6eaba36783762e}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-From\-String@{parse\-From\-String}}
+\index{parse\-From\-String@{parse\-From\-String}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-From\-String}]{\setlength{\rightskip}{0pt plus 5cm}Q\-P\-Controller\-Spec giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-From\-String (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{input}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1GiskardPPParser_a0202ac022be6ef723f6eaba36783762e}
+
+
+Parses a controller specification form an input string. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Controller specification 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a422493cb0e62b04443b5a0058e7e65b8}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Function\-Call@{parse\-Function\-Call}}
+\index{parse\-Function\-Call@{parse\-Function\-Call}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Function\-Call}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Function\-Call (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a422493cb0e62b04443b5a0058e7e65b8}
+
+
+Parser rule parsing a function call. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the function\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Parsed function call 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a54d108fb57763f43f24a84655fa3ec54}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Function\-Definition@{parse\-Function\-Definition}}
+\index{parse\-Function\-Definition@{parse\-Function\-Definition}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Function\-Definition}]{\setlength{\rightskip}{0pt plus 5cm}Fn\-Def\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Function\-Definition (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{input}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1GiskardPPParser_a54d108fb57763f43f24a84655fa3ec54}
+
+
+Parses a function definition from a string. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & Input string\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Parsed function definition 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_ad4c9438a4c33559ec898d76967732b49}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Function\-Definition@{parse\-Function\-Definition}}
+\index{parse\-Function\-Definition@{parse\-Function\-Definition}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Function\-Definition}]{\setlength{\rightskip}{0pt plus 5cm}Fn\-Def\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Function\-Definition (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_ad4c9438a4c33559ec898d76967732b49}
+
+
+Parser rule parsing a function definition. 
+
+\begin{DoxyReturn}{Returns}
+Parsed function definition 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a392ed0aa7ed397d08dd0044eb00e24c6}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Import\-Statement@{parse\-Import\-Statement}}
+\index{parse\-Import\-Statement@{parse\-Import\-Statement}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Import\-Statement}]{\setlength{\rightskip}{0pt plus 5cm}Import\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Import\-Statement (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{input}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1GiskardPPParser_a392ed0aa7ed397d08dd0044eb00e24c6}
+
+
+Parses an import from a string. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & Input string\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Parsed input statement 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a4a578fa8cb1146dcfaef6339cbf21191}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Import\-Statement@{parse\-Import\-Statement}}
+\index{parse\-Import\-Statement@{parse\-Import\-Statement}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Import\-Statement}]{\setlength{\rightskip}{0pt plus 5cm}Import\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Import\-Statement (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a4a578fa8cb1146dcfaef6339cbf21191}
+
+
+Parser rule parsing an import statement. 
+
+\begin{DoxyReturn}{Returns}
+Parsed import statement 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_ad70ef6f3bdfef9a9303ab8ed5bd4fc6a}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Literal@{parse\-Literal}}
+\index{parse\-Literal@{parse\-Literal}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Literal}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Literal (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{input}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1GiskardPPParser_ad70ef6f3bdfef9a9303ab8ed5bd4fc6a}
+
+
+Parses a literal from a string. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & Input string\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Parsed literal specification 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_ad7d2f3327f7f48a7273af852f51fbe5a}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Literal@{parse\-Literal}}
+\index{parse\-Literal@{parse\-Literal}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Literal}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Literal (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_ad7d2f3327f7f48a7273af852f51fbe5a}
+
+
+Parser rule parsing member. 
+
+\begin{DoxyReturn}{Returns}
+Parsed literal 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_abc02fe77f1aa658ce54e295dd81f72fd}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Member\-Access@{parse\-Member\-Access}}
+\index{parse\-Member\-Access@{parse\-Member\-Access}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Member\-Access}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Member\-Access (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{input}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1GiskardPPParser_abc02fe77f1aa658ce54e295dd81f72fd}
+
+
+Parses a member access from a string. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & Input string\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Parsed member access specification 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a65a09e46160e3a4f4b88882eebb07c28}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Member\-Access@{parse\-Member\-Access}}
+\index{parse\-Member\-Access@{parse\-Member\-Access}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Member\-Access}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Member\-Access (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a65a09e46160e3a4f4b88882eebb07c28}
+
+
+Parser rule parsing member access. 
+
+\begin{DoxyReturn}{Returns}
+Parsed member access 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a204cc6b1dbb4f4c123ae2381c21e1129}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Named\-Expression@{parse\-Named\-Expression}}
+\index{parse\-Named\-Expression@{parse\-Named\-Expression}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Named\-Expression}]{\setlength{\rightskip}{0pt plus 5cm}Scope\-Entry giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Named\-Expression (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{input}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1GiskardPPParser_a204cc6b1dbb4f4c123ae2381c21e1129}
+
+
+Parses a scope entry from a string. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & Input String\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Parsed scope entry 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a8468037631a6bd116cdc0fe13b8092e3}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Named\-Expression@{parse\-Named\-Expression}}
+\index{parse\-Named\-Expression@{parse\-Named\-Expression}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Named\-Expression}]{\setlength{\rightskip}{0pt plus 5cm}Scope\-Entry giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Named\-Expression (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a8468037631a6bd116cdc0fe13b8092e3}
+
+
+Parser rule parsing a scope entry. 
+
+\begin{DoxyReturn}{Returns}
+Parsed scope entry 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_afb645a65de0e1816d40e327b72d89903}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Reference@{parse\-Reference}}
+\index{parse\-Reference@{parse\-Reference}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Reference}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Reference (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_afb645a65de0e1816d40e327b72d89903}
+
+
+Function creating a reference based on a name and the current state of the parser. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the reference\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Created reference 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_ab2d3195d4882590f42a92856ec84c3d1}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Scope@{parse\-Scope}}
+\index{parse\-Scope@{parse\-Scope}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Scope}]{\setlength{\rightskip}{0pt plus 5cm}const Advanced\-Scope\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Scope (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{input}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1GiskardPPParser_ab2d3195d4882590f42a92856ec84c3d1}
+
+
+Parse a scope from a string. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & Input string\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Parsed scope 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a304048c5760494529fbdb1dc350faef1}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Scope@{parse\-Scope}}
+\index{parse\-Scope@{parse\-Scope}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Scope}]{\setlength{\rightskip}{0pt plus 5cm}Advanced\-Scope\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Scope (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a304048c5760494529fbdb1dc350faef1}
+
+
+Parser rule parsing a scope. 
+
+\begin{DoxyReturn}{Returns}
+Parsed scope 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a1cfd0a847425bfc11e5fa3ee44d4f0da}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Term@{parse\-Term}}
+\index{parse\-Term@{parse\-Term}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Term}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Term (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{input}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1GiskardPPParser_a1cfd0a847425bfc11e5fa3ee44d4f0da}
+
+
+Parses a term from a string. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & Input string\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Parsed term specification 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a3e58dd2c0122a8c2b2ce0cac05316cb9}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Term@{parse\-Term}}
+\index{parse\-Term@{parse\-Term}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Term}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Term (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a3e58dd2c0122a8c2b2ce0cac05316cb9}
+
+
+Parser rule parsing a term. 
+
+\begin{DoxyReturn}{Returns}
+Parsed term 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_ae18049f559432fef1008a7e4a4acbe52}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Type@{parse\-Type}}
+\index{parse\-Type@{parse\-Type}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Type}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Type (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{input}
+\end{DoxyParamCaption}
+)}}\label{classgiskard__suturo_1_1GiskardPPParser_ae18049f559432fef1008a7e4a4acbe52}
+
+
+Parses a type from a string. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & Input string\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer of parsed type 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a05e00946126ec889106a2e19279be47f}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!parse\-Type@{parse\-Type}}
+\index{parse\-Type@{parse\-Type}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{parse\-Type}]{\setlength{\rightskip}{0pt plus 5cm}Spec\-Ptr giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::parse\-Type (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a05e00946126ec889106a2e19279be47f}
+
+
+Parser rule parsing a type keyword. 
+
+\begin{DoxyReturn}{Returns}
+Pointer of parsed type 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a488c72ec868b096a0efaea5c2587e6fd}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!qstr@{qstr}}
+\index{qstr@{qstr}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{qstr}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::qstr (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a488c72ec868b096a0efaea5c2587e6fd}
+
+
+Parser rule parsing a quoted string. 
+
+\begin{DoxyReturn}{Returns}
+Parsed string 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_aa870bd8151cc3e8e39ae130475a86430}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!scalar@{scalar}}
+\index{scalar@{scalar}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{scalar}]{\setlength{\rightskip}{0pt plus 5cm}double giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::scalar (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_aa870bd8151cc3e8e39ae130475a86430}
+
+
+Parser rule parsing a scalar value. 
+
+\begin{DoxyReturn}{Returns}
+\{ description\-\_\-of\-\_\-the\-\_\-return\-\_\-value \} 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a8e475797a969228c979758e5fb2113d1}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!set\-Input@{set\-Input}}
+\index{set\-Input@{set\-Input}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{set\-Input}]{\setlength{\rightskip}{0pt plus 5cm}void giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::set\-Input (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{input}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a8e475797a969228c979758e5fb2113d1}
+
+
+Sets the current parser input. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & Input string \\
+\hline
+\end{DoxyParams}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a29ed8d6871277989e9ae23c8fa0adbb5}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!skip@{skip}}
+\index{skip@{skip}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{skip}]{\setlength{\rightskip}{0pt plus 5cm}char giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::skip (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a29ed8d6871277989e9ae23c8fa0adbb5}
+
+
+Skipper rule, skipping white spaces, line breaks and comments. 
+
+\begin{DoxyReturn}{Returns}
+Character the skipper stopped on 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_afb006a7326d82ab54d0eeaa72542ba99}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!skip\-Char@{skip\-Char}}
+\index{skip\-Char@{skip\-Char}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{skip\-Char}]{\setlength{\rightskip}{0pt plus 5cm}bool giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::skip\-Char (
+\begin{DoxyParamCaption}
+\item[{char}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_afb006a7326d82ab54d0eeaa72542ba99}
+
+
+Skipper that returns true if it skipped the given character. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em c} & Character that should be skipped\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if c was skipped 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a2a108e8cd73b619ccb1baa943fe6a747}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!throw\-Error@{throw\-Error}}
+\index{throw\-Error@{throw\-Error}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{throw\-Error}]{\setlength{\rightskip}{0pt plus 5cm}void giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::throw\-Error (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{msg}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a2a108e8cd73b619ccb1baa943fe6a747}
+
+
+Function for throwing parser errors containing a call trace. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em msg} & Error message \\
+\hline
+\end{DoxyParams}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_a9907eb00aaf8065f387a5bdac3f5de17}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!type\-List@{type\-List}}
+\index{type\-List@{type\-List}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{type\-List}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::type\-List (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ Spec\-Ptr $>$ \&}]{v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a9907eb00aaf8065f387a5bdac3f5de17}
+
+
+Helper function generating a readable list of type names for a list of specifications. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & List of specifications\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+List type string 
+\end{DoxyReturn}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_ae34ba71ad3c4018730bd8dffb1c1044c}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!type\-String@{type\-String}}
+\index{type\-String@{type\-String}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{type\-String}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::type\-String (
+\begin{DoxyParamCaption}
+\item[{Spec\-Ptr \&}]{ptr}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_ae34ba71ad3c4018730bd8dffb1c1044c}
+
+
+Helper function generating a readable name for the type of a specification. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Specification pointer\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Type string 
+\end{DoxyReturn}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classgiskard__suturo_1_1GiskardPPParser_aab4e3732ffd6ad76e3915e17b3655b0c}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!access\-Prefix@{access\-Prefix}}
+\index{access\-Prefix@{access\-Prefix}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{access\-Prefix}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::access\-Prefix\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_aab4e3732ffd6ad76e3915e17b3655b0c}
+Prefix used for generating resolved reference names \hypertarget{classgiskard__suturo_1_1GiskardPPParser_a23c7988ac4807b6c10ff00bd4f340b9e}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!blacklist@{blacklist}}
+\index{blacklist@{blacklist}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{blacklist}]{\setlength{\rightskip}{0pt plus 5cm}const std\-::vector$<$std\-::string$>$ giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::blacklist\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a23c7988ac4807b6c10ff00bd4f340b9e}
+List of keywords reserved by the language \hypertarget{classgiskard__suturo_1_1GiskardPPParser_a22435e6cc45304914888b6c53b3eeb17}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!end@{end}}
+\index{end@{end}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{end}]{\setlength{\rightskip}{0pt plus 5cm}S\-It giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::end\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a22435e6cc45304914888b6c53b3eeb17}
+End of input iterator \hypertarget{classgiskard__suturo_1_1GiskardPPParser_a7dee6cfbff88604796d7968fc190e810}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!it@{it}}
+\index{it@{it}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{it}]{\setlength{\rightskip}{0pt plus 5cm}S\-It giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::it\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a7dee6cfbff88604796d7968fc190e810}
+Cursor iterator \hypertarget{classgiskard__suturo_1_1GiskardPPParser_ab1fa470eaed886d6ff52f85fe8618c7f}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!l\-\_\-begin@{l\-\_\-begin}}
+\index{l\-\_\-begin@{l\-\_\-begin}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{l\-\_\-begin}]{\setlength{\rightskip}{0pt plus 5cm}S\-It giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::l\-\_\-begin\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_ab1fa470eaed886d6ff52f85fe8618c7f}
+Begin of line iterator \hypertarget{classgiskard__suturo_1_1GiskardPPParser_ad6743dbba552509d2d55cdb874ac7e76}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!last\-Keyword@{last\-Keyword}}
+\index{last\-Keyword@{last\-Keyword}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{last\-Keyword}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::last\-Keyword\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_ad6743dbba552509d2d55cdb874ac7e76}
+Last parsed keyword \hypertarget{classgiskard__suturo_1_1GiskardPPParser_ae4a702a812d943e99e67ffa7da455ec9}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!line\-Number@{line\-Number}}
+\index{line\-Number@{line\-Number}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{line\-Number}]{\setlength{\rightskip}{0pt plus 5cm}size\-\_\-t giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::line\-Number\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_ae4a702a812d943e99e67ffa7da455ec9}
+Current line number \hypertarget{classgiskard__suturo_1_1GiskardPPParser_aad16704f4a92d18367568749642da53a}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!lit\-It@{lit\-It}}
+\index{lit\-It@{lit\-It}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{lit\-It}]{\setlength{\rightskip}{0pt plus 5cm}S\-It giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::lit\-It\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_aad16704f4a92d18367568749642da53a}
+Begin of literal iterator \hypertarget{classgiskard__suturo_1_1GiskardPPParser_a6ae65d54b237bd3321091310825b702b}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!resource\-Retriever@{resource\-Retriever}}
+\index{resource\-Retriever@{resource\-Retriever}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{resource\-Retriever}]{\setlength{\rightskip}{0pt plus 5cm}resource\-\_\-retriever\-::\-Retriever giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::resource\-Retriever\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a6ae65d54b237bd3321091310825b702b}
+Resource retriever used for retrieving external files \hypertarget{classgiskard__suturo_1_1GiskardPPParser_ae8670c50103c477e9a3a1774bcd0cfbc}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!scope\-Stack@{scope\-Stack}}
+\index{scope\-Stack@{scope\-Stack}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{scope\-Stack}]{\setlength{\rightskip}{0pt plus 5cm}std\-::stack$<$boost\-::shared\-\_\-ptr$<${\bf Advanced\-Scope}$>$ $>$ giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::scope\-Stack\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_ae8670c50103c477e9a3a1774bcd0cfbc}
+Stack of scopes being parsed \hypertarget{classgiskard__suturo_1_1GiskardPPParser_a63fc104102b073b0a5f9dfa1fa93eea3}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!search\-Scope@{search\-Scope}}
+\index{search\-Scope@{search\-Scope}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{search\-Scope}]{\setlength{\rightskip}{0pt plus 5cm}boost\-::shared\-\_\-ptr$<${\bf Advanced\-Scope}$>$ giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::search\-Scope\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a63fc104102b073b0a5f9dfa1fa93eea3}
+Current scope to be searched for symbols \hypertarget{classgiskard__suturo_1_1GiskardPPParser_a01e9ef7fa18417e28380b93b91c389b1}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!s\-Scalar@{s\-Scalar}}
+\index{s\-Scalar@{s\-Scalar}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{s\-Scalar}]{\setlength{\rightskip}{0pt plus 5cm}const std\-::string giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::s\-Scalar = \char`\"{}scalar\char`\"{}\hspace{0.3cm}{\ttfamily [static]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a01e9ef7fa18417e28380b93b91c389b1}
+Keywords reserved by the language \hypertarget{classgiskard__suturo_1_1GiskardPPParser_a27bec9e4c3824a46126cce10474b0c97}{\index{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}!trace\-Stack@{trace\-Stack}}
+\index{trace\-Stack@{trace\-Stack}!giskard_suturo::GiskardPPParser@{giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser}}
+\subsubsection[{trace\-Stack}]{\setlength{\rightskip}{0pt plus 5cm}std\-::stack$<${\bf Context}$>$ giskard\-\_\-suturo\-::\-Giskard\-P\-P\-Parser\-::trace\-Stack\hspace{0.3cm}{\ttfamily [private]}}}\label{classgiskard__suturo_1_1GiskardPPParser_a27bec9e4c3824a46126cce10474b0c97}
+Current rule call trace 
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+giskard\-\_\-suturo\-\_\-parser/include/giskard\-\_\-suturo\-\_\-parser/parser.\-h\item 
+giskard\-\_\-suturo\-\_\-parser/src/parser.\-cpp\end{DoxyCompactItemize}

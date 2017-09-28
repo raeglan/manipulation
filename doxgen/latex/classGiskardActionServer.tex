@@ -1,0 +1,532 @@
+\hypertarget{classGiskardActionServer}{\section{Giskard\-Action\-Server Class Reference}
+\label{classGiskardActionServer}\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}}
+}
+
+
+Class for giskard action server. Sets up action server, threads and callbacks.  
+
+
+
+
+{\ttfamily \#include $<$Giskard\-Action\-Server.\-h$>$}
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structGiskardActionServer_1_1gripperController}{gripper\-Controller}
+\begin{DoxyCompactList}\small\item\em Internal structure to manage a gripper controller. \end{DoxyCompactList}\item 
+struct \hyperlink{structGiskardActionServer_1_1posController}{pos\-Controller}
+\begin{DoxyCompactList}\small\item\em Internal structure to manage a position controller. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classGiskardActionServer_a8a7027c7e6c35a2d0bb39146ea8233fd}{Giskard\-Action\-Server} (string \-\_\-name)
+\begin{DoxyCompactList}\small\item\em Constructor for giskard action server. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classGiskardActionServer_aed9b983c543c6f45d1adb023d4ae6e6f}{set\-Goal} (const suturo\-\_\-manipulation\-\_\-msgs\-::\-Move\-Robot\-Goal\-Const\-Ptr \&goal)
+\begin{DoxyCompactList}\small\item\em Goal callback for the action server. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classGiskardActionServer_ad1b3fb4f09d818b2751d8ec760295149}{load\-Config} (Y\-A\-M\-L\-::\-Node config)
+\begin{DoxyCompactList}\small\item\em Configures the action server using a yaml configuration. \end{DoxyCompactList}\item 
+void \hyperlink{classGiskardActionServer_ac81b9f53586562358dac417f4ef1df33}{update\-Joint\-State} (const sensor\-\_\-msgs\-::\-Joint\-State\-::\-Const\-Ptr \&joint\-State\-Msg)
+\begin{DoxyCompactList}\small\item\em Callback function for receiving joint states. \end{DoxyCompactList}\item 
+void \hyperlink{classGiskardActionServer_ad435a52f4d06c69459db72efc1db3662}{update\-Controller} (const sensor\-\_\-msgs\-::\-Joint\-State joint\-State)
+\begin{DoxyCompactList}\small\item\em Performs one controller update cycle. \end{DoxyCompactList}\item 
+bool \hyperlink{classGiskardActionServer_ab71dfdc1a4c04038b8a769859243d82a}{decode\-Double} (const string \&\hyperlink{classGiskardActionServer_ae1d480bfeed0f97334d25e1dfc868e67}{name}, string value)
+\begin{DoxyCompactList}\small\item\em Decodes a scalar parameter from a string and writes it to the state vector. \end{DoxyCompactList}\item 
+bool \hyperlink{classGiskardActionServer_a60aebb66785577c5a106de74f6a5c55a}{decode\-Double} (const string \&\hyperlink{classGiskardActionServer_ae1d480bfeed0f97334d25e1dfc868e67}{name}, double value)
+\begin{DoxyCompactList}\small\item\em Assigns a scalar parameter to the state vector. \end{DoxyCompactList}\item 
+bool \hyperlink{classGiskardActionServer_ae821164a4a9ab651d1243ecace70e7e2}{decode\-Vector} (const string \&\hyperlink{classGiskardActionServer_ae1d480bfeed0f97334d25e1dfc868e67}{name}, string vector)
+\begin{DoxyCompactList}\small\item\em Decodes a vector parameter from a string and writes it to the state vector. \end{DoxyCompactList}\item 
+bool \hyperlink{classGiskardActionServer_adac7573c728e9e1509b3add22d580ba4}{decode\-Vector} (const string \&\hyperlink{classGiskardActionServer_ae1d480bfeed0f97334d25e1dfc868e67}{name}, Eigen\-::\-Vector3d vector)
+\begin{DoxyCompactList}\small\item\em Assigns a vector parameter to the state vector. \end{DoxyCompactList}\item 
+bool \hyperlink{classGiskardActionServer_ab1656dc16797cdf15607a42e59435c5b}{decode\-Transform} (const string \&\hyperlink{classGiskardActionServer_ae1d480bfeed0f97334d25e1dfc868e67}{name}, string transform)
+\begin{DoxyCompactList}\small\item\em Decodes a transform parameter from a string and writes it to the state vector. \end{DoxyCompactList}\item 
+bool \hyperlink{classGiskardActionServer_afd265e6b6c0af3afb6e147b4ee2fe0ff}{decode\-Transform} (const string \&\hyperlink{classGiskardActionServer_ae1d480bfeed0f97334d25e1dfc868e67}{name}, tf\-::\-Transform transform)
+\begin{DoxyCompactList}\small\item\em Assigns a transform parameter to the state vector. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{classGiskardActionServer_a027ef896e1d60656dc32b7fd827e00c1}{n\-W\-S\-R}
+\item 
+bool \hyperlink{classGiskardActionServer_acc7002280c576e183f1fc07a7450918e}{terminate\-Execution}
+\item 
+const string \hyperlink{classGiskardActionServer_ae1d480bfeed0f97334d25e1dfc868e67}{name}
+\item 
+ros\-::\-Node\-Handle \hyperlink{classGiskardActionServer_a9ff54b2b5811ca6a48b5147a3799697a}{nh}
+\item 
+actionlib\-::\-Simple\-Action\-Server\\*
+$<$ suturo\-\_\-manipulation\-\_\-msgs\-::\-Move\-Robot\-Action $>$ \hyperlink{classGiskardActionServer_aec1639ae446055aff03685e3a3b0bda2}{server}
+\item 
+giskard\-\_\-core\-::\-Q\-P\-Controller \hyperlink{classGiskardActionServer_a72419de3a5237d2ee09ad92f1ed81da1}{controller}
+\item 
+Eigen\-::\-Vector\-Xd \hyperlink{classGiskardActionServer_ae79dc838a2d884755866e29d9c02dd77}{state}
+\item 
+map$<$ std\-::string, ros\-::\-Publisher $>$ \hyperlink{classGiskardActionServer_a4ea7edab163168d8c747f7d2e67b2f67}{vel\-Controllers}
+\item 
+unordered\-\_\-map$<$ string, \\*
+\hyperlink{structGiskardActionServer_1_1posController}{pos\-Controller} $>$ \hyperlink{classGiskardActionServer_a972ee6ac1c1295b7c183cfea96ee4db1}{pos\-Controllers}
+\item 
+unordered\-\_\-map$<$ string, \\*
+\hyperlink{structGiskardActionServer_1_1gripperController}{gripper\-Controller} $>$ \hyperlink{classGiskardActionServer_a20e66f4df22818fd6db1a78b4f9db129}{gripper\-Controllers}
+\item 
+unordered\-\_\-set$<$ string $>$ \hyperlink{classGiskardActionServer_af4c11bee852dc54f821c4aabbeec5d7c}{joint\-Set}
+\item 
+vector$<$ boost\-::shared\-\_\-ptr\\*
+$<$ \hyperlink{structAQuery}{A\-Query} $>$ $>$ \hyperlink{classGiskardActionServer_ae8224875f2c3e1cba7f38a05c2d8985a}{queries}
+\item 
+map$<$ string, double $>$ \hyperlink{classGiskardActionServer_a965e4f058e16f29b8a6516d7fd6d45ad}{last\-Command}
+\item 
+map$<$ string, double $>$ \hyperlink{classGiskardActionServer_a02213acb96763c0283668a519903e440}{last\-Controllable\-Pos}
+\item 
+ros\-::\-Time \hyperlink{classGiskardActionServer_a549f8c868afd0fff8383fbbe512e4bfa}{last\-Update}
+\item 
+string \hyperlink{classGiskardActionServer_ab1ff77a2e75bc70378c6e763745593d1}{vis\-Ref\-Frame\-Name}
+\end{DoxyCompactItemize}
+\subsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{classGiskardActionServer_a3dcd42d3ccb136a49377b68bcdf21078}{Vis\-Types} \-: int \{ {\bfseries v\-Point}, 
+{\bfseries v\-Vector}, 
+{\bfseries v\-Frame}
+ \}
+\begin{DoxyCompactList}\small\item\em Enumeration for visualization types. \end{DoxyCompactList}\item 
+typedef std\-::pair\\*
+$<$ K\-D\-L\-::\-Expression$<$ K\-D\-L\-::\-Vector $>$\\*
+\-::Ptr, K\-D\-L\-::\-Expression\\*
+$<$ K\-D\-L\-::\-Vector $>$\-::Ptr $>$ \hyperlink{classGiskardActionServer_a49b67ed22398144efcae8cf2d6596f9e}{T\-Vec\-Pair}
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classGiskardActionServer_a4164a1043930f6575d011e3fb7bbb207}{generate\-Visuals\-From\-Scope} (const giskard\-\_\-core\-::\-Scope \&scope)
+\begin{DoxyCompactList}\small\item\em Parses controller scope for values to visualize. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+mutex \hyperlink{classGiskardActionServer_ac77cdbd8c3b81397c4be868e6711a458}{js\-Mutex}
+\item 
+bool \hyperlink{classGiskardActionServer_a6af586abe01f748597efea84d3d52e21}{new\-J\-S}
+\item 
+sensor\-\_\-msgs\-::\-Joint\-State \hyperlink{classGiskardActionServer_a06b9a0bfdf889fd886b4a10c6e0f7fe1}{current\-J\-S}
+\item 
+double \hyperlink{classGiskardActionServer_aca0c0257a6df8d3563fbdfdc39da1361}{d\-T}
+\item 
+tf\-::\-Transform\-Listener \hyperlink{classGiskardActionServer_ae7deb327e757759d21614df5adbc42f3}{tf\-Listener}
+\item 
+double \hyperlink{classGiskardActionServer_a17640817711388e121902779b66a3657}{last\-Feedback}
+\item 
+ros\-::\-Subscriber \hyperlink{classGiskardActionServer_a4197a9f1da3c9832d4bf7786bffa82ff}{js\-Sub}
+\item 
+bool \hyperlink{classGiskardActionServer_a46b468b15e97c46911fccfccf960ea76}{controller\-Initialized}
+\item 
+K\-D\-L\-::\-Expression$<$ double $>$\-::Ptr \hyperlink{classGiskardActionServer_ae68ed4306e57da20d00e80bf38f2e4f1}{feedback\-Expr}
+\item 
+unordered\-\_\-map$<$ string, \\*
+K\-D\-L\-::\-Expression$<$ double $>$\-::Ptr $>$ \hyperlink{classGiskardActionServer_ae04063c56a2103232e3aa88283897666}{vis\-Scalars}
+\item 
+unordered\-\_\-map$<$ string, \\*
+K\-D\-L\-::\-Expression$<$ K\-D\-L\-::\-Vector $>$\\*
+\-::Ptr $>$ \hyperlink{classGiskardActionServer_a1094414df8bbfbcf469c88877f46d019}{vis\-Points}
+\item 
+unordered\-\_\-map$<$ string, \hyperlink{classGiskardActionServer_a49b67ed22398144efcae8cf2d6596f9e}{T\-Vec\-Pair} $>$ \hyperlink{classGiskardActionServer_abdad3a9c717ec286399323b152a8e64d}{vis\-Vectors}
+\item 
+unordered\-\_\-map$<$ string, \\*
+K\-D\-L\-::\-Expression$<$ K\-D\-L\-::\-Frame $>$\\*
+\-::Ptr $>$ \hyperlink{classGiskardActionServer_a018f9bc81967e035deb6cec695893dbc}{vis\-Frames}
+\item 
+ros\-::\-Publisher \hyperlink{classGiskardActionServer_a127b4e7740905cceb5a1ed2affd7fed3}{js\-Cmd\-Pub}
+\item 
+ros\-::\-Publisher \hyperlink{classGiskardActionServer_ac3e0344ceea38b8113c364b34c2353b2}{pos\-Error\-Pub}
+\item 
+\hypertarget{classGiskardActionServer_aed767b9547c953f6861a363925a41d88}{ros\-::\-Publisher {\bfseries vel\-Error\-Pub}}\label{classGiskardActionServer_aed767b9547c953f6861a363925a41d88}
+
+\item 
+ros\-::\-Publisher \hyperlink{classGiskardActionServer_ad5faa562d8e3e2ea964effb5df90775b}{vis\-Pub}
+\item 
+\hypertarget{classGiskardActionServer_a6759ab8fd7b1bb1ed5b8341801d483a5}{ros\-::\-Publisher {\bfseries vis\-Scalar\-Pub}}\label{classGiskardActionServer_a6759ab8fd7b1bb1ed5b8341801d483a5}
+
+\item 
+\hyperlink{classVisualizationManager}{Visualization\-Manager} \hyperlink{classGiskardActionServer_a4aca89815a5d0cb84475773401613365}{vis\-Manager}
+\item 
+\hyperlink{classCollisionScene}{Collision\-Scene} \hyperlink{classGiskardActionServer_a9092b32b81ae2e3c13ab6f5632e716a1}{collision\-Scene}
+\item 
+\hyperlink{classMutexMap}{Collision\-Scene\-::\-Query\-Map} \hyperlink{classGiskardActionServer_a6dc2df6171c07b6c15e20e91533b0430}{coll\-Query\-Map}
+\item 
+suturo\-\_\-manipulation\-\_\-msgs\-::\-Move\-Robot\-Feedback \hyperlink{classGiskardActionServer_aaa0e1708f9a1af19c33986f0504e7f34}{feedback}
+\item 
+suturo\-\_\-manipulation\-\_\-msgs\-::\-Move\-Robot\-Result \hyperlink{classGiskardActionServer_a62a22a3a61a61b36a2b4c0d5f6ed1e70}{result}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class for giskard action server. Sets up action server, threads and callbacks. 
+
+\subsection{Member Typedef Documentation}
+\hypertarget{classGiskardActionServer_a49b67ed22398144efcae8cf2d6596f9e}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!T\-Vec\-Pair@{T\-Vec\-Pair}}
+\index{T\-Vec\-Pair@{T\-Vec\-Pair}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{T\-Vec\-Pair}]{\setlength{\rightskip}{0pt plus 5cm}typedef std\-::pair$<$K\-D\-L\-::\-Expression$<$K\-D\-L\-::\-Vector$>$\-::Ptr, K\-D\-L\-::\-Expression$<$K\-D\-L\-::\-Vector$>$\-::Ptr$>$ {\bf Giskard\-Action\-Server\-::\-T\-Vec\-Pair}\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a49b67ed22398144efcae8cf2d6596f9e}
+Type definition for vector visualization. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classGiskardActionServer_a8a7027c7e6c35a2d0bb39146ea8233fd}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!Giskard\-Action\-Server@{Giskard\-Action\-Server}}
+\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{Giskard\-Action\-Server}]{\setlength{\rightskip}{0pt plus 5cm}Giskard\-Action\-Server\-::\-Giskard\-Action\-Server (
+\begin{DoxyParamCaption}
+\item[{string}]{\-\_\-name}
+\end{DoxyParamCaption}
+)}}\label{classGiskardActionServer_a8a7027c7e6c35a2d0bb39146ea8233fd}
+
+
+Constructor for giskard action server. 
+
+During construction, an actionlib action server is created and command and visualization topics are advertised. Additional configuration information is read from the parameter $\sim$config on the parameter server.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-name} & The name that the actionlib action server will be created with \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classGiskardActionServer_ab71dfdc1a4c04038b8a769859243d82a}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!decode\-Double@{decode\-Double}}
+\index{decode\-Double@{decode\-Double}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{decode\-Double}]{\setlength{\rightskip}{0pt plus 5cm}bool Giskard\-Action\-Server\-::decode\-Double (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{name, }
+\item[{string}]{value}
+\end{DoxyParamCaption}
+)}}\label{classGiskardActionServer_ab71dfdc1a4c04038b8a769859243d82a}
+
+
+Decodes a scalar parameter from a string and writes it to the state vector. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the corresponding input in the current controller \\
+\hline
+\mbox{\tt in}  & {\em value} & Scalar encoded as string \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Success of decoding and value assignment. 
+\end{DoxyReturn}
+\hypertarget{classGiskardActionServer_a60aebb66785577c5a106de74f6a5c55a}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!decode\-Double@{decode\-Double}}
+\index{decode\-Double@{decode\-Double}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{decode\-Double}]{\setlength{\rightskip}{0pt plus 5cm}bool Giskard\-Action\-Server\-::decode\-Double (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{name, }
+\item[{double}]{value}
+\end{DoxyParamCaption}
+)}}\label{classGiskardActionServer_a60aebb66785577c5a106de74f6a5c55a}
+
+
+Assigns a scalar parameter to the state vector. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the corresponding input in the current controller \\
+\hline
+\mbox{\tt in}  & {\em value} & Scalar \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Success of value assignment. 
+\end{DoxyReturn}
+\hypertarget{classGiskardActionServer_ab1656dc16797cdf15607a42e59435c5b}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!decode\-Transform@{decode\-Transform}}
+\index{decode\-Transform@{decode\-Transform}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{decode\-Transform}]{\setlength{\rightskip}{0pt plus 5cm}bool Giskard\-Action\-Server\-::decode\-Transform (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{name, }
+\item[{string}]{transform}
+\end{DoxyParamCaption}
+)}}\label{classGiskardActionServer_ab1656dc16797cdf15607a42e59435c5b}
+
+
+Decodes a transform parameter from a string and writes it to the state vector. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the corresponding input in the current controller \\
+\hline
+\mbox{\tt in}  & {\em vector} & Transform encoded as string\-: \char`\"{}\-X Y Z A\-X A\-Y A\-Z Angle\char`\"{} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Success of decoding and value assignment. 
+\end{DoxyReturn}
+\hypertarget{classGiskardActionServer_afd265e6b6c0af3afb6e147b4ee2fe0ff}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!decode\-Transform@{decode\-Transform}}
+\index{decode\-Transform@{decode\-Transform}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{decode\-Transform}]{\setlength{\rightskip}{0pt plus 5cm}bool Giskard\-Action\-Server\-::decode\-Transform (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{name, }
+\item[{tf\-::\-Transform}]{transform}
+\end{DoxyParamCaption}
+)}}\label{classGiskardActionServer_afd265e6b6c0af3afb6e147b4ee2fe0ff}
+
+
+Assigns a transform parameter to the state vector. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the corresponding input in the current controller \\
+\hline
+\mbox{\tt in}  & {\em vector} & Transform \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Success of value assignment. 
+\end{DoxyReturn}
+\hypertarget{classGiskardActionServer_ae821164a4a9ab651d1243ecace70e7e2}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!decode\-Vector@{decode\-Vector}}
+\index{decode\-Vector@{decode\-Vector}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{decode\-Vector}]{\setlength{\rightskip}{0pt plus 5cm}bool Giskard\-Action\-Server\-::decode\-Vector (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{name, }
+\item[{string}]{vector}
+\end{DoxyParamCaption}
+)}}\label{classGiskardActionServer_ae821164a4a9ab651d1243ecace70e7e2}
+
+
+Decodes a vector parameter from a string and writes it to the state vector. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the corresponding input in the current controller \\
+\hline
+\mbox{\tt in}  & {\em vector} & Vector encoded as string\-: \char`\"{}\-X Y Z\char`\"{} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Success of decoding and value assignment. 
+\end{DoxyReturn}
+\hypertarget{classGiskardActionServer_adac7573c728e9e1509b3add22d580ba4}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!decode\-Vector@{decode\-Vector}}
+\index{decode\-Vector@{decode\-Vector}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{decode\-Vector}]{\setlength{\rightskip}{0pt plus 5cm}bool Giskard\-Action\-Server\-::decode\-Vector (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{name, }
+\item[{Eigen\-::\-Vector3d}]{vector}
+\end{DoxyParamCaption}
+)}}\label{classGiskardActionServer_adac7573c728e9e1509b3add22d580ba4}
+
+
+Assigns a vector parameter to the state vector. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the corresponding input in the current controller \\
+\hline
+\mbox{\tt in}  & {\em vector} & Vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Success of value assignment. 
+\end{DoxyReturn}
+\hypertarget{classGiskardActionServer_a4164a1043930f6575d011e3fb7bbb207}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!generate\-Visuals\-From\-Scope@{generate\-Visuals\-From\-Scope}}
+\index{generate\-Visuals\-From\-Scope@{generate\-Visuals\-From\-Scope}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{generate\-Visuals\-From\-Scope}]{\setlength{\rightskip}{0pt plus 5cm}void Giskard\-Action\-Server\-::generate\-Visuals\-From\-Scope (
+\begin{DoxyParamCaption}
+\item[{const giskard\-\_\-core\-::\-Scope \&}]{scope}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a4164a1043930f6575d011e3fb7bbb207}
+
+
+Parses controller scope for values to visualize. 
+
+Values beginning with \char`\"{}\-V\-I\-S\-\_\-\-\_\-\char`\"{} will be visualized. Their visual name is determined by the part following the prefix. If a vector should be visualized as direction, the name of a base point must be provided. This point's name is separated from the visual name with a double underscore \char`\"{}\-\_\-\-\_\-\char`\"{}.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em scope} & The scope \\
+\hline
+\end{DoxyParams}
+\hypertarget{classGiskardActionServer_ad1b3fb4f09d818b2751d8ec760295149}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!load\-Config@{load\-Config}}
+\index{load\-Config@{load\-Config}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{load\-Config}]{\setlength{\rightskip}{0pt plus 5cm}void Giskard\-Action\-Server\-::load\-Config (
+\begin{DoxyParamCaption}
+\item[{Y\-A\-M\-L\-::\-Node}]{config}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classGiskardActionServer_ad1b3fb4f09d818b2751d8ec760295149}
+
+
+Configures the action server using a yaml configuration. 
+
+The yaml structure must be a map. The map is scanned for the following keys\-:
+\begin{DoxyItemize}
+\item position\-\_\-controllers\-: Defines which joints are supposed be controlled using position commands
+\item gripper\-\_\-controllers\-: Defines whoch joints should be controlled as grippers
+\item joint\-\_\-state\-\_\-command\-\_\-topic\-: Defines topic to which commands are published as sensor\-\_\-msgs\-::\-Joint\-State
+\item visualization\-\_\-target\-\_\-frame\-: Names the root frame for visualization 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em config} & Configuration as yaml structure \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}\hypertarget{classGiskardActionServer_aed9b983c543c6f45d1adb023d4ae6e6f}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!set\-Goal@{set\-Goal}}
+\index{set\-Goal@{set\-Goal}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{set\-Goal}]{\setlength{\rightskip}{0pt plus 5cm}void Giskard\-Action\-Server\-::set\-Goal (
+\begin{DoxyParamCaption}
+\item[{const suturo\-\_\-manipulation\-\_\-msgs\-::\-Move\-Robot\-Goal\-Const\-Ptr \&}]{goal}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classGiskardActionServer_aed9b983c543c6f45d1adb023d4ae6e6f}
+
+
+Goal callback for the action server. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em goal} & The received goal message \\
+\hline
+\end{DoxyParams}
+\hypertarget{classGiskardActionServer_ad435a52f4d06c69459db72efc1db3662}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!update\-Controller@{update\-Controller}}
+\index{update\-Controller@{update\-Controller}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{update\-Controller}]{\setlength{\rightskip}{0pt plus 5cm}void Giskard\-Action\-Server\-::update\-Controller (
+\begin{DoxyParamCaption}
+\item[{const sensor\-\_\-msgs\-::\-Joint\-State}]{joint\-State}
+\end{DoxyParamCaption}
+)}}\label{classGiskardActionServer_ad435a52f4d06c69459db72efc1db3662}
+
+
+Performs one controller update cycle. 
+
+This function performs one controller update. It evaluates all parameter queries, generates and sends new commands and updates the visualization. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em joint\-State} & The current joint state \\
+\hline
+\end{DoxyParams}
+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/------ V\-I\-S\-U\-A\-L\-I\-Z\-A\-T\-I\-O\-N -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/------ 
+
+\hypertarget{classGiskardActionServer_ac81b9f53586562358dac417f4ef1df33}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!update\-Joint\-State@{update\-Joint\-State}}
+\index{update\-Joint\-State@{update\-Joint\-State}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{update\-Joint\-State}]{\setlength{\rightskip}{0pt plus 5cm}void Giskard\-Action\-Server\-::update\-Joint\-State (
+\begin{DoxyParamCaption}
+\item[{const sensor\-\_\-msgs\-::\-Joint\-State\-::\-Const\-Ptr \&}]{joint\-State\-Msg}
+\end{DoxyParamCaption}
+)}}\label{classGiskardActionServer_ac81b9f53586562358dac417f4ef1df33}
+
+
+Callback function for receiving joint states. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em joint\-State\-Msg} & The new joint state message \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classGiskardActionServer_a9092b32b81ae2e3c13ab6f5632e716a1}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!collision\-Scene@{collision\-Scene}}
+\index{collision\-Scene@{collision\-Scene}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{collision\-Scene}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Collision\-Scene} Giskard\-Action\-Server\-::collision\-Scene\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a9092b32b81ae2e3c13ab6f5632e716a1}
+Collision Scene \hypertarget{classGiskardActionServer_a6dc2df6171c07b6c15e20e91533b0430}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!coll\-Query\-Map@{coll\-Query\-Map}}
+\index{coll\-Query\-Map@{coll\-Query\-Map}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{coll\-Query\-Map}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Collision\-Scene\-::\-Query\-Map} Giskard\-Action\-Server\-::coll\-Query\-Map\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a6dc2df6171c07b6c15e20e91533b0430}
+Results of collision scene updates \hypertarget{classGiskardActionServer_a72419de3a5237d2ee09ad92f1ed81da1}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!controller@{controller}}
+\index{controller@{controller}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{controller}]{\setlength{\rightskip}{0pt plus 5cm}giskard\-\_\-core\-::\-Q\-P\-Controller Giskard\-Action\-Server\-::controller\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_a72419de3a5237d2ee09ad92f1ed81da1}
+Current generated controller \hypertarget{classGiskardActionServer_a46b468b15e97c46911fccfccf960ea76}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!controller\-Initialized@{controller\-Initialized}}
+\index{controller\-Initialized@{controller\-Initialized}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{controller\-Initialized}]{\setlength{\rightskip}{0pt plus 5cm}bool Giskard\-Action\-Server\-::controller\-Initialized\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a46b468b15e97c46911fccfccf960ea76}
+Flag showing whether current controller was initialized \hypertarget{classGiskardActionServer_a06b9a0bfdf889fd886b4a10c6e0f7fe1}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!current\-J\-S@{current\-J\-S}}
+\index{current\-J\-S@{current\-J\-S}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{current\-J\-S}]{\setlength{\rightskip}{0pt plus 5cm}sensor\-\_\-msgs\-::\-Joint\-State Giskard\-Action\-Server\-::current\-J\-S\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a06b9a0bfdf889fd886b4a10c6e0f7fe1}
+Last received joint state \hypertarget{classGiskardActionServer_aca0c0257a6df8d3563fbdfdc39da1361}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!d\-T@{d\-T}}
+\index{d\-T@{d\-T}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{d\-T}]{\setlength{\rightskip}{0pt plus 5cm}double Giskard\-Action\-Server\-::d\-T\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_aca0c0257a6df8d3563fbdfdc39da1361}
+Seconds passed since last update cycle \hypertarget{classGiskardActionServer_aaa0e1708f9a1af19c33986f0504e7f34}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!feedback@{feedback}}
+\index{feedback@{feedback}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{feedback}]{\setlength{\rightskip}{0pt plus 5cm}suturo\-\_\-manipulation\-\_\-msgs\-::\-Move\-Robot\-Feedback Giskard\-Action\-Server\-::feedback\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_aaa0e1708f9a1af19c33986f0504e7f34}
+Action server feedback message \hypertarget{classGiskardActionServer_ae68ed4306e57da20d00e80bf38f2e4f1}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!feedback\-Expr@{feedback\-Expr}}
+\index{feedback\-Expr@{feedback\-Expr}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{feedback\-Expr}]{\setlength{\rightskip}{0pt plus 5cm}K\-D\-L\-::\-Expression$<$double$>$\-::Ptr Giskard\-Action\-Server\-::feedback\-Expr\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_ae68ed4306e57da20d00e80bf38f2e4f1}
+Pointer to feedback expression \hypertarget{classGiskardActionServer_a20e66f4df22818fd6db1a78b4f9db129}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!gripper\-Controllers@{gripper\-Controllers}}
+\index{gripper\-Controllers@{gripper\-Controllers}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{gripper\-Controllers}]{\setlength{\rightskip}{0pt plus 5cm}unordered\-\_\-map$<$string, {\bf gripper\-Controller}$>$ Giskard\-Action\-Server\-::gripper\-Controllers\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_a20e66f4df22818fd6db1a78b4f9db129}
+Map of joints being controlled with gripper controllers \hypertarget{classGiskardActionServer_af4c11bee852dc54f821c4aabbeec5d7c}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!joint\-Set@{joint\-Set}}
+\index{joint\-Set@{joint\-Set}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{joint\-Set}]{\setlength{\rightskip}{0pt plus 5cm}unordered\-\_\-set$<$string$>$ Giskard\-Action\-Server\-::joint\-Set\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_af4c11bee852dc54f821c4aabbeec5d7c}
+Set containing the names of all joints referenced in current controller \hypertarget{classGiskardActionServer_a127b4e7740905cceb5a1ed2affd7fed3}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!js\-Cmd\-Pub@{js\-Cmd\-Pub}}
+\index{js\-Cmd\-Pub@{js\-Cmd\-Pub}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{js\-Cmd\-Pub}]{\setlength{\rightskip}{0pt plus 5cm}ros\-::\-Publisher Giskard\-Action\-Server\-::js\-Cmd\-Pub\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a127b4e7740905cceb5a1ed2affd7fed3}
+Publisher for joint state commands \hypertarget{classGiskardActionServer_ac77cdbd8c3b81397c4be868e6711a458}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!js\-Mutex@{js\-Mutex}}
+\index{js\-Mutex@{js\-Mutex}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{js\-Mutex}]{\setlength{\rightskip}{0pt plus 5cm}mutex Giskard\-Action\-Server\-::js\-Mutex\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_ac77cdbd8c3b81397c4be868e6711a458}
+Mutex used to allow for asynchronous joint state updates \hypertarget{classGiskardActionServer_a4197a9f1da3c9832d4bf7786bffa82ff}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!js\-Sub@{js\-Sub}}
+\index{js\-Sub@{js\-Sub}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{js\-Sub}]{\setlength{\rightskip}{0pt plus 5cm}ros\-::\-Subscriber Giskard\-Action\-Server\-::js\-Sub\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a4197a9f1da3c9832d4bf7786bffa82ff}
+Joint state subscriber \hypertarget{classGiskardActionServer_a965e4f058e16f29b8a6516d7fd6d45ad}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!last\-Command@{last\-Command}}
+\index{last\-Command@{last\-Command}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{last\-Command}]{\setlength{\rightskip}{0pt plus 5cm}map$<$string, double$>$ Giskard\-Action\-Server\-::last\-Command\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_a965e4f058e16f29b8a6516d7fd6d45ad}
+Map of last velocity commands \hypertarget{classGiskardActionServer_a02213acb96763c0283668a519903e440}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!last\-Controllable\-Pos@{last\-Controllable\-Pos}}
+\index{last\-Controllable\-Pos@{last\-Controllable\-Pos}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{last\-Controllable\-Pos}]{\setlength{\rightskip}{0pt plus 5cm}map$<$string, double$>$ Giskard\-Action\-Server\-::last\-Controllable\-Pos\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_a02213acb96763c0283668a519903e440}
+Map of last position commands \hypertarget{classGiskardActionServer_a17640817711388e121902779b66a3657}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!last\-Feedback@{last\-Feedback}}
+\index{last\-Feedback@{last\-Feedback}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{last\-Feedback}]{\setlength{\rightskip}{0pt plus 5cm}double Giskard\-Action\-Server\-::last\-Feedback\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a17640817711388e121902779b66a3657}
+Value of feedback after last update cycle \hypertarget{classGiskardActionServer_a549f8c868afd0fff8383fbbe512e4bfa}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!last\-Update@{last\-Update}}
+\index{last\-Update@{last\-Update}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{last\-Update}]{\setlength{\rightskip}{0pt plus 5cm}ros\-::\-Time Giskard\-Action\-Server\-::last\-Update\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_a549f8c868afd0fff8383fbbe512e4bfa}
+Time of last update cycle \hypertarget{classGiskardActionServer_ae1d480bfeed0f97334d25e1dfc868e67}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!name@{name}}
+\index{name@{name}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{name}]{\setlength{\rightskip}{0pt plus 5cm}const string Giskard\-Action\-Server\-::name\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_ae1d480bfeed0f97334d25e1dfc868e67}
+Name of the action server \hypertarget{classGiskardActionServer_a6af586abe01f748597efea84d3d52e21}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!new\-J\-S@{new\-J\-S}}
+\index{new\-J\-S@{new\-J\-S}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{new\-J\-S}]{\setlength{\rightskip}{0pt plus 5cm}bool Giskard\-Action\-Server\-::new\-J\-S\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a6af586abe01f748597efea84d3d52e21}
+Flag showing whether a new joint state has been received since last update cycle \hypertarget{classGiskardActionServer_a9ff54b2b5811ca6a48b5147a3799697a}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!nh@{nh}}
+\index{nh@{nh}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{nh}]{\setlength{\rightskip}{0pt plus 5cm}ros\-::\-Node\-Handle Giskard\-Action\-Server\-::nh\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_a9ff54b2b5811ca6a48b5147a3799697a}
+Server's node handle \hypertarget{classGiskardActionServer_a027ef896e1d60656dc32b7fd827e00c1}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!n\-W\-S\-R@{n\-W\-S\-R}}
+\index{n\-W\-S\-R@{n\-W\-S\-R}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{n\-W\-S\-R}]{\setlength{\rightskip}{0pt plus 5cm}int Giskard\-Action\-Server\-::n\-W\-S\-R\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_a027ef896e1d60656dc32b7fd827e00c1}
+Iteration limit for giskard per update cycle \hypertarget{classGiskardActionServer_a972ee6ac1c1295b7c183cfea96ee4db1}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!pos\-Controllers@{pos\-Controllers}}
+\index{pos\-Controllers@{pos\-Controllers}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{pos\-Controllers}]{\setlength{\rightskip}{0pt plus 5cm}unordered\-\_\-map$<$string, {\bf pos\-Controller}$>$ Giskard\-Action\-Server\-::pos\-Controllers\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_a972ee6ac1c1295b7c183cfea96ee4db1}
+Map of joints being controlled with position controllers \hypertarget{classGiskardActionServer_ac3e0344ceea38b8113c364b34c2353b2}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!pos\-Error\-Pub@{pos\-Error\-Pub}}
+\index{pos\-Error\-Pub@{pos\-Error\-Pub}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{pos\-Error\-Pub}]{\setlength{\rightskip}{0pt plus 5cm}ros\-::\-Publisher Giskard\-Action\-Server\-::pos\-Error\-Pub\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_ac3e0344ceea38b8113c364b34c2353b2}
+Publishers for deviations of measurements and expectations \hypertarget{classGiskardActionServer_ae8224875f2c3e1cba7f38a05c2d8985a}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!queries@{queries}}
+\index{queries@{queries}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{queries}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$boost\-::shared\-\_\-ptr$<${\bf A\-Query}$>$ $>$ Giskard\-Action\-Server\-::queries\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_ae8224875f2c3e1cba7f38a05c2d8985a}
+List of queries to run during update cycle \hypertarget{classGiskardActionServer_a62a22a3a61a61b36a2b4c0d5f6ed1e70}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!result@{result}}
+\index{result@{result}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{result}]{\setlength{\rightskip}{0pt plus 5cm}suturo\-\_\-manipulation\-\_\-msgs\-::\-Move\-Robot\-Result Giskard\-Action\-Server\-::result\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a62a22a3a61a61b36a2b4c0d5f6ed1e70}
+Action server result message \hypertarget{classGiskardActionServer_aec1639ae446055aff03685e3a3b0bda2}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!server@{server}}
+\index{server@{server}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{server}]{\setlength{\rightskip}{0pt plus 5cm}actionlib\-::\-Simple\-Action\-Server$<$suturo\-\_\-manipulation\-\_\-msgs\-::\-Move\-Robot\-Action$>$ Giskard\-Action\-Server\-::server\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_aec1639ae446055aff03685e3a3b0bda2}
+Action server instance \hypertarget{classGiskardActionServer_ae79dc838a2d884755866e29d9c02dd77}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!state@{state}}
+\index{state@{state}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{state}]{\setlength{\rightskip}{0pt plus 5cm}Eigen\-::\-Vector\-Xd Giskard\-Action\-Server\-::state\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_ae79dc838a2d884755866e29d9c02dd77}
+Controller state vector \hypertarget{classGiskardActionServer_acc7002280c576e183f1fc07a7450918e}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!terminate\-Execution@{terminate\-Execution}}
+\index{terminate\-Execution@{terminate\-Execution}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{terminate\-Execution}]{\setlength{\rightskip}{0pt plus 5cm}bool Giskard\-Action\-Server\-::terminate\-Execution\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_acc7002280c576e183f1fc07a7450918e}
+Flag set to terminate controller execution from deeper layers \hypertarget{classGiskardActionServer_ae7deb327e757759d21614df5adbc42f3}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!tf\-Listener@{tf\-Listener}}
+\index{tf\-Listener@{tf\-Listener}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{tf\-Listener}]{\setlength{\rightskip}{0pt plus 5cm}tf\-::\-Transform\-Listener Giskard\-Action\-Server\-::tf\-Listener\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_ae7deb327e757759d21614df5adbc42f3}
+Tranform listener used by Tf queries \hypertarget{classGiskardActionServer_a4ea7edab163168d8c747f7d2e67b2f67}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!vel\-Controllers@{vel\-Controllers}}
+\index{vel\-Controllers@{vel\-Controllers}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{vel\-Controllers}]{\setlength{\rightskip}{0pt plus 5cm}map$<$std\-::string, ros\-::\-Publisher$>$ Giskard\-Action\-Server\-::vel\-Controllers\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_a4ea7edab163168d8c747f7d2e67b2f67}
+Map of all velocity controllers \hypertarget{classGiskardActionServer_a018f9bc81967e035deb6cec695893dbc}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!vis\-Frames@{vis\-Frames}}
+\index{vis\-Frames@{vis\-Frames}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{vis\-Frames}]{\setlength{\rightskip}{0pt plus 5cm}unordered\-\_\-map$<$string, K\-D\-L\-::\-Expression$<$K\-D\-L\-::\-Frame$>$\-::Ptr$>$ Giskard\-Action\-Server\-::vis\-Frames\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a018f9bc81967e035deb6cec695893dbc}
+Frames to visualize \hypertarget{classGiskardActionServer_a4aca89815a5d0cb84475773401613365}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!vis\-Manager@{vis\-Manager}}
+\index{vis\-Manager@{vis\-Manager}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{vis\-Manager}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Visualization\-Manager} Giskard\-Action\-Server\-::vis\-Manager\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a4aca89815a5d0cb84475773401613365}
+Visualization manager to manage Ids and deletion of markers \hypertarget{classGiskardActionServer_a1094414df8bbfbcf469c88877f46d019}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!vis\-Points@{vis\-Points}}
+\index{vis\-Points@{vis\-Points}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{vis\-Points}]{\setlength{\rightskip}{0pt plus 5cm}unordered\-\_\-map$<$string, K\-D\-L\-::\-Expression$<$K\-D\-L\-::\-Vector$>$\-::Ptr$>$ Giskard\-Action\-Server\-::vis\-Points\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_a1094414df8bbfbcf469c88877f46d019}
+Points to visualize \hypertarget{classGiskardActionServer_ad5faa562d8e3e2ea964effb5df90775b}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!vis\-Pub@{vis\-Pub}}
+\index{vis\-Pub@{vis\-Pub}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{vis\-Pub}]{\setlength{\rightskip}{0pt plus 5cm}ros\-::\-Publisher Giskard\-Action\-Server\-::vis\-Pub\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_ad5faa562d8e3e2ea964effb5df90775b}
+Publishers for visualization \hypertarget{classGiskardActionServer_ab1ff77a2e75bc70378c6e763745593d1}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!vis\-Ref\-Frame\-Name@{vis\-Ref\-Frame\-Name}}
+\index{vis\-Ref\-Frame\-Name@{vis\-Ref\-Frame\-Name}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{vis\-Ref\-Frame\-Name}]{\setlength{\rightskip}{0pt plus 5cm}string Giskard\-Action\-Server\-::vis\-Ref\-Frame\-Name\hspace{0.3cm}{\ttfamily [protected]}}}\label{classGiskardActionServer_ab1ff77a2e75bc70378c6e763745593d1}
+Name of origin frame for visualization \hypertarget{classGiskardActionServer_ae04063c56a2103232e3aa88283897666}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!vis\-Scalars@{vis\-Scalars}}
+\index{vis\-Scalars@{vis\-Scalars}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{vis\-Scalars}]{\setlength{\rightskip}{0pt plus 5cm}unordered\-\_\-map$<$string, K\-D\-L\-::\-Expression$<$double$>$\-::Ptr$>$ Giskard\-Action\-Server\-::vis\-Scalars\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_ae04063c56a2103232e3aa88283897666}
+Scalars to visualize \hypertarget{classGiskardActionServer_abdad3a9c717ec286399323b152a8e64d}{\index{Giskard\-Action\-Server@{Giskard\-Action\-Server}!vis\-Vectors@{vis\-Vectors}}
+\index{vis\-Vectors@{vis\-Vectors}!GiskardActionServer@{Giskard\-Action\-Server}}
+\subsubsection[{vis\-Vectors}]{\setlength{\rightskip}{0pt plus 5cm}unordered\-\_\-map$<$string, {\bf T\-Vec\-Pair}$>$ Giskard\-Action\-Server\-::vis\-Vectors\hspace{0.3cm}{\ttfamily [private]}}}\label{classGiskardActionServer_abdad3a9c717ec286399323b152a8e64d}
+Vectors to visualize 
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+suturo\-\_\-action\-\_\-server/include/suturo\-\_\-action\-\_\-server/Giskard\-Action\-Server.\-h\item 
+suturo\-\_\-action\-\_\-server/src/Giskard\-Action\-Server.\-cpp\end{DoxyCompactItemize}

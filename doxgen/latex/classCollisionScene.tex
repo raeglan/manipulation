@@ -1,0 +1,279 @@
+\hypertarget{classCollisionScene}{\section{Collision\-Scene Class Reference}
+\label{classCollisionScene}\index{Collision\-Scene@{Collision\-Scene}}
+}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structCollisionScene_1_1bBox}{b\-Box}
+\item 
+struct \hyperlink{structCollisionScene_1_1SQueryPoints}{S\-Query\-Points}
+\item 
+struct \hyperlink{structCollisionScene_1_1SRobotLink}{S\-Robot\-Link}
+\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCollisionScene_aa0b9e7bae731b946f0e049b4591bbaf4}{typedef \hyperlink{classMutexMap}{Mutex\-Map}$<$ string, \\*
+\hyperlink{structCollisionScene_1_1SQueryPoints}{Collision\-Scene\-::\-S\-Query\-Points} $>$ {\bfseries Query\-Map}}\label{classCollisionScene_aa0b9e7bae731b946f0e049b4591bbaf4}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classCollisionScene_ad814c6de8d0c1b6c3c9cf8e75ea19358}{Collision\-Scene} (\hyperlink{classMutexMap}{Query\-Map} \&\-\_\-map)
+\begin{DoxyCompactList}\small\item\em Constructs the \hyperlink{classCollisionScene}{Collision\-Scene}. \end{DoxyCompactList}\item 
+\hypertarget{classCollisionScene_a78292b107e0ba4d074749e8a45e52ae3}{\hyperlink{classCollisionScene_a78292b107e0ba4d074749e8a45e52ae3}{$\sim$\-Collision\-Scene} ()}\label{classCollisionScene_a78292b107e0ba4d074749e8a45e52ae3}
+
+\begin{DoxyCompactList}\small\item\em Stops the update thread and deletes the octree. \end{DoxyCompactList}\item 
+void \hyperlink{classCollisionScene_a76efb9371fd01bb1a372ddc9535f9537}{set\-Robot\-Description} (const string \&urdf\-Str)
+\begin{DoxyCompactList}\small\item\em Sets the robot description. \end{DoxyCompactList}\item 
+void \hyperlink{classCollisionScene_ad7e104a8659e5eb0c9f55c56b6f9011d}{add\-Query\-Link} (const string \&link)
+\begin{DoxyCompactList}\small\item\em Adds a query link to the \hyperlink{classCollisionScene}{Collision\-Scene}. \end{DoxyCompactList}\item 
+\hypertarget{classCollisionScene_aa1d80c51501b53bf176f1484fba7d3bd}{void {\bfseries clear\-Query\-Links} ()}\label{classCollisionScene_aa1d80c51501b53bf176f1484fba7d3bd}
+
+\item 
+\hypertarget{classCollisionScene_a0d1d5b732e65711bd783b27a9b866219}{void \hyperlink{classCollisionScene_a0d1d5b732e65711bd783b27a9b866219}{update\-Query} ()}\label{classCollisionScene_a0d1d5b732e65711bd783b27a9b866219}
+
+\begin{DoxyCompactList}\small\item\em updates the \hyperlink{structCollisionScene_1_1SQueryPoints}{S\-Query\-Points} for every link in the \hyperlink{classCollisionScene}{Collision\-Scene}. \end{DoxyCompactList}\item 
+\hypertarget{classCollisionScene_a35fffc2c243b08deac3914d2b0c80169}{void \hyperlink{classCollisionScene_a35fffc2c243b08deac3914d2b0c80169}{update\-Bboxes} ()}\label{classCollisionScene_a35fffc2c243b08deac3914d2b0c80169}
+
+\begin{DoxyCompactList}\small\item\em updates the bounding boxes of every query link in the \hyperlink{classCollisionScene}{Collision\-Scene}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classCollisionScene_a338284876502577c783b745ba7bac385}{traverse\-Tree} (\hyperlink{structCollisionScene_1_1SQueryPoints}{S\-Query\-Points} \&q\-Point, const Eigen\-::\-Affine3d t\-Link, const \hyperlink{structCollisionScene_1_1bBox}{b\-Box} \&link\-Box)
+\begin{DoxyCompactList}\small\item\em iterates over every leaf of the octree to find the closest voxel to the link. \end{DoxyCompactList}\item 
+Eigen\-::\-Vector3d \hyperlink{classCollisionScene_a287195084a9b8dd1eb7fbbf093766eb1}{calc\-Intersection} (const Eigen\-::\-Vector3d \&v, const struct \hyperlink{structCollisionScene_1_1bBox}{b\-Box} \&box)
+\begin{DoxyCompactList}\small\item\em Calculates the intersection of a Vector from the center of the bounding box and the bounding box. \end{DoxyCompactList}\item 
+void \hyperlink{classCollisionScene_a16b5e86c6b438cee575dbafb47506970}{update\-Point\-Cloud} (const pcl\-::\-Point\-Cloud$<$ pcl\-::\-Point\-X\-Y\-Z\-R\-G\-B $>$\-::Const\-Ptr \&input)
+\begin{DoxyCompactList}\small\item\em Makes a copy of the point cloud to the point cloud pointer. \end{DoxyCompactList}\item 
+void \hyperlink{classCollisionScene_a0458b7a7748c991626e7154b6cacbd0a}{set\-Ref\-Frame} (const string \&p\-Ref\-Frame)
+\begin{DoxyCompactList}\small\item\em Sets the reference frame of the \hyperlink{classCollisionScene}{Collision\-Scene}. \end{DoxyCompactList}\item 
+\hypertarget{classCollisionScene_a493a467161c0bab5d6717f58d96d3e00}{void \hyperlink{classCollisionScene_a493a467161c0bab5d6717f58d96d3e00}{update\-Octree\-Visualization} ()}\label{classCollisionScene_a493a467161c0bab5d6717f58d96d3e00}
+
+\begin{DoxyCompactList}\small\item\em Publishes the leaf nodes of the octree as marker. \end{DoxyCompactList}\item 
+\hypertarget{classCollisionScene_aa33eb3f701cfd4d750cfedec58bc9729}{void \hyperlink{classCollisionScene_aa33eb3f701cfd4d750cfedec58bc9729}{update\-Octree\-Thread} ()}\label{classCollisionScene_aa33eb3f701cfd4d750cfedec58bc9729}
+
+\begin{DoxyCompactList}\small\item\em Updates the octree when a new point cloud arrives. \end{DoxyCompactList}\item 
+\hypertarget{classCollisionScene_ae6d94b627968a2508cd2ac43a83cf1bf}{void \hyperlink{classCollisionScene_ae6d94b627968a2508cd2ac43a83cf1bf}{swap\-Point\-Clouds} ()}\label{classCollisionScene_ae6d94b627968a2508cd2ac43a83cf1bf}
+
+\begin{DoxyCompactList}\small\item\em Swaps the pointers of the active and inactive point cloud. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCollisionScene_a30b43dd54810ba4ba85ce0736b061c45}{ros\-::\-Node\-Handle {\bfseries nh}}\label{classCollisionScene_a30b43dd54810ba4ba85ce0736b061c45}
+
+\item 
+\hypertarget{classCollisionScene_afaf7a12837bb9694b0df4d2a3888405d}{ros\-::\-Callback\-Queue {\bfseries cb\-Queue}}\label{classCollisionScene_afaf7a12837bb9694b0df4d2a3888405d}
+
+\item 
+\hypertarget{classCollisionScene_ac715ff5694a1b35aea05835c9c50716d}{ros\-::\-Timer {\bfseries update\-Timer}}\label{classCollisionScene_ac715ff5694a1b35aea05835c9c50716d}
+
+\item 
+int \hyperlink{classCollisionScene_a7b106dc5a0338af700abaf62d6d77ad9}{octree\-Depth} = 6
+\item 
+int \hyperlink{classCollisionScene_aa50f77359129b8a44335d76ee3420cc7}{octree\-Size} = 2
+\item 
+\hypertarget{classCollisionScene_acad20b472c7f6a8acd6fafcaa9fe35e5}{bool {\bfseries swap} = false}\label{classCollisionScene_acad20b472c7f6a8acd6fafcaa9fe35e5}
+
+\item 
+\hypertarget{classCollisionScene_a0bf30bd2de0b64092e215f0d1e45a28a}{bool {\bfseries stop\-Update\-Thread}}\label{classCollisionScene_a0bf30bd2de0b64092e215f0d1e45a28a}
+
+\item 
+\hypertarget{classCollisionScene_a1d885afac5e533d6972b31148c22fc35}{pcl\-::\-Point\-Cloud\\*
+$<$ pcl\-::\-Point\-X\-Y\-Z\-R\-G\-B $>$\-::Const\-Ptr {\bfseries active\-Point\-Cloud\-Pointer}}\label{classCollisionScene_a1d885afac5e533d6972b31148c22fc35}
+
+\item 
+\hypertarget{classCollisionScene_aee8373f709dd3efa1300f676f783d2bc}{pcl\-::\-Point\-Cloud\\*
+$<$ pcl\-::\-Point\-X\-Y\-Z\-R\-G\-B $>$\-::Const\-Ptr {\bfseries point\-Cloud\-Pointer}}\label{classCollisionScene_aee8373f709dd3efa1300f676f783d2bc}
+
+\item 
+std\-::thread \hyperlink{classCollisionScene_af8a098eaddd613c3312f63c4b6a99a1a}{t}
+\item 
+\hypertarget{classCollisionScene_acec1a566d8788d3d6de7da58dcb80ec4}{ros\-::\-Publisher {\bfseries octree\-Vis\-Publisher}}\label{classCollisionScene_acec1a566d8788d3d6de7da58dcb80ec4}
+
+\item 
+\hypertarget{classCollisionScene_ae185f726a5ec8c68f92980eace1b613b}{ros\-::\-Subscriber {\bfseries point\-Cloud\-Subscriber}}\label{classCollisionScene_ae185f726a5ec8c68f92980eace1b613b}
+
+\item 
+\hypertarget{classCollisionScene_a09c519cf1c97e9e1c4d5d90197b8b404}{urdf\-::\-Model {\bfseries robot}}\label{classCollisionScene_a09c519cf1c97e9e1c4d5d90197b8b404}
+
+\item 
+unordered\-\_\-map$<$ string, \hyperlink{structCollisionScene_1_1bBox}{b\-Box} $>$ \hyperlink{classCollisionScene_a86929e1d07a315dec9e6c1b305cacabc}{bbox\-Map}
+\item 
+\hyperlink{classMutexMap}{Query\-Map} \& \hyperlink{classCollisionScene_a50300cec4b2a8bb3c3d51eef54acc0f8}{map}
+\item 
+set$<$ string $>$ \hyperlink{classCollisionScene_ab6fe95cec3f4207074aabedce8b4be61}{links}
+\item 
+\hypertarget{classCollisionScene_acf1bebb09bc150915efbb88ced9e3db1}{tf\-::\-Transform\-Listener {\bfseries tf\-Listener}}\label{classCollisionScene_acf1bebb09bc150915efbb88ced9e3db1}
+
+\item 
+\hypertarget{classCollisionScene_a59692641d55fc7b2c680429030749365}{string {\bfseries controller\-Ref\-Frame}}\label{classCollisionScene_a59692641d55fc7b2c680429030749365}
+
+\item 
+\hypertarget{classCollisionScene_a53afa27e7913804dfe9b77c72ff55c7a}{string {\bfseries octomap\-Frame} = \char`\"{}head\-\_\-mount\-\_\-kinect\-\_\-rgb\-\_\-optical\-\_\-frame\char`\"{}}\label{classCollisionScene_a53afa27e7913804dfe9b77c72ff55c7a}
+
+\item 
+\hypertarget{classCollisionScene_a7fae33d8e04f4b7db02b14e78220b9a4}{\hyperlink{classsuturo__octree_1_1Octree}{suturo\-\_\-octree\-::\-Octree} $\ast$ {\bfseries octree} = N\-U\-L\-L}\label{classCollisionScene_a7fae33d8e04f4b7db02b14e78220b9a4}
+
+\item 
+\hypertarget{classCollisionScene_a9957ef59711be6baa110dc8483c58afe}{mutex {\bfseries point\-Cloud\-Mutex}}\label{classCollisionScene_a9957ef59711be6baa110dc8483c58afe}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classCollisionScene_ad814c6de8d0c1b6c3c9cf8e75ea19358}{\index{Collision\-Scene@{Collision\-Scene}!Collision\-Scene@{Collision\-Scene}}
+\index{Collision\-Scene@{Collision\-Scene}!CollisionScene@{Collision\-Scene}}
+\subsubsection[{Collision\-Scene}]{\setlength{\rightskip}{0pt plus 5cm}Collision\-Scene\-::\-Collision\-Scene (
+\begin{DoxyParamCaption}
+\item[{{\bf Query\-Map} \&}]{\-\_\-map}
+\end{DoxyParamCaption}
+)}}\label{classCollisionScene_ad814c6de8d0c1b6c3c9cf8e75ea19358}
+
+
+Constructs the \hyperlink{classCollisionScene}{Collision\-Scene}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-map} & The mutex map which maps \hyperlink{structCollisionScene_1_1SQueryPoints}{S\-Query\-Points} to the query links \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classCollisionScene_ad7e104a8659e5eb0c9f55c56b6f9011d}{\index{Collision\-Scene@{Collision\-Scene}!add\-Query\-Link@{add\-Query\-Link}}
+\index{add\-Query\-Link@{add\-Query\-Link}!CollisionScene@{Collision\-Scene}}
+\subsubsection[{add\-Query\-Link}]{\setlength{\rightskip}{0pt plus 5cm}void Collision\-Scene\-::add\-Query\-Link (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{link}
+\end{DoxyParamCaption}
+)}}\label{classCollisionScene_ad7e104a8659e5eb0c9f55c56b6f9011d}
+
+
+Adds a query link to the \hyperlink{classCollisionScene}{Collision\-Scene}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em link} & The query link \\
+\hline
+\end{DoxyParams}
+\hypertarget{classCollisionScene_a287195084a9b8dd1eb7fbbf093766eb1}{\index{Collision\-Scene@{Collision\-Scene}!calc\-Intersection@{calc\-Intersection}}
+\index{calc\-Intersection@{calc\-Intersection}!CollisionScene@{Collision\-Scene}}
+\subsubsection[{calc\-Intersection}]{\setlength{\rightskip}{0pt plus 5cm}Vector3d Collision\-Scene\-::calc\-Intersection (
+\begin{DoxyParamCaption}
+\item[{const Eigen\-::\-Vector3d \&}]{v, }
+\item[{const struct {\bf b\-Box} \&}]{box}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classCollisionScene_a287195084a9b8dd1eb7fbbf093766eb1}
+
+
+Calculates the intersection of a Vector from the center of the bounding box and the bounding box. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em v} & The Vector from the center of the bounding box \\
+\hline
+\mbox{\tt in}  & {\em box} & The box\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The intersection. 
+\end{DoxyReturn}
+\hypertarget{classCollisionScene_a0458b7a7748c991626e7154b6cacbd0a}{\index{Collision\-Scene@{Collision\-Scene}!set\-Ref\-Frame@{set\-Ref\-Frame}}
+\index{set\-Ref\-Frame@{set\-Ref\-Frame}!CollisionScene@{Collision\-Scene}}
+\subsubsection[{set\-Ref\-Frame}]{\setlength{\rightskip}{0pt plus 5cm}void Collision\-Scene\-::set\-Ref\-Frame (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{pcontroller\-Ref\-Frame}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classCollisionScene_a0458b7a7748c991626e7154b6cacbd0a}
+
+
+Sets the reference frame of the \hyperlink{classCollisionScene}{Collision\-Scene}. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em p\-Ref\-Frame} & The reference frame \\
+\hline
+\end{DoxyParams}
+\hypertarget{classCollisionScene_a76efb9371fd01bb1a372ddc9535f9537}{\index{Collision\-Scene@{Collision\-Scene}!set\-Robot\-Description@{set\-Robot\-Description}}
+\index{set\-Robot\-Description@{set\-Robot\-Description}!CollisionScene@{Collision\-Scene}}
+\subsubsection[{set\-Robot\-Description}]{\setlength{\rightskip}{0pt plus 5cm}void Collision\-Scene\-::set\-Robot\-Description (
+\begin{DoxyParamCaption}
+\item[{const string \&}]{urdf\-Str}
+\end{DoxyParamCaption}
+)}}\label{classCollisionScene_a76efb9371fd01bb1a372ddc9535f9537}
+
+
+Sets the robot description. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em urdf\-Str} & The urdf string \\
+\hline
+\end{DoxyParams}
+\hypertarget{classCollisionScene_a338284876502577c783b745ba7bac385}{\index{Collision\-Scene@{Collision\-Scene}!traverse\-Tree@{traverse\-Tree}}
+\index{traverse\-Tree@{traverse\-Tree}!CollisionScene@{Collision\-Scene}}
+\subsubsection[{traverse\-Tree}]{\setlength{\rightskip}{0pt plus 5cm}void Collision\-Scene\-::traverse\-Tree (
+\begin{DoxyParamCaption}
+\item[{{\bf S\-Query\-Points} \&}]{q\-Point, }
+\item[{const Eigen\-::\-Affine3d}]{t\-Link, }
+\item[{const {\bf b\-Box} \&}]{link\-Box}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classCollisionScene_a338284876502577c783b745ba7bac385}
+
+
+iterates over every leaf of the octree to find the closest voxel to the link. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+ & {\em q\-Point} & The \hyperlink{structCollisionScene_1_1SQueryPoints}{S\-Query\-Points} for the link \\
+\hline
+\mbox{\tt in}  & {\em t\-Link} & The transform for the link \\
+\hline
+\mbox{\tt in}  & {\em link\-Box} & The bounding box for the link \\
+\hline
+\end{DoxyParams}
+\hypertarget{classCollisionScene_a16b5e86c6b438cee575dbafb47506970}{\index{Collision\-Scene@{Collision\-Scene}!update\-Point\-Cloud@{update\-Point\-Cloud}}
+\index{update\-Point\-Cloud@{update\-Point\-Cloud}!CollisionScene@{Collision\-Scene}}
+\subsubsection[{update\-Point\-Cloud}]{\setlength{\rightskip}{0pt plus 5cm}void Collision\-Scene\-::update\-Point\-Cloud (
+\begin{DoxyParamCaption}
+\item[{const pcl\-::\-Point\-Cloud$<$ pcl\-::\-Point\-X\-Y\-Z\-R\-G\-B $>$\-::Const\-Ptr \&}]{input}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classCollisionScene_a16b5e86c6b438cee575dbafb47506970}
+
+
+Makes a copy of the point cloud to the point cloud pointer. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em input} & The point cloud message \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classCollisionScene_a86929e1d07a315dec9e6c1b305cacabc}{\index{Collision\-Scene@{Collision\-Scene}!bbox\-Map@{bbox\-Map}}
+\index{bbox\-Map@{bbox\-Map}!CollisionScene@{Collision\-Scene}}
+\subsubsection[{bbox\-Map}]{\setlength{\rightskip}{0pt plus 5cm}unordered\-\_\-map$<$string, {\bf b\-Box}$>$ Collision\-Scene\-::bbox\-Map\hspace{0.3cm}{\ttfamily [private]}}}\label{classCollisionScene_a86929e1d07a315dec9e6c1b305cacabc}
+This map contains the bounding boxes for each link. \hypertarget{classCollisionScene_ab6fe95cec3f4207074aabedce8b4be61}{\index{Collision\-Scene@{Collision\-Scene}!links@{links}}
+\index{links@{links}!CollisionScene@{Collision\-Scene}}
+\subsubsection[{links}]{\setlength{\rightskip}{0pt plus 5cm}set$<$string$>$ Collision\-Scene\-::links\hspace{0.3cm}{\ttfamily [private]}}}\label{classCollisionScene_ab6fe95cec3f4207074aabedce8b4be61}
+The set of all the links with collision queries. \hypertarget{classCollisionScene_a50300cec4b2a8bb3c3d51eef54acc0f8}{\index{Collision\-Scene@{Collision\-Scene}!map@{map}}
+\index{map@{map}!CollisionScene@{Collision\-Scene}}
+\subsubsection[{map}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Query\-Map}\& Collision\-Scene\-::map\hspace{0.3cm}{\ttfamily [private]}}}\label{classCollisionScene_a50300cec4b2a8bb3c3d51eef54acc0f8}
+The mutex map which maps \hyperlink{structCollisionScene_1_1SQueryPoints}{S\-Query\-Points} to the query links. \hypertarget{classCollisionScene_a7b106dc5a0338af700abaf62d6d77ad9}{\index{Collision\-Scene@{Collision\-Scene}!octree\-Depth@{octree\-Depth}}
+\index{octree\-Depth@{octree\-Depth}!CollisionScene@{Collision\-Scene}}
+\subsubsection[{octree\-Depth}]{\setlength{\rightskip}{0pt plus 5cm}int Collision\-Scene\-::octree\-Depth = 6\hspace{0.3cm}{\ttfamily [private]}}}\label{classCollisionScene_a7b106dc5a0338af700abaf62d6d77ad9}
+The depth of the octree. A depth greater than 7 is not recommended due to memory consumption. \hypertarget{classCollisionScene_aa50f77359129b8a44335d76ee3420cc7}{\index{Collision\-Scene@{Collision\-Scene}!octree\-Size@{octree\-Size}}
+\index{octree\-Size@{octree\-Size}!CollisionScene@{Collision\-Scene}}
+\subsubsection[{octree\-Size}]{\setlength{\rightskip}{0pt plus 5cm}int Collision\-Scene\-::octree\-Size = 2\hspace{0.3cm}{\ttfamily [private]}}}\label{classCollisionScene_aa50f77359129b8a44335d76ee3420cc7}
+The size of the octree in m. \hypertarget{classCollisionScene_af8a098eaddd613c3312f63c4b6a99a1a}{\index{Collision\-Scene@{Collision\-Scene}!t@{t}}
+\index{t@{t}!CollisionScene@{Collision\-Scene}}
+\subsubsection[{t}]{\setlength{\rightskip}{0pt plus 5cm}std\-::thread Collision\-Scene\-::t\hspace{0.3cm}{\ttfamily [private]}}}\label{classCollisionScene_af8a098eaddd613c3312f63c4b6a99a1a}
+The octree update thread. 
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+suturo\-\_\-action\-\_\-server/include/suturo\-\_\-action\-\_\-server/Collision\-Scene.\-h\item 
+suturo\-\_\-action\-\_\-server/src/Collision\-Scene.\-cpp\end{DoxyCompactItemize}
