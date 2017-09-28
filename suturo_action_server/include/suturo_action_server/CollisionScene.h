@@ -15,6 +15,7 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <thread>
+#include <condition_variable>
 //#include "suturo_action_server/Octree.h"
 
 using namespace std;
@@ -151,4 +152,8 @@ private:
 	suturo_octree::Octree* octree = NULL;
 
 	mutex pointCloudMutex;
+	mutex octreeMutex;
+	mutex cvMutex;
+	condition_variable cv;
+	bool newPointCloud = false;
 };

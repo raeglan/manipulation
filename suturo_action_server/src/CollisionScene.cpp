@@ -109,37 +109,39 @@ void CollisionScene::updateOctreeThread(){
 	while(!pointCloudPointer);
 
 	while(!stopUpdateThread){
-		
+
+		unique_lock<mutex> lk(cvMutex);
+		cv.wait(lk, [&]{return newPointCloud;});
+		newPointCloud = false;
+
 		pointCloudMutex.lock();
-		if(swap){
-			swapPointClouds();
-			swap = false;
+		swapPointClouds();
+		pointCloudMutex.unlock();
 
-			pointCloudMutex.unlock();
-
-			suturo_octree::Octree* newOctree = new suturo_octree::Octree(octreeSize, octreeDepth, Point3f());
-			octomapFrame = "head_mount_kinect_rgb_optical_frame";
-			for(auto it = activePointCloudPointer->points.begin(); it != activePointCloudPointer->points.end(); it++){
-				newOctree->addPoint(Point3f(it->x, it->y, it->z));
-			}
-			delete(octree);
-			octree = newOctree;
-			updateOctreeVisualization();
+		suturo_octree::Octree* newOctree = new suturo_octree::Octree(octreeSize, octreeDepth, Point3f());
+		octomapFrame = "head_mount_kinect_rgb_optical_frame";
+		for(auto it = activePointCloudPointer->points.begin(); it <= activePointCloudPointer->points.end(); it+=100){
+			newOctree->addPoint(Point3f(it->x, it->y, it->z));
 		}
-		
+		octreeMutex.lock();
+		delete(octree);
+		octree = newOctree;
+		octreeMutex.unlock();
+		updateOctreeVisualization();
 	}
 }
 
 /**
- * @brief      Makes a copy of the point cloud to the point cloud pointer.
+ * @brief      Makes a copy of the point cloud to the point cloud pointer and notifies the octree update thread.
  *
  * @param[in]  input  The point cloud message
  */
 void CollisionScene::updatePointCloud(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr& input){
 	pointCloudMutex.lock();
 	pointCloudPointer = input->makeShared();
-	swap = true;
 	pointCloudMutex.unlock();
+	newPointCloud = true;
+	cv.notify_one();
 }
 
 
