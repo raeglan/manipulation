@@ -85,6 +85,7 @@ public:
 	void clearQueryLinks();
 	void updateQuery();
 	void updateBboxes();
+	void setRefFrame(const string& pRefFrame);
 
 private:
 	struct SRobotLink {
@@ -106,7 +107,6 @@ private:
 
 	void updatePointCloud(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr& input);
 
-	void setRefFrame(const string& pRefFrame);
 
 	void updateOctreeVisualization();
 	void updateOctreeThread();
