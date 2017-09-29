@@ -4,4 +4,4 @@ Welcome to the CaterROS manipulation repository. This repository contains all th
 
 To find out how you can use the software in this repository for your project, please go to our [user documentation](http://suturo-docs.readthedocs.io/en/latest/components/manipulation.html)
 
-For an overview of the code of our system, please go to our [API documentation](https://suturo16.github.io/manipulation/).
+For an overview of the code of our system, please go to our [API documentation](https://suturo16.github.io/manipulation/annotated.html).
