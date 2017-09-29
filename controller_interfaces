@@ -64,6 +64,11 @@ knife_grasp_r.yaml
 gripper_control_l.yaml
    double  gripper_goal
 ------------------------------------------------------
+pr2_place_object_r.giskard
+   frame  goal_position
+   double  object_height
+   frame  object_in_gripper
+------------------------------------------------------
 pr2_push_cake_l.giskard
    frame  cake_frame
    frame  knife_in_wrist
@@ -112,6 +117,7 @@ pr2_grasp_fingerHandle_l.giskard
 ------------------------------------------------------
 pr2_move_cake_r.giskard
    frame  cake
+   double  knife_height
    frame  knife_in_gripper
    frame  plate
 ------------------------------------------------------
@@ -129,9 +135,27 @@ pr2_right_arm_joint_control.yaml
    double  wrist_flex_joint_goal
    double  wrist_roll_joint_goal
 ------------------------------------------------------
+pr2_r_arm_collision_avoidance.giskard
+   vector3  COLL:L:r_forearm_link
+   vector3  COLL:L:r_gripper_palm_link
+   vector3  COLL:W:r_forearm_link
+   vector3  COLL:W:r_gripper_palm_link
+   frame  goal_r
+   frame  r_gripper_palm_link
+------------------------------------------------------
 pr2_release_l.giskard
    double  gripper_opening
    frame  start_pose
+------------------------------------------------------
+pr2_left_arm_joint_control.yaml
+   double  l_elbow_flex_joint_goal
+   double  l_forearm_roll_joint_goal
+   double  l_shoulder_lift_joint_goal
+   double  l_shoulder_pan_joint_goal
+   double  l_upper_arm_roll_joint_goal
+   double  l_wrist_flex_joint_goal
+   double  l_wrist_roll_joint_goal
+   double  torso_lift_joint_goal
 ------------------------------------------------------
 pr2_cut_position_r.giskard
    frame  cake_frame
@@ -146,6 +170,11 @@ pr2_cut_position_r.giskard
 pr2_self_collision_test.giskard
    frame  goal_frame_r
    vector3  goal_pos_l
+------------------------------------------------------
+pr2_place_object_l.giskard
+   frame  goal_position
+   double  object_height
+   frame  object_in_gripper
 ------------------------------------------------------
 pr2_grasp_plate_r.giskard
    double  edge_angle

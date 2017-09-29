@@ -24,18 +24,13 @@ GiskardActionServer::GiskardActionServer(string _name)
 , terminateExecution(false)
 , lastFeedback(0)
 , dT(0)
-, rGripper_dT(0)
-, lGripper_dT(0)
-, rGripperIdx(-1)
-, lGripperIdx(-1)
-, rGripperEffort(30)
-, lGripperEffort(30)
 , newJS(false)
 , name(_name)
 , nWSR(1000)
 , nh("~")
 , server(nh, name, boost::bind(&GiskardActionServer::setGoal, this, _1), false)
 , collisionScene(collQueryMap)
+, visRefFrameName("base_link")
 {
 	
 	posErrorPub = nh.advertise<suturo_manipulation_msgs::Float64Map>("pos_errors", 1);
@@ -46,7 +41,7 @@ GiskardActionServer::GiskardActionServer(string _name)
 
 	jsCmdPub = nh.advertise<sensor_msgs::JointState>("/simulator/commands", 1);
 
-	jsSub = nh.subscribe("/joint_states", 1, &GiskardActionServer::updatejointState, this);
+	jsSub = nh.subscribe("/joint_states", 1, &GiskardActionServer::updateJointState, this);
 
 	visManager.addNamespace(vPoint, "Points");
 	visManager.addNamespace(vVector, "Vectors");
@@ -88,9 +83,12 @@ void GiskardActionServer::loadConfig(YAML::Node configNode) {
 		string topicName = configNode["joint_state_command_topic"].as<string>();
 		jsCmdPub = nh.advertise<sensor_msgs::JointState>(topicName, 1);
 	}
+	if (configNode["visualization_target_frame"]) {
+		visRefFrameName = configNode["visualization_target_frame"].as<string>();
+	}
 }
 
-void GiskardActionServer::updatejointState(const sensor_msgs::JointState::ConstPtr& jointState) {
+void GiskardActionServer::updateJointState(const sensor_msgs::JointState::ConstPtr& jointState) {
 	if(jsMutex.try_lock()) {
 		currentJS = *jointState;
 		newJS = true;
@@ -233,12 +231,6 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 				queries.push_back(boost::shared_ptr<AQuery>(new ElapsedTimeQuery(this, p.name)));
 				break;
 			case TypedParam::VECTOR:
-				break;
-			case TypedParam::COLLISIONQUERY:
-				if (!p.isConst) {
-					queries.push_back(boost::shared_ptr<AQuery>(new CollisionQuery(this, p.value, collQueryMap)));	
-					collisionScene.addQueryLink(p.value);
-				}
 				break;
 			case TypedParam::VISUALIZE: {
 				istringstream ss(p.value);
@@ -391,7 +383,7 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 	while (!server.isPreemptRequested() && ros::ok() && !terminateExecution) {
 		if (jsMutex.try_lock()) {
 			if (newJS) {
-				jointStateCallback(currentJS);
+				updateController(currentJS);
 				newJS = false;
 			}
 			jsMutex.unlock();
@@ -430,7 +422,7 @@ void GiskardActionServer::setGoal(const MoveRobotGoalConstPtr& goal) {
 }	
 
 
-void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState jointStateMsg) {
+void GiskardActionServer::updateController(const sensor_msgs::JointState jointStateMsg) {
 	ros::Time now = ros::Time::now();
 	dT = (now - lastUpdate).toSec();
 	lastUpdate = now;
@@ -481,8 +473,6 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 		ROS_ERROR("Query evaluation failed! Skipping this update step.");
 		return;
 	}
-
-	updateLoop();
 
 	if (!controllerInitialized) {
 		if (controller.start(state, nWSR)) {
@@ -566,7 +556,7 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 			KDL::Vector pKDL = it->second->value();
 			Eigen::Vector3d p;
 			tf::vectorKDLToEigen(pKDL, p);
-			visManager.annotatedPoint(ma.markers, vPoint, p, it->first, 0, 0.8f, 0, 1, "base_link");
+			visManager.annotatedPoint(ma.markers, vPoint, p, it->first, 0, 0.8f, 0, 1, visRefFrameName);
 		}
 
 		for (auto it = visVectors.begin(); it != visVectors.end(); it++) {
@@ -575,14 +565,14 @@ void GiskardActionServer::jointStateCallback(const sensor_msgs::JointState joint
 			Eigen::Vector3d va, vb;
 			tf::vectorKDLToEigen(vaKDL, va);
 			tf::vectorKDLToEigen(vbKDL, vb);
-			visManager.annotatedVector(ma.markers, vVector, vb, va, it->first, 0, 0.8f, 0, 1, "base_link");
+			visManager.annotatedVector(ma.markers, vVector, vb, va, it->first, 0, 0.8f, 0, 1, visRefFrameName);
 		}
 
 		for (auto it = visFrames.begin(); it != visFrames.end(); it++) {
 			KDL::Frame fKDL = it->second->value();
 			Eigen::Affine3d f = Affine3d::Identity();
 			tf::transformKDLToEigen(fKDL,f);
-			visManager.poseMarker(ma.markers, vFrame, f, 0.1, 1.f, "base_link");
+			visManager.poseMarker(ma.markers, vFrame, f, 0.1, 1.f, visRefFrameName);
 		}
 
 		visManager.endDrawCycle(ma.markers);
@@ -643,6 +633,8 @@ void GiskardActionServer::generateVisualsFromScope(const giskard_core::Scope& sc
 			visFrames[visName] = it->second;	
 		}
 	}
+
+	cout << "Found " << visScalars.size() << " scalars, " << visPoints.size() << " points, " << visVectors.size() << " vectors and " << visFrames.size() << " frames to visualize." << endl;
 }
 
 bool GiskardActionServer::decodeDouble(const std::string& name, string value) {

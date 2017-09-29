@@ -121,7 +121,7 @@ softConstraints = {
 	softConstraint(r_dist_err, r_dist_err, weightPositionGoal, r_dist, "Radial position");
 	softConstraint(low_obs_ctrl, 100, 0.2, obstruction_coord, "Visual obstruction");
 	softConstraint(elbow_low, 100, weightPositionGoal, elbow_pos.z, "Elbow");
-	softConstraint(-0.01, -0.01, 1, j_gripper, "Keep grasped")
+	softConstraint(-0.1, -0.1, 1, j_gripper, "Keep grasped")
 }	
 
 hardConstraints = {

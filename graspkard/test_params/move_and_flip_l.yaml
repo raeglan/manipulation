@@ -1,12 +1,12 @@
 - name: spatula_in_gripper
   type: transform
   const: false
-  value: spatula l_wrist_roll_link
+  value: SupportingPlaneOfCakeSpatula1 l_wrist_roll_link
 
 - name: goal_frame
   type: transform
   const: false
-  value: plate base_link
+  value: dinnerPlateForCake1 base_link
 
 - name: spatula_radius
   type: double
@@ -18,7 +18,7 @@
   const: true
   value: 0.06
 
-- name: r_gripper_effort
+- name: l_gripper_joint_effort
   type: double
   const: true
   value: 100

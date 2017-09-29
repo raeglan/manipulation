@@ -10,40 +10,135 @@ using boost::dynamic_pointer_cast;
     const char* what() noexcept { return "TODO"; }
   };
 
+  /**
+   * @brief      Function for easy instantiation of classes needing no construction arguments.
+   *
+   * @tparam     T     Class to instantiate
+   *
+   * @return     Shared pointer to the new object
+   */
   template<class T>
   boost::shared_ptr<T> instance() {
     return boost::shared_ptr<T>(new T());
   }
 
+  /**
+   * @brief      Function for easy instantiation of classes needing one construction argument.
+   *
+   * @param[in]  a     First argument
+   *
+   * @tparam     T     Class to instantiate
+   * @tparam     A     Type of first argument
+   *
+   * @return     Shared pointer to the new object
+   */
   template<class T, typename A>
   boost::shared_ptr<T> instance(A a) {
     return boost::shared_ptr<T>(new T(a));
   }
 
+  /**
+   * @brief      Function for easy instantiation of classes needing two construction arguments.
+   *
+   * @param[in]  a     First argument
+   * @param[in]  b     Second argument
+   *
+   * @tparam     T     Class to instantiate
+   * @tparam     A     Type of first argument
+   * @tparam     B     Type of second argument
+   *
+   * @return     Shared pointer to the new object
+   */
   template<class T, typename A, typename B>
   boost::shared_ptr<T> instance(A a, B b) {
     return boost::shared_ptr<T>(new T(a, b));
   }
 
+  /**
+   * @brief      Function for easy instantiation of classes needing three construction arguments.
+   *
+   * @param[in]  a     First argument
+   * @param[in]  b     Second argument
+   * @param[in]  c     Third argument
+   *
+   * @tparam     T     Class to instantiate
+   * @tparam     A     Type of first argument
+   * @tparam     B     Type of second argument
+   * @tparam     C     Type of third argument
+   *
+   * @return     Shared pointer to the new object
+   */
   template<class T, typename A, typename B, typename C>
   boost::shared_ptr<T> instance(A a, B b, C c) {
     return boost::shared_ptr<T>(new T(a, b, c));
   }
 
+  /**
+   * @brief      Function for easy instantiation of classes needing four construction arguments.
+   *
+   * @param[in]  a     First argument
+   * @param[in]  b     Second argument
+   * @param[in]  c     Third argument
+   * @param[in]  d     Fourth argument
+   *
+   * @tparam     T     Class to instantiate
+   * @tparam     A     Type of first argument
+   * @tparam     B     Type of second argument
+   * @tparam     C     Type of third argument
+   * @tparam     D     Type of fourth argument
+   *
+   * @return     Shared pointer to the new object
+   */
   template<class T, typename A, typename B, typename C, typename D>
   boost::shared_ptr<T> instance(A a, B b, C c, D d) {
     return boost::shared_ptr<T>(new T(a, b, c, d));
   }
 
+  /**
+   * @brief      Function for easy instantiation of classes needing five construction arguments.
+   *
+   * @param[in]  a     First argument
+   * @param[in]  b     Second argument
+   * @param[in]  c     Third argument
+   * @param[in]  d     Fourth argument
+   * @param[in]  e     Fifth argument
+   *
+   * @tparam     T     Class to instantiate
+   * @tparam     A     Type of first argument
+   * @tparam     B     Type of second argument
+   * @tparam     C     Type of third argument
+   * @tparam     D     Type of fourth argument
+   * @tparam     E     Type of fifth argument
+   *
+   * @return     Shared pointer to the new object
+   */
   template<class T, typename A, typename B, typename C, typename D, typename E>
   boost::shared_ptr<T> instance(A a, B b, C c, D d, E e) {
     return boost::shared_ptr<T>(new T(a, b, c, d, e));
   }
 
+  /**
+   * @brief      Operator for comfortably comparing strings and c-strings.
+   *
+   * @param[in]  str   A string
+   * @param[in]  cstr  A c-string
+   *
+   * @return     True if the string's contents are equal, false otherwise.
+   */
   inline bool operator == (const std::string& str, const char* cstr) {
     return str.compare(cstr) == 0;
   }
 
+  /**
+   * @brief      Function trying to do a pointer cast.
+   *
+   * @param      p     Pointer to cast
+   * @param      out   Successfully cast pointer
+   *
+   * @tparam     T     Desired pointer type
+   *
+   * @return     True if cast was successful
+   */
   template<typename T>  
   bool matches(SpecPtr& p, boost::shared_ptr<T>& out) {
     out = dynamic_pointer_cast<T>(p);
@@ -70,15 +165,84 @@ using boost::dynamic_pointer_cast;
     return matches(a, aout) && matches(b, bout) && matches(c, cout) && matches(d, dout) && matches(e, eout);
   }
 
+  /**
+   * @brief      Function generating a readable name for a pointer's type.
+   *
+   * @param[in]  ptr   Pointer to generate type name for
+   *
+   * @return     Readable type name
+   */
   std::string toTypeString(const SpecPtr& ptr);
+
+  /**
+   * @brief      Function generating a readable list of name for a vector containing pointers.
+   *
+   * @param[in]  v     Vector to generate names for.
+   *
+   * @return     List of names
+   */
   std::string toTypeList(const std::vector<SpecPtr>& v);
+
+  /**
+   * @brief      Creates a reference specification for the given pointer and scope.
+   *
+   * @param[in]  name         Name of the reference
+   * @param[in]  ptr          Pointer to reference
+   * @param[in]  searchScope  Scope the pointer is defined in
+   *
+   * @return     A global reference to the pointer with the given name
+   */
   SpecPtr createReferenceSpec(const std::string& name, SpecPtr ptr, const AdvancedScopePtr& searchScope);
+  
+  /**
+   * @brief      Checks whether the two pointers match in their base types.
+   *
+   * @param[in]  a     First pointer for comparison
+   * @param[in]  b     Second pointer for comparison
+   *
+   * @return     True if pointer types match.
+   */
   bool typesAreEqual(const SpecPtr& a, const SpecPtr& b);
+
+  /**
+   * @brief      Recursively find all references within a specification.
+   *
+   * @param      references  Found references
+   * @param[in]  specPtr     Specification to search
+   */
   void getReferenceSpecs(std::vector<SpecPtr>& references, const SpecPtr& specPtr);
+  
+  /**
+   * @brief      Generate an algebraic string for a specification.
+   *
+   * @param      out      Resulting string
+   * @param[in]  specPtr  Specification to generate string for
+   */
   void specToString(std::string& out, const SpecPtr& specPtr);
+  
+  /**
+   * @brief      Generate an algebraic string for a specification.
+   *
+   * @param      out      Resulting string
+   * @param[in]  specPtr  Specification to generate string for
+   */
   void specToString(std::string& out, const Spec& specPtr);
 
+  /**
+   * @brief      Get the name of the referenced specification from a reference.
+   *
+   * @param[in]  ptr   Reference to get name from
+   *
+   * @return     Name of the referenced specification
+   */
   std::string getReferenceName(const SpecPtr& ptr);
+
+  /**
+   * @brief      Sets the name of the specification referenced by a reference.
+   *
+   * @param[in]  ptr   Reference specification
+   * @param[in]  name  New name of referenced specification
+   */
   void setReferenceName(const SpecPtr& ptr, std::string name);
 
   //////// Specializations to deal with the lack of constructors for the giskard specifications

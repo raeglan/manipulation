@@ -396,9 +396,9 @@ SpecPtr GiskardPPParser::parseExpression() {
 
 	char c = skip();
 
-	if (c == '+' || c == '-') {
+	while (c == '+' || c == '-') {
 		moveahead();
-        CALL_RULE(parseExpression(), SpecPtr rhs);
+        CALL_RULE(parseTerm(), SpecPtr rhs);
 		
 		if (c == '+') {
 			// + overloads
@@ -408,29 +408,29 @@ SpecPtr GiskardPPParser::parseExpression() {
 			StringSpecPtr slhs, srhs;
 			// AMapSpecPtr  mlhs, mrhs;
 			if (matches(lhs, rhs, dlhs, drhs)) {
-				return instance<DoubleAdditionSpec>(dlhs, drhs);
+				lhs = instance<DoubleAdditionSpec>(dlhs, drhs);
 			} else if (matches(lhs, rhs, vlhs, vrhs)) {
-				return instance<VectorAdditionSpec>(vlhs, vrhs);
+				lhs = instance<VectorAdditionSpec>(vlhs, vrhs);
 			} else if (matches(lhs, rhs, llhs, lrhs)) {
-				return instance<ConcatListSpec>(llhs, lrhs);
+				lhs = instance<ConcatListSpec>(llhs, lrhs);
 			} else if (matches(lhs, rhs, slhs, srhs)) {
-				return instance<ConcatStringSpec>(slhs, srhs);
-			} //else if (matches(lhs, rhs, mlhs, mrhs)) {
-			// 	throw NotImplementedException();
-			// }
-			throwError("No overload known for '+' matching '" + typeString(lhs) + " + " + typeString(rhs) + "'");
+				lhs = instance<ConcatStringSpec>(slhs, srhs);
+			} else {
+				throwError("No overload known for '+' matching '" + typeString(lhs) + " + " + typeString(rhs) + "'");
+			}
 		} else {
 			// - overloads
 			DoubleSpecPtr dlhs, drhs;
 			VectorSpecPtr vlhs, vrhs;
 			if (matches(lhs, rhs, dlhs, drhs)) {
-				return instance<DoubleSubtractionSpec>(dlhs, drhs);
+				lhs = instance<DoubleSubtractionSpec>(dlhs, drhs);
 			} else if (matches(lhs, rhs, vlhs, vrhs)) {
-				return instance<VectorSubtractionSpec>(vlhs, vrhs);
-			} 
-
-			throwError("No overload known for '-' matching '" + typeString(lhs) + " - " + typeString(rhs) + "'");
-		}	
+				lhs = instance<VectorSubtractionSpec>(vlhs, vrhs);
+			} else {
+				throwError("No overload known for '-' matching '" + typeString(lhs) + " - " + typeString(rhs) + "'");
+			}
+		}
+		c = skip();	
 	}
 
 	return lhs;
@@ -441,10 +441,9 @@ SpecPtr GiskardPPParser::parseTerm() {
 	CALL_RULE(parseFactor(), SpecPtr lhs);
 
 	char c = skip();
-
-	if (c == '*' || c == '/') {
+	while (c == '*' || c == '/') {
 		moveahead();
-        CALL_RULE(parseTerm(), SpecPtr rhs);
+		CALL_RULE(parseFactor(), SpecPtr rhs);
 		if (c == '*') {
 			// * overloads
 			DoubleSpecPtr dlhs, drhs;
@@ -452,43 +451,34 @@ SpecPtr GiskardPPParser::parseTerm() {
 			RotationSpecPtr rlhs, rrhs;
 			FrameSpecPtr flhs, frhs;
 			if (matches(lhs, rhs, dlhs, drhs)) {
-
-				return instance<DoubleMultiplicationSpec>(dlhs, drhs);
+				lhs = instance<DoubleMultiplicationSpec>(dlhs, drhs);
 			} else if (matches(lhs, rhs, dlhs, vrhs)) {
-
-				return instance<VectorDoubleMultiplicationSpec>(dlhs, vrhs);
+				lhs = instance<VectorDoubleMultiplicationSpec>(dlhs, vrhs);
 			} else if (matches(lhs, rhs, vlhs, drhs)) {
-
-				return instance<VectorDoubleMultiplicationSpec>(drhs, vlhs);
+				lhs = instance<VectorDoubleMultiplicationSpec>(drhs, vlhs);
 			} else if (matches(lhs, rhs, vlhs, vrhs)) {
-
-				return instance<VectorDotSpec>(vlhs, vrhs);
-			} else if (matches(lhs, rhs, rlhs, rrhs)) {
-				
-				return instance<RotationMultiplicationSpec>(rlhs, rrhs);
-			} else if (matches(lhs, rhs, flhs, frhs)) {
-				
-				return instance<FrameMultiplicationSpec>(flhs, frhs);
-			} else if (matches(lhs, rhs, rlhs, vrhs)) {
-				
-				return instance<VectorRotationMultiplicationSpec>(rlhs, vrhs);
-			} else if (matches(lhs, rhs, flhs, vrhs)) {
-				
-				return instance<VectorFrameMultiplicationSpec>(flhs, vrhs);
+				lhs = instance<VectorDotSpec>(vlhs, vrhs);
+			} else if (matches(lhs, rhs, rlhs, rrhs)) {				
+				lhs = instance<RotationMultiplicationSpec>(rlhs, rrhs);
+			} else if (matches(lhs, rhs, flhs, frhs)) {				
+				lhs = instance<FrameMultiplicationSpec>(flhs, frhs);
+			} else if (matches(lhs, rhs, rlhs, vrhs)) {				
+				lhs = instance<VectorRotationMultiplicationSpec>(rlhs, vrhs);
+			} else if (matches(lhs, rhs, flhs, vrhs)) {				
+				lhs = instance<VectorFrameMultiplicationSpec>(flhs, vrhs);
+			} else { 
+				throwError("No overload known for '*' matching '" + typeString(lhs) + " * " + typeString(rhs) + "'");
 			}
-
-			throwError("No overload known for '*' matching '" + typeString(lhs) + " * " + typeString(rhs) + "'");
 		} else {
 			// / overloads
 			DoubleSpecPtr dlhs, drhs;
 			if (matches(lhs, rhs, dlhs, drhs)) {
-
-				return instance<DoubleDivisionSpec>(dlhs, drhs);
+				lhs = instance<DoubleDivisionSpec>(dlhs, drhs);
+			} else {
+				throwError("No overload known for '/' matching '" + typeString(lhs) + " / " + typeString(rhs) + "'");
 			}
-
-			throwError("No overload known for '/' matching '" + typeString(lhs) + " / " + typeString(rhs) + "'");
 		}
-
+		c = skip();
 	}
 
 	return lhs;	
@@ -525,7 +515,9 @@ SpecPtr GiskardPPParser::parseFactor() {
 SpecPtr GiskardPPParser::parseMemberAccess() {
 	CALL_RULE(parseLiteral(), SpecPtr lit);
 
-	if (it != end && (*it) == '.') {
+	char c = skip();
+
+	while (c == '.') {
 		moveahead();
 
 		VectorSpecPtr vec;
@@ -535,24 +527,25 @@ SpecPtr GiskardPPParser::parseMemberAccess() {
 			CALL_RULE(lstr(), std::string att);
 
 			if (att == "x") {
-				return instance<DoubleXCoordOfSpec>(vec);
+				lit = instance<DoubleXCoordOfSpec>(vec);
 			} else if (att == "y") {
-				return instance<DoubleYCoordOfSpec>(vec);
+				lit = instance<DoubleYCoordOfSpec>(vec);
 			} else if (att == "z") {
-				return instance<DoubleZCoordOfSpec>(vec);
+				lit = instance<DoubleZCoordOfSpec>(vec);
+			} else {
+				throwError(sVec3 + " has no attribute '" + att + "'.");
 			}
 
-			throwError(sVec3 + " has no attribute '" + att + "'.");
 		} else if(matches(lit, frame)) {
 			std::string att = lstr();
 
 			if (att == "pos") {
-				return instance<VectorOriginOfSpec>(frame);
+				lit = instance<VectorOriginOfSpec>(frame);
 			} else if (att == "rot") {
-				return instance<OrientationOfSpec>(frame);
-			} 
-
-			throwError(sFrame + " has no attribute '" + att + "'.");
+				lit = instance<OrientationOfSpec>(frame);
+			} else {
+				throwError(sFrame + " has no attribute '" + att + "'.");
+			}
 		} else if(matches(lit, subScope)) {
 			searchScope = subScope;
 			std::string currentPrefix = accessPrefix;
@@ -560,9 +553,9 @@ SpecPtr GiskardPPParser::parseMemberAccess() {
 			CALL_RULE(parseMemberAccess(), SpecPtr member);
 			searchScope = scopeStack.top();
 			accessPrefix = currentPrefix;
-			return member;
+			lit = member;
 		}
-
+		c = skip();
 	}
 
 	return lit;

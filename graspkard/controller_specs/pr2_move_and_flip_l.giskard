@@ -101,7 +101,10 @@ scope = {
 	VIS__obstruction_coord = obstruction_coord;
 	VIS__obs_ctrl = low_obs_ctrl;
 	VIS__lookDir__opt_pos = c_vDir;
-	VIS__w2opt__wrist_pos = w2opt
+	VIS__w2opt__wrist_pos = w2opt;
+	VIS__z_low__wrist_pos = z_pos_low * unitZ;
+	VIS__z_high__wrist_pos = z_pos_high * unitZ;
+	VIS__upright__goal_pos = upright_err * unitZ
 }
 
 controllableConstraints = {
@@ -123,7 +126,7 @@ softConstraints = {
 	softConstraint(low_obs_ctrl, 100, 0.2, obstruction_coord, "Visual obstruction");
 	softConstraint(elbow_low, 100, weightPositionGoal, elbow_pos.z, "Elbow");
 	#softConstraint(-1000, wrist_high_ctrl, weightPositionGoal, wrist_z_dist, "Wrist z position");
-	softConstraint(-0.01, -0.01, 1, j_gripper, "Keep grasped")
+	softConstraint(-0.1, -0.1, 1, j_gripper, "Keep grasped")
 }	
 
 hardConstraints = {

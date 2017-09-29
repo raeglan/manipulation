@@ -21,6 +21,7 @@
 
 #include <giskard_core/giskard_core.hpp>
 #include <giskard_suturo_parser/giskard_parser.hpp>
+#include <giskard_suturo_parser/parser.h>
 #include <dirent.h>
 
 #include <string>
@@ -65,9 +66,7 @@ int main(int argc, char **argv)
             cerr << "Error while parsing '" << (filePath) << "':" << endl << e.what() << endl; 
             failed = true;
           }
-        }
-
-        if (filename.find(".giskard") != string::npos) {
+        } else if (filename.find(".giskard") != string::npos) {
           total ++;
           try {
             std::ifstream t(filePath);
@@ -87,6 +86,16 @@ int main(int argc, char **argv)
             cerr << "Error while parsing '" << (filePath) << "':" << std::endl << e.what() << std::endl; 
             failed = true;
           } catch (giskard_suturo::GiskardLangParser::ParseException e) {
+            cerr << "Error while parsing '" << (filePath) << "':" << std::endl << e.what() << std::endl; 
+            failed = true;
+          }
+        } else if (filename.find(".gpp") != string::npos) {
+          total ++;
+          try {
+            giskard_suturo::GiskardPPParser glParser;
+            spec = glParser.parseFromFile(filePath);
+            isController = true;
+          } catch (const std::exception& e) {
             cerr << "Error while parsing '" << (filePath) << "':" << std::endl << e.what() << std::endl; 
             failed = true;
           }
