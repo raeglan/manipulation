@@ -86,6 +86,10 @@ void GiskardActionServer::loadConfig(YAML::Node configNode) {
 	if (configNode["visualization_target_frame"]) {
 		visRefFrameName = configNode["visualization_target_frame"].as<string>();
 	}
+	if (configNode["cpqs_target_frame"]) {
+		string collFrame = configNode["cpqs_target_frame"].as<string>();
+		collisionScene.setRefFrame(collFrame);
+	}
 }
 
 void GiskardActionServer::updateJointState(const sensor_msgs::JointState::ConstPtr& jointState) {
